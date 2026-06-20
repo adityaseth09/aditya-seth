@@ -6,7 +6,8 @@
 		"hook": "I love optimizing systems. I have saved over $30M/year on infrastructure by measuring and driving optimizations based on resource usage on cloud and on-prem.",
 		"location": "Amsterdam, Netherlands",
 		"photo": "/aditya.jpg",
-		"email": "adityaseth09@gmail.com",
+		"resumePdf": "/aditya-kumar-seth-resume.pdf",
+		"availability": "Open to Site Reliability Engineering leadership roles in Europe",
 		"linkedin": "https://www.linkedin.com/in/aditya-seth/"
 	},
 	"metrics": [
@@ -95,6 +96,20 @@
 			"tags": ["Solr", "MySQL", "eCommerce", "Architecture"]
 		},
 		{
+			"company": "Belzabar Software Design",
+			"role": "Sr. Computer Scientist",
+			"start": "Oct 2010",
+			"end": "Mar 2012",
+			"location": "New Delhi, India",
+			"highlights": [
+				"Managed website and server infrastructure for TLBB mobile apps.",
+				"Architected FAvision, an analytical web tool for Kasina LLC.",
+				"Led AWS server management, database optimization, and front-end performance improvements.",
+				"Drove team management and technical leadership across enterprise software projects."
+			],
+			"tags": ["AWS", "Architecture", "Team Leadership", "Optimization"]
+		},
+		{
 			"company": "Info Edge (Naukri.com)",
 			"role": "Senior Software Engineer",
 			"start": "Feb 2008",
@@ -135,12 +150,30 @@
 		}
 	],
 	"certifications": [
-		"FinOps Certified Engineer",
-		"FinOps Certified Practitioner",
-		"FinOps Certified FOCUS Analyst",
-		"AWS Certified Solutions Architect – Associate",
-		"AWS Certified AI Practitioner",
-		"Certified Scrum Master"
+		{
+			"name": "AWS Certified AI Practitioner",
+			"verifyUrl": "https://credly.com/badges/1c1fa42c-20b4-4047-bff9-16b90e8a2237"
+		},
+		{
+			"name": "AWS Certified Solutions Architect – Associate",
+			"verifyUrl": "https://www.credly.com/badges/a9978885-f32f-4392-84bf-f00d7cde7e10"
+		},
+		{
+			"name": "FinOps Certified Engineer",
+			"verifyUrl": "https://verify.skilljar.com/c/yaisr8qk9rxn"
+		},
+		{
+			"name": "FinOps Certified Practitioner",
+			"verifyUrl": "https://verify.skilljar.com/c/wgr46i96f952"
+		},
+		{
+			"name": "FinOps Certified FOCUS Analyst",
+			"verifyUrl": "https://verify.skilljar.com/c/32xuwf8uyfne"
+		},
+		{
+			"name": "Certified Scrum Master",
+			"verifyUrl": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster"
+		}
 	],
 	"skills": [
 		{
