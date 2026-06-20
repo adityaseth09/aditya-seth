@@ -1,0 +1,187 @@
+{
+	"profile": {
+		"name": "Aditya Kumar Seth",
+		"title": "Business-Minded Technology Leader / SRE Engineering Manager",
+		"tagline": "19+ years turning technical infrastructure into high-yield business assets.",
+		"hook": "I love optimizing systems. I have saved over $30M/year on infrastructure by measuring and driving optimizations based on resource usage on cloud and on-prem.",
+		"location": "Amsterdam, Netherlands",
+		"photo": "/aditya.jpg",
+		"email": "adityaseth09@gmail.com",
+		"linkedin": "https://www.linkedin.com/in/aditya-seth/"
+	},
+	"metrics": [
+		{ "value": 30, "prefix": "$", "suffix": "M+", "label": "Saved Annually" },
+		{ "value": 20, "suffix": "k+", "label": "MySQL Servers Managed" },
+		{ "value": 19, "suffix": "+", "label": "Years Experience" },
+		{ "value": 35, "suffix": "%", "label": "Cloud Cost Reduction" }
+	],
+	"experience": [
+		{
+			"company": "Booking.com",
+			"role": "SRE Engineering Manager",
+			"start": "Feb 2022",
+			"end": "Present",
+			"location": "Amsterdam, Netherlands",
+			"highlights": [
+				"Lead teams managing one of the world's largest MySQL infrastructures with strict SLOs and SOX, PCI, and PII compliance at scale.",
+				"Drove AI-led automation and FinOps discipline during cloud migration, delivering $30M+/year infrastructure savings.",
+				"Cut on-demand AWS costs to less than half of initial forecasts by treating cost as a first-class architectural pillar.",
+				"Scaled SRE teams and hiring across Amsterdam and Bangalore COE."
+			],
+			"tags": ["FinOps", "AI Automation", "MySQL", "Leadership"]
+		},
+		{
+			"company": "Delivery Hero",
+			"role": "Engineering Manager",
+			"start": "Aug 2019",
+			"end": "Dec 2021",
+			"location": "Berlin, Germany",
+			"highlights": [
+				"Led the tech team building Dynamic Delivery Pricing for goods across all Delivery Hero brands.",
+				"Delivered a high-performance Java/Kotlin service on Kubernetes and AWS serving 40+ countries.",
+				"Owned pricing strategy infrastructure with React frontends and strict latency requirements."
+			],
+			"tags": ["Dynamic Pricing", "Kubernetes", "Java", "Leadership"]
+		},
+		{
+			"company": "Delivery Hero",
+			"role": "Senior Software Engineer",
+			"start": "May 2015",
+			"end": "Aug 2019",
+			"location": "Berlin, Germany",
+			"highlights": [
+				"Built geolocation and Time Predictions services handling 1M+ requests/min at ~15ms latency.",
+				"Engineered integration platforms for major restaurant chains using Python, PostgreSQL, and AWS.",
+				"Drove site optimization, automation, and API-based third-party integrations at scale."
+			],
+			"tags": ["Scale", "Latency", "Python", "PostgreSQL"]
+		},
+		{
+			"company": "SpaceWays (Rocket Internet)",
+			"role": "Senior Backend Developer",
+			"start": "Dec 2014",
+			"end": "Apr 2015",
+			"location": "Berlin, Germany",
+			"highlights": [
+				"Built backend services with PHP/Phalcon following SOLID principles.",
+				"Optimized site performance with Memcache, Vagrant, and cross-cultural team delivery."
+			],
+			"tags": ["PHP", "Backend", "Optimization"]
+		},
+		{
+			"company": "MakeMyTrip.com",
+			"role": "Manager, Technology",
+			"start": "Apr 2014",
+			"end": "Nov 2014",
+			"location": "Gurgaon, India",
+			"highlights": [
+				"Led tech team through responsive site launch and mobile site implementation.",
+				"Set up CDN, staging/live deployment pipelines, and live server monitoring.",
+				"Drove front-end optimization and code review standards."
+			],
+			"tags": ["CDN", "Responsive Web", "Team Management"]
+		},
+		{
+			"company": "FabFurnish.com (Rocket Internet)",
+			"role": "Technical Architect / Engineering Manager",
+			"start": "Mar 2012",
+			"end": "Apr 2014",
+			"location": "Gurgaon, India",
+			"highlights": [
+				"Architected e-commerce platform with Solr faceted search and MySQL optimizations.",
+				"Managed backend performance, CDN setup, and MVC frameworks (Zend, Yii).",
+				"Mentored junior developers and owned staging-to-production delivery."
+			],
+			"tags": ["Solr", "MySQL", "eCommerce", "Architecture"]
+		},
+		{
+			"company": "Info Edge (Naukri.com)",
+			"role": "Senior Software Engineer",
+			"start": "Feb 2008",
+			"end": "Jul 2010",
+			"location": "Noida, India",
+			"highlights": [
+				"Developed and optimized naukri.com and firstnaukri.com on the LAMP stack.",
+				"Delivered high-traffic recruitment platform features at scale."
+			],
+			"tags": ["LAMP", "PHP", "MySQL"]
+		},
+		{
+			"company": "Oracle Financial Services",
+			"role": "Associate Consultant",
+			"start": "Aug 2006",
+			"end": "Feb 2008",
+			"location": "Bengaluru, India",
+			"highlights": [
+				"Developed and tested Flexcube, Oracle's flagship core banking product.",
+				"Worked on enterprise-grade banking solutions for global financial institutions."
+			],
+			"tags": ["Core Banking", "Flexcube", "Enterprise"]
+		}
+	],
+	"education": [
+		{
+			"institution": "HEC Paris",
+			"credential": "Executive MBA",
+			"start": "2024",
+			"end": "2025",
+			"note": "QS #2 Executive MBA globally (2026)"
+		},
+		{
+			"institution": "KIET (UP Technical University)",
+			"credential": "B.Tech, Computer Science & Engineering",
+			"start": "2002",
+			"end": "2006"
+		}
+	],
+	"certifications": [
+		"FinOps Certified Engineer",
+		"FinOps Certified Practitioner",
+		"FinOps Certified FOCUS Analyst",
+		"AWS Certified Solutions Architect – Associate",
+		"AWS Certified AI Practitioner",
+		"Certified Scrum Master"
+	],
+	"skills": [
+		{
+			"group": "Leadership & FinOps",
+			"items": [
+				"Engineering Management",
+				"FinOps & Cost Optimization",
+				"Team Scaling",
+				"SRE Practices",
+				"Stakeholder Management",
+				"Cross-Cultural Leadership"
+			]
+		},
+		{
+			"group": "Software Engineering & Databases",
+			"items": [
+				"MySQL at Scale",
+				"Distributed Systems",
+				"System Design",
+				"High-Throughput Services",
+				"PostgreSQL",
+				"Core Banking Systems"
+			]
+		},
+		{
+			"group": "Technologies & Infrastructure",
+			"items": [
+				"AWS & Cloud Migration",
+				"Kubernetes",
+				"Observability & SLOs",
+				"AI Automation",
+				"Python / Java / PHP",
+				"Compliance (SOX, PCI, PII)"
+			]
+		}
+	],
+	"navigation": [
+		{ "label": "Impact", "href": "#impact" },
+		{ "label": "Experience", "href": "#experience" },
+		{ "label": "Education", "href": "#education" },
+		{ "label": "Skills", "href": "#skills" },
+		{ "label": "Contact", "href": "#contact" }
+	]
+}

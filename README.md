@@ -1,43 +1,64 @@
-# Astro Starter Kit: Minimal
+# Aditya Kumar Seth — Portfolio
 
-```sh
-npm create astro@latest -- --template minimal
+A high-performance, single-page portfolio and resume site built with [Astro](https://astro.build) and [Tailwind CSS v4](https://tailwindcss.com). All content lives in `src/data/resume.json` so updates never require touching components.
+
+## Local development
+
+```bash
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Open [http://localhost:4321](http://localhost:4321).
 
-## 🚀 Project Structure
+## Production build
 
-Inside of your Astro project, you'll see the following folders and files:
+```bash
+npm run build
+npm run preview
+```
+
+Static output is written to `dist/`.
+
+## Content updates
+
+Edit [`src/data/resume.json`](src/data/resume.json) to change profile info, metrics, experience, education, certifications, skills, or navigation links.
+
+Drop your headshot at [`public/aditya.jpg`](public/aditya.jpg). If the image is missing, the hero falls back to an initials avatar.
+
+## Deploy to Cloudflare Pages (free)
+
+1. Push this repo to GitHub (or GitLab / Bitbucket).
+2. In the [Cloudflare dashboard](https://dash.cloudflare.com), go to **Workers & Pages → Create → Pages → Connect to Git**.
+3. Select the repository and configure:
+   - **Framework preset:** Astro
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Node.js version:** 22 (or match `engines` in `package.json`)
+4. Deploy. Cloudflare serves the static site from its global CDN at no cost on the free tier.
+
+Optional: set a custom domain under **Pages → Custom domains**.
+
+Update `site` in [`astro.config.mjs`](astro.config.mjs) to your production URL for correct canonical and Open Graph URLs.
+
+## Performance & accessibility
+
+- Zero client-side framework; only theme toggle and scroll/count animations use small inline scripts.
+- Self-hosted variable fonts (Inter, Space Grotesk) — no Google Fonts request.
+- Dark mode by default with seamless light/dark toggle (persisted in `localStorage`).
+- Skip link, semantic landmarks, focus-visible rings, and `prefers-reduced-motion` support.
+
+## Project structure
 
 ```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+src/
+├── data/resume.json       # Single source of truth
+├── components/            # UI sections
+├── layouts/BaseLayout.astro
+├── pages/index.astro
+└── styles/global.css      # Tailwind @theme tokens
+public/
+├── favicon.svg
+├── og-image.svg
+└── aditya.jpg             # Your photo (add this)
 ```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

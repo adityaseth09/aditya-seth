@@ -1,0 +1,29 @@
+---
+import Section from './Section.astro';
+import TimelineItem from './TimelineItem.astro';
+import resume from '../data/resume.json';
+---
+
+<Section
+	id="experience"
+	eyebrow="Experience"
+	title="A career built on reliability, scale, and business impact"
+	description="From core banking systems to one of the world's largest MySQL fleets — engineering leadership with measurable outcomes."
+>
+	<div class="relative space-y-8">
+		{
+			resume.experience.map((role, index) => (
+				<TimelineItem
+					company={role.company}
+					role={role.role}
+					start={role.start}
+					end={role.end}
+					location={role.location}
+					highlights={role.highlights}
+					tags={role.tags}
+					index={index}
+				/>
+			))
+		}
+	</div>
+</Section>

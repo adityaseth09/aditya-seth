@@ -1,0 +1,124 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/space-grotesk";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-display: "Space Grotesk Variable", ui-sans-serif, system-ui, sans-serif;
+
+	--color-base: #f8fafc;
+	--color-surface: #ffffff;
+	--color-elevated: #f1f5f9;
+	--color-border: #e2e8f0;
+	--color-text: #0f172a;
+	--color-muted: #64748b;
+	--color-accent: #2563eb;
+	--color-accent-soft: #dbeafe;
+	--color-accent-cyan: #0891b2;
+	--color-glow: rgb(37 99 235 / 0.12);
+}
+
+.dark {
+	--color-base: #0b1120;
+	--color-surface: #111827;
+	--color-elevated: #1e293b;
+	--color-border: #1f2937;
+	--color-text: #e2e8f0;
+	--color-muted: #94a3b8;
+	--color-accent: #3b82f6;
+	--color-accent-soft: #1e3a5f;
+	--color-accent-cyan: #22d3ee;
+	--color-glow: rgb(59 130 246 / 0.15);
+}
+
+@layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		@apply bg-base text-text font-sans antialiased;
+		background-image:
+			radial-gradient(circle at top, var(--color-glow), transparent 45%),
+			linear-gradient(to bottom, transparent, var(--color-base));
+	}
+
+	::selection {
+		background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+	}
+
+	:focus-visible {
+		@apply outline-2 outline-offset-2 outline-accent;
+	}
+}
+
+@layer utilities {
+	.font-display {
+		font-family: var(--font-display);
+	}
+
+	.tabular-nums {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.text-gradient {
+		background: linear-gradient(135deg, var(--color-accent), var(--color-accent-cyan));
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.card-surface {
+		@apply rounded-2xl border border-border bg-surface/80 backdrop-blur-sm;
+		box-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset;
+	}
+
+	.section-shell {
+		@apply mx-auto w-full max-w-6xl px-6 sm:px-8;
+	}
+}
+
+@keyframes fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(1.25rem);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.reveal {
+	opacity: 1;
+	transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.reveal {
+		opacity: 0;
+		transform: translateY(1.25rem);
+		transition:
+			opacity 0.7s ease,
+			transform 0.7s ease;
+	}
+
+	.reveal.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

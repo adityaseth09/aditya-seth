@@ -1,0 +1,26 @@
+---
+import Section from './Section.astro';
+import MetricCard from './MetricCard.astro';
+import resume from '../data/resume.json';
+---
+
+<Section
+	id="impact"
+	eyebrow="Impact Metrics"
+	title="Infrastructure wins, measured in dollars and scale"
+	description="A snapshot of the operational and financial outcomes I have driven across cloud and on-prem environments."
+>
+	<div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+		{
+			resume.metrics.map((metric, index) => (
+				<MetricCard
+					value={metric.value}
+					prefix={metric.prefix}
+					suffix={metric.suffix}
+					label={metric.label}
+					index={index}
+				/>
+			))
+		}
+	</div>
+</Section>

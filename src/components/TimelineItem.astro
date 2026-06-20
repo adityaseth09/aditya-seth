@@ -1,0 +1,61 @@
+---
+interface Props {
+	company: string;
+	role: string;
+	start: string;
+	end: string;
+	location?: string;
+	highlights: string[];
+	tags?: string[];
+	index?: number;
+}
+
+const { company, role, start, end, location, highlights, tags = [], index = 0 } = Astro.props;
+---
+
+<article class="reveal relative pl-8 sm:pl-10" data-reveal style={`transition-delay: ${index * 60}ms`}>
+	<div
+		class="absolute left-0 top-2 h-3 w-3 rounded-full border-2 border-accent bg-base ring-4 ring-accent/15"
+		aria-hidden="true"
+	></div>
+	<div
+		class="absolute bottom-0 left-[5px] top-6 w-px bg-gradient-to-b from-accent/50 to-border"
+		aria-hidden="true"
+	></div>
+
+	<div class="card-surface p-6 sm:p-7">
+		<div class="flex flex-wrap items-start justify-between gap-3">
+			<div>
+				<h3 class="font-display text-xl font-semibold text-text">{company}</h3>
+				<p class="mt-1 text-base font-medium text-accent">{role}</p>
+			</div>
+			<div class="text-right text-sm text-muted">
+				<p>{start} — {end}</p>
+				{location && <p class="mt-1">{location}</p>}
+			</div>
+		</div>
+
+		<ul class="mt-5 space-y-3 text-sm leading-relaxed text-muted sm:text-base">
+			{
+				highlights.map((highlight) => (
+					<li class="flex gap-3">
+						<span class="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-cyan" aria-hidden="true"></span>
+						<span>{highlight}</span>
+					</li>
+				))
+			}
+		</ul>
+
+		{
+			tags.length > 0 && (
+				<div class="mt-5 flex flex-wrap gap-2">
+					{tags.map((tag) => (
+						<span class="rounded-full border border-border bg-elevated/70 px-3 py-1 text-xs font-medium text-muted">
+							{tag}
+						</span>
+					))}
+				</div>
+			)
+		}
+	</div>
+</article>

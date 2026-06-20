@@ -1,0 +1,44 @@
+---
+import resume from '../data/resume.json';
+
+const { profile } = resume;
+const year = new Date().getFullYear();
+---
+
+<footer id="contact" class="border-t border-border py-12 sm:py-16">
+	<div class="section-shell">
+		<div class="reveal card-surface flex flex-col gap-8 p-8 sm:flex-row sm:items-center sm:justify-between" data-reveal>
+			<div>
+				<p class="text-sm uppercase tracking-[0.18em] text-accent">Contact</p>
+				<h2 class="mt-2 font-display text-2xl font-semibold text-text sm:text-3xl">
+					Let's build resilient, cost-efficient systems.
+				</h2>
+				<p class="mt-3 max-w-xl text-muted">
+					Open to conversations on SRE leadership, FinOps, cloud migration, and engineering at scale.
+				</p>
+			</div>
+
+			<div class="flex flex-col gap-3 sm:items-end">
+				<a
+					href={`mailto:${profile.email}`}
+					class="inline-flex items-center justify-center rounded-full bg-accent px-6 py-3 text-sm font-medium text-white transition hover:brightness-110"
+				>
+					{profile.email}
+				</a>
+				<a
+					href={profile.linkedin}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex items-center justify-center rounded-full border border-border px-6 py-3 text-sm font-medium text-text transition hover:border-accent/40"
+				>
+					LinkedIn Profile
+				</a>
+			</div>
+		</div>
+
+		<div class="mt-8 flex flex-col gap-3 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+			<p>&copy; {year} {profile.name}. All rights reserved.</p>
+			<a href="#hero" class="transition hover:text-text">Back to top</a>
+		</div>
+	</div>
+</footer>
