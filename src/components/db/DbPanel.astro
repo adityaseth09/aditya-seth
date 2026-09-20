@@ -1,0 +1,30 @@
+---
+interface Props {
+	id: string;
+	title: string;
+	/** Short monospace "source" label, e.g. a system table name. Can be swapped per engine via data-mysql / data-postgres children. */
+	source?: string;
+	span?: 1 | 2;
+	class?: string;
+}
+
+const { id, title, source, span = 1, class: className = '' } = Astro.props;
+---
+
+<section
+	id={id}
+	class:list={['db-panel card-surface flex min-w-0 flex-col', span === 2 && 'xl:col-span-2', className]}
+	aria-labelledby={`${id}-title`}
+>
+	<header class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border/70 px-4 py-3 sm:px-5">
+		<h2 id={`${id}-title`} class="font-display text-sm font-semibold tracking-tight text-text">
+			{title}
+		</h2>
+		<div class="db-panel-source flex items-center gap-2 font-mono text-[11px] text-muted">
+			<slot name="source">{source && <span>{source}</span>}</slot>
+		</div>
+	</header>
+	<div class="db-panel-body flex-1 p-4 sm:p-5">
+		<slot />
+	</div>
+</section>

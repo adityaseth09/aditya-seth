@@ -1,0 +1,58 @@
+---
+import ThemeToggle from '../ThemeToggle.astro';
+import resume from '../../data/resume.json';
+import { DATABASE_NAME } from '../../lib/db/schema';
+
+const { profile } = resume;
+---
+
+<header class="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-md">
+	<div class="mx-auto flex h-14 w-full max-w-[1600px] items-center justify-between gap-3 px-4 sm:px-6">
+		<a href="/db" class="flex min-w-0 items-center gap-2.5 font-mono text-sm text-text" aria-label="Database view home">
+			<svg class="h-5 w-5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+				<ellipse cx="12" cy="5.5" rx="8" ry="3" />
+				<path d="M4 5.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" />
+				<path d="M4 11.5v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" />
+			</svg>
+			<span class="hidden truncate sm:inline">
+				<span class="text-muted">{DATABASE_NAME}</span><span class="text-muted">.</span><span class="font-semibold">{profile.name.split(' ')[0].toLowerCase()}</span>
+			</span>
+			<span id="db-status-pill" class="db-pill hidden sm:inline-flex" data-state="ok">
+				<span class="db-pill-dot"></span> available
+			</span>
+		</a>
+
+		<div class="flex items-center gap-2">
+			<div
+				id="engine-switch"
+				class="inline-flex h-9 items-center rounded-full border border-border bg-elevated/60 p-0.5 font-mono text-xs"
+				role="group"
+				aria-label="Database engine"
+			>
+				<button type="button" class="db-engine-btn" data-engine-pick="mysql" aria-pressed="true">MySQL</button>
+				<button type="button" class="db-engine-btn" data-engine-pick="postgres" aria-pressed="false">PostgreSQL</button>
+			</div>
+
+			<a
+				id="classic-view"
+				href="/"
+				class="hidden h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm text-muted transition hover:border-accent/40 hover:text-text md:inline-flex"
+			>
+				<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+				</svg>
+				Classic view
+			</a>
+
+			<a
+				href={profile.linkedin}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="hidden h-9 items-center rounded-lg border border-border px-3 text-sm text-muted transition hover:border-accent/40 hover:text-text sm:inline-flex"
+			>
+				LinkedIn
+			</a>
+			<ThemeToggle />
+		</div>
+	</div>
+</header>
