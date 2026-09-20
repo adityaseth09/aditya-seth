@@ -2,18 +2,19 @@
 	"profile": {
 		"name": "Aditya Kumar Seth",
 		"title": "Business-Minded Technology Leader / SRE Engineering Manager",
-		"tagline": "19+ years turning technical infrastructure into high-yield business assets.",
-		"hook": "I love optimizing systems. I have saved over $30M/year on infrastructure by measuring and driving optimizations based on resource usage on cloud and on-prem.",
+		"tagline": "20+ years turning technical infrastructure into high-yield business assets.",
+		"hook": "I love optimizing systems. I have saved over $40M/year on infrastructure by measuring and driving AI-assisted optimizations based on resource usage on cloud and on-prem.",
 		"location": "Amsterdam, Netherlands",
 		"photo": "/aditya.jpg",
 		"resumePdf": "/aditya-kumar-seth-resume.pdf",
 		"availability": "Open to Site Reliability Engineering leadership roles in Europe",
-		"linkedin": "https://www.linkedin.com/in/aditya-seth/"
+		"linkedin": "https://www.linkedin.com/in/aditya-seth/",
+		"languages": ["English (Native)", "Hindi (Native)", "German (Basic)"]
 	},
 	"metrics": [
-		{ "value": 30, "prefix": "$", "suffix": "M+", "label": "Saved Annually" },
+		{ "value": 40, "prefix": "$", "suffix": "M+", "label": "Saved Annually" },
 		{ "value": 20, "suffix": "k+", "label": "MySQL Servers Managed" },
-		{ "value": 19, "suffix": "+", "label": "Years Experience" },
+		{ "value": 20, "suffix": "+", "label": "Years Experience" },
 		{ "value": 35, "suffix": "%", "label": "Cloud Cost Reduction" }
 	],
 	"experience": [
@@ -24,12 +25,16 @@
 			"end": "Present",
 			"location": "Amsterdam, Netherlands",
 			"highlights": [
-				"Lead teams managing one of the world's largest MySQL infrastructures with strict SLOs and SOX, PCI, and PII compliance at scale.",
-				"Drove AI-led automation and FinOps discipline during cloud migration, delivering $30M+/year infrastructure savings.",
-				"Cut on-demand AWS costs to less than half of initial forecasts by treating cost as a first-class architectural pillar.",
-				"Scaled SRE teams and hiring across Amsterdam and Bangalore COE."
+				"Direct multinational SRE teams running 20,000+ MySQL servers, integrating AI-driven observability and agentic auto-remediation to keep one of the world's largest MySQL fleets reliable.",
+				"Saved $40M+/year by optimising AWS and on-prem MySQL infrastructure with AI-based automation; agentic optimisation initiatives cut operational costs a further 20%.",
+				"Supervised the migration of thousands of servers to the cloud, improving scalability and reducing infrastructure costs by 35%.",
+				"Championed company-wide Technical FinOps, establishing cost-visibility frameworks and engineering-led optimisations across cloud and on-prem.",
+				"Own and optimise a multi-million-dollar vendor budget, negotiating high-value contracts and maximising ROI across external partnerships.",
+				"Designed the hiring playbook and end-to-end recruitment pipeline for the Bangalore expansion, hiring 20+ engineers in 5 months and standing up two new teams.",
+				"Lead 8 in-house ICs plus multiple outsourced teams, lifting collaboration and delivery efficiency by 30% while maintaining 100% SOX, PCI, and PII compliance.",
+				"Stay hands-on with the SRE teams and support 24/7 on-call incident response rotations."
 			],
-			"tags": ["FinOps", "AI Automation", "MySQL", "Leadership"]
+			"tags": ["FinOps", "AI Automation", "MySQL", "Leadership", "Hiring"]
 		},
 		{
 			"company": "Delivery Hero",
@@ -38,9 +43,9 @@
 			"end": "Dec 2021",
 			"location": "Berlin, Germany",
 			"highlights": [
-				"Led the tech team building Dynamic Delivery Pricing for goods across all Delivery Hero brands.",
-				"Delivered a high-performance Java/Kotlin service on Kubernetes and AWS serving 40+ countries.",
-				"Owned pricing strategy infrastructure with React frontends and strict latency requirements."
+				"Founded the Dynamic Pricing Service and led it from proof of concept to a critical Java/Kotlin system on Kubernetes and AWS deployed in 40+ countries, boosting pricing and delivery efficiency by up to 35%.",
+				"Spearheaded the Time Predictions Squad, delivering time-estimation and real-time order-tracking services handling 1M+ requests/min at ~15ms average latency.",
+				"Directed the lifecycle of the Delivery Areas product, increasing restaurant availability to nearby customers by 55%."
 			],
 			"tags": ["Dynamic Pricing", "Kubernetes", "Java", "Leadership"]
 		},
@@ -51,8 +56,8 @@
 			"end": "Aug 2019",
 			"location": "Berlin, Germany",
 			"highlights": [
-				"Built geolocation and Time Predictions services handling 1M+ requests/min at ~15ms latency.",
-				"Engineered integration platforms for major restaurant chains using Python, PostgreSQL, and AWS.",
+				"Designed and executed integrations with major restaurant chains such as McDonald's and Domino's using Python, PostgreSQL, and AWS, improving order processing efficiency by 50% and expanding service coverage by 30%.",
+				"Developed advanced geolocation services for real-time customer location tracking, improving delivery accuracy by 40% and customer satisfaction by 25%.",
 				"Drove site optimization, automation, and API-based third-party integrations at scale."
 			],
 			"tags": ["Scale", "Latency", "Python", "PostgreSQL"]
@@ -76,7 +81,7 @@
 			"end": "Nov 2014",
 			"location": "Gurgaon, India",
 			"highlights": [
-				"Led tech team through responsive site launch and mobile site implementation.",
+				"Led a cross-functional team of developers, QA, and designers through the responsive site launch and mobile site implementation, lifting site performance and user engagement by 23%.",
 				"Set up CDN, staging/live deployment pipelines, and live server monitoring.",
 				"Drove front-end optimization and code review standards."
 			],
@@ -89,7 +94,8 @@
 			"end": "Apr 2014",
 			"location": "Gurgaon, India",
 			"highlights": [
-				"Architected e-commerce platform with Solr faceted search and MySQL optimizations.",
+				"Architected the e-commerce platform with Solr faceted search and MySQL optimizations, improving server and database efficiency by 30%.",
+				"Led development of the mobile-optimized website, growing mobile traffic by 40%.",
 				"Managed backend performance, CDN setup, and MVC frameworks (Zend, Yii).",
 				"Mentored junior developers and owned staging-to-production delivery."
 			],
@@ -116,8 +122,8 @@
 			"end": "Jul 2010",
 			"location": "Noida, India",
 			"highlights": [
-				"Developed and optimized naukri.com and firstnaukri.com on the LAMP stack.",
-				"Delivered high-traffic recruitment platform features at scale."
+				"Architected and optimized naukri.com and firstnaukri.com on the LAMP stack, improving site speed by 35%.",
+				"Delivered high-traffic recruitment platform features at scale, increasing user retention by 20%."
 			],
 			"tags": ["LAMP", "PHP", "MySQL"]
 		},
@@ -140,7 +146,7 @@
 			"credential": "Executive MBA",
 			"start": "2024",
 			"end": "2025",
-			"note": "QS #2 Executive MBA globally (2026)"
+			"note": "Specialization: Test your Start-up Idea · QS #2 Executive MBA globally (2026)"
 		},
 		{
 			"institution": "KIET (UP Technical University)",
@@ -173,6 +179,9 @@
 		{
 			"name": "Certified Scrum Master",
 			"verifyUrl": "https://www.scrumalliance.org/get-certified/scrum-master-track/certified-scrummaster"
+		},
+		{
+			"name": "AI Generalist — Outskill India"
 		}
 	],
 	"skills": [
@@ -188,24 +197,39 @@
 			]
 		},
 		{
+			"group": "AI & Generative Tools",
+			"items": [
+				"Agentic Workflows",
+				"Custom AI Bots & Auto-Remediation",
+				"Prompt Engineering",
+				"Claude",
+				"Cursor",
+				"NotebookLM"
+			]
+		},
+		{
 			"group": "Software Engineering & Databases",
 			"items": [
 				"MySQL at Scale",
+				"PostgreSQL",
+				"DynamoDB",
+				"Redis / Memcached",
+				"ElasticSearch",
 				"Distributed Systems",
 				"System Design",
 				"High-Throughput Services",
-				"PostgreSQL",
-				"Core Banking Systems"
+				"Python / Java / PHP"
 			]
 		},
 		{
 			"group": "Technologies & Infrastructure",
 			"items": [
-				"AWS & Cloud Migration",
+				"AWS (RDS, EC2) & Cloud Migration",
 				"Kubernetes",
+				"Docker",
+				"Linux",
+				"Git",
 				"Observability & SLOs",
-				"AI Automation",
-				"Python / Java / PHP",
 				"Compliance (SOX, PCI, PII)"
 			]
 		}

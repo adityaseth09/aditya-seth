@@ -41,30 +41,47 @@ import resume from '../data/resume.json';
 					{
 						resume.certifications.map((cert) => (
 							<li class="rounded-xl bg-elevated/60 px-4 py-3 text-sm text-text">
-								<a
-									href={cert.verifyUrl}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="group flex items-start gap-3 transition hover:text-accent"
-								>
-									<svg
-										class="mt-0.5 h-4 w-4 shrink-0 text-accent"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-										aria-hidden="true"
+								{'verifyUrl' in cert && cert.verifyUrl ? (
+									<a
+										href={cert.verifyUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="group flex items-start gap-3 transition hover:text-accent"
 									>
-										<path
-											fill-rule="evenodd"
-											d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-											clip-rule="evenodd"></path>
-									</svg>
-									<span>
-										{cert.name}
-										<span class="mt-0.5 block text-xs text-muted group-hover:text-accent/80">
-											Verify credential →
+										<svg
+											class="mt-0.5 h-4 w-4 shrink-0 text-accent"
+											viewBox="0 0 20 20"
+											fill="currentColor"
+											aria-hidden="true"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+												clip-rule="evenodd"></path>
+										</svg>
+										<span>
+											{cert.name}
+											<span class="mt-0.5 block text-xs text-muted group-hover:text-accent/80">
+												Verify credential →
+											</span>
 										</span>
+									</a>
+								) : (
+									<span class="flex items-start gap-3">
+										<svg
+											class="mt-0.5 h-4 w-4 shrink-0 text-accent"
+											viewBox="0 0 20 20"
+											fill="currentColor"
+											aria-hidden="true"
+										>
+											<path
+												fill-rule="evenodd"
+												d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+												clip-rule="evenodd"></path>
+										</svg>
+										<span>{cert.name}</span>
 									</span>
-								</a>
+								)}
 							</li>
 						))
 					}
