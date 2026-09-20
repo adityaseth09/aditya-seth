@@ -10,6 +10,17 @@ import Footer from '../components/Footer.astro';
 ---
 
 <BaseLayout>
+	<Fragment slot="head">
+		<script is:inline>
+			(function () {
+				try {
+					if (localStorage.getItem('view') === 'db') {
+						location.replace('/db');
+					}
+				} catch (e) {}
+			})();
+		</script>
+	</Fragment>
 	<Nav />
 	<main id="main">
 		<Hero />

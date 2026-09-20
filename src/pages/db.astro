@@ -1,0 +1,302 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DbNav from '../components/db/DbNav.astro';
+import Sidebar from '../components/db/Sidebar.astro';
+import DbPanel from '../components/db/DbPanel.astro';
+import resume from '../data/resume.json';
+import { DATABASE_NAME, TABLES } from '../lib/db/schema';
+import { POOL_CAPACITY, TOTAL_PAGES } from '../lib/db/simulation';
+import '../styles/db.css';
+
+const { profile } = resume;
+const title = `${profile.name} — resume as a database`;
+const description = `Query ${profile.name}'s resume like a MySQL or PostgreSQL database: EXPLAIN plans, B+Tree index walks, buffer pool, replication, MVCC and SRE dashboards.`;
+const totalRows = TABLES.reduce((n, t) => n + t.rows.length, 0);
+const year = new Date().getFullYear();
+---
+
+<BaseLayout title={title} description={description}>
+	<Fragment slot="head">
+		<script is:inline>
+			(function () {
+				try {
+					localStorage.setItem('view', 'db');
+					var engine = localStorage.getItem('db-engine');
+					document.documentElement.dataset.engine = engine === 'postgres' ? 'postgres' : 'mysql';
+				} catch (e) {
+					document.documentElement.dataset.engine = 'mysql';
+				}
+			})();
+		</script>
+	</Fragment>
+
+	<DbNav />
+
+	<main id="main" class="db-shell mx-auto w-full max-w-[1600px] px-4 pb-16 pt-5 sm:px-6">
+		<div class="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+			<div>
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
+					<span data-mysql>mysql&gt; USE {DATABASE_NAME};</span><span data-postgres>\c {DATABASE_NAME}</span>
+				</p>
+				<h1 class="mt-1 font-display text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+					{profile.name.split(' ')[0]}'s resume, as a database
+				</h1>
+				<p class="mt-1 max-w-2xl text-sm text-muted">
+					{TABLES.length} tables, {totalRows} rows, twenty years of schema migrations. Pick a table or a saved query, then watch what the engine does underneath.
+					Every panel switches vocabulary with the engine toggle.
+				</p>
+			</div>
+			<div class="flex flex-wrap gap-2 font-mono text-[11px] text-muted">
+				<span class="db-kv"><span>engine</span><b id="hdr-engine">MySQL 8.4</b></span>
+				<span class="db-kv"><span>primary</span><b id="hdr-primary">eu-west-1a</b></span>
+				<span class="db-kv"><span>buffer pool</span><b>{POOL_CAPACITY}/{TOTAL_PAGES} pages</b></span>
+				<a href="/" id="classic-view-mobile" class="db-kv md:hidden"><span>view</span><b>classic →</b></a>
+			</div>
+		</div>
+
+		<div class="grid gap-5 lg:grid-cols-[272px_minmax(0,1fr)]">
+			<Sidebar />
+
+			<div class="grid min-w-0 gap-5 xl:grid-cols-2">
+				<!-- Query -->
+				<DbPanel id="panel-query" title="Query" span={2}>
+					<Fragment slot="source">
+						<span id="q-route" class="db-pill" data-state="ok"><span class="db-pill-dot"></span> reads → replica</span>
+					</Fragment>
+					<div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+						<div class="min-w-0">
+							<div class="flex items-start justify-between gap-3">
+								<div class="min-w-0">
+									<h3 id="q-title" class="truncate font-display text-base font-semibold text-text">Pick a query</h3>
+									<p id="q-lesson" class="mt-1 text-[13px] leading-relaxed text-muted">
+										Choose a saved query or a table on the left. The console is guided: no typing, no SQL injection, just internals.
+									</p>
+								</div>
+								<button id="q-run" type="button" class="db-btn-primary shrink-0" disabled>
+									<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+									Run
+								</button>
+							</div>
+							<pre id="q-sql" class="db-code mt-3" aria-live="polite"><code><span class="db-prompt" data-prompt></span> <span class="text-muted">-- waiting for a query</span></code></pre>
+							<details id="q-ddl-wrap" class="mt-3 group">
+								<summary class="flex cursor-pointer list-none items-center gap-2 font-mono text-[11px] text-muted hover:text-text">
+									<svg class="h-3 w-3 transition group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7" /></svg>
+									<span id="q-ddl-cmd">SHOW CREATE TABLE</span>
+								</summary>
+								<pre id="q-ddl" class="db-code mt-2 max-h-72 overflow-auto"><code></code></pre>
+							</details>
+						</div>
+						<div class="min-w-0">
+							<div id="q-results" class="db-results" aria-live="polite" aria-busy="false">
+								<div class="db-empty">
+									<span class="db-prompt" data-prompt></span> result set will appear here
+								</div>
+							</div>
+							<pre id="q-footer" class="mt-2 whitespace-pre-wrap font-mono text-[11px] text-muted"></pre>
+						</div>
+					</div>
+				</DbPanel>
+
+				<!-- B+Tree -->
+				<DbPanel id="panel-btree" title="B+Tree index walk" span={2}>
+					<Fragment slot="source"><span id="btree-title">—</span></Fragment>
+					<div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]">
+						<div id="btree-svg" class="db-btree">
+							<p class="db-empty">The index descent animates here: root → internal → leaf → row.</p>
+						</div>
+						<p id="btree-note" class="text-[12.5px] leading-relaxed text-muted"></p>
+					</div>
+				</DbPanel>
+
+				<!-- EXPLAIN -->
+				<DbPanel id="panel-explain" title="Query plan">
+					<Fragment slot="source"><span id="explain-cmd">EXPLAIN FORMAT=TREE</span></Fragment>
+					<div id="explain-tree" class="db-plan">
+						<p class="db-empty">Run a query to see how the optimiser executes it.</p>
+					</div>
+					<details class="mt-3 group">
+						<summary class="flex cursor-pointer list-none items-center gap-2 font-mono text-[11px] text-muted hover:text-text">
+							<svg class="h-3 w-3 transition group-open:rotate-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m9 5 7 7-7 7" /></svg>
+							raw output
+						</summary>
+						<pre id="explain-raw" class="db-code mt-2 overflow-auto"><code></code></pre>
+					</details>
+					<div class="mt-3 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10.5px] text-muted">
+						<span><i class="db-access-dot" data-access="const"></i> const / ref</span>
+						<span><i class="db-access-dot" data-access="range"></i> range</span>
+						<span><i class="db-access-dot" data-access="index"></i> index scan</span>
+						<span><i class="db-access-dot" data-access="all"></i> full scan</span>
+					</div>
+				</DbPanel>
+
+				<!-- Buffer pool -->
+				<DbPanel id="panel-bp" title="Buffer pool">
+					<Fragment slot="source"><span id="bp-title">InnoDB buffer pool</span></Fragment>
+					<div class="mb-3 grid grid-cols-3 gap-3">
+						<div class="db-stat"><span>hit ratio</span><b id="bp-hit">100.0%</b></div>
+						<div class="db-stat"><span>resident</span><b id="bp-resident">0 / {POOL_CAPACITY}</b></div>
+						<div class="db-stat"><span>page size</span><b id="bp-pagesize">16 KB</b></div>
+					</div>
+					<div id="bp-grid" class="db-bp-grid" role="img" aria-label="Buffer pool frames"></div>
+					<div class="mt-3 flex flex-wrap items-center justify-between gap-2 font-mono text-[10.5px] text-muted">
+						<span id="bp-policy">Midpoint-insertion LRU</span>
+						<span class="flex gap-3">
+							<span><i class="db-bp-swatch is-hit"></i> hit</span>
+							<span><i class="db-bp-swatch is-miss"></i> miss (disk read)</span>
+							<span><i class="db-bp-swatch is-evict"></i> evicted</span>
+						</span>
+					</div>
+					<p id="bp-log" class="mt-2 font-mono text-[11px] text-muted"></p>
+				</DbPanel>
+
+				<!-- Replication -->
+				<DbPanel id="panel-repl" title="Replication topology">
+					<Fragment slot="source"><span id="repl-cmd">SHOW REPLICA STATUS</span></Fragment>
+					<div id="repl-nodes" class="db-repl"></div>
+					<div class="mt-3 flex flex-wrap items-center justify-between gap-2 font-mono text-[11px]">
+						<span class="text-muted"><span id="repl-pos-label">Executed_Gtid_Set</span> <b id="repl-pos" class="text-text"></b></span>
+						<button id="repl-failover" type="button" class="db-btn-danger">Simulate AZ failure</button>
+					</div>
+					<ol id="repl-log" class="mt-2 space-y-0.5 font-mono text-[11px] text-muted"></ol>
+				</DbPanel>
+
+				<!-- Slow log -->
+				<DbPanel id="panel-slow" title="Statement digest">
+					<Fragment slot="source"><span id="slow-source">performance_schema…by_digest</span></Fragment>
+					<div class="db-results">
+						<table class="db-table">
+							<thead>
+								<tr>
+									<th>digest</th>
+									<th class="text-right">calls</th>
+									<th class="text-right">avg ms</th>
+									<th class="text-right">rows examined</th>
+									<th class="text-right">rows sent</th>
+									<th>access</th>
+								</tr>
+							</thead>
+							<tbody id="slow-table"></tbody>
+						</table>
+						<p id="slow-empty" class="db-empty">No statements yet. Every query you run is digested here; full scans are flagged.</p>
+					</div>
+				</DbPanel>
+
+				<!-- MVCC -->
+				<DbPanel id="panel-mvcc" title="MVCC: the profile row through time" span={2}>
+					<Fragment slot="source"><span data-mysql>undo log · read views</span><span data-postgres>xmin / xmax · snapshots</span></Fragment>
+					<div class="mb-3 flex flex-wrap items-center gap-3">
+						<label class="flex min-w-0 flex-1 items-center gap-2 font-mono text-[11px] text-muted">
+							<span class="shrink-0">snapshot as of</span>
+							<input id="mvcc-slider" type="range" min="0" max="100" value="100" class="db-range flex-1" aria-label="Snapshot date" />
+							<b id="mvcc-asof" class="w-20 shrink-0 text-right text-text">today</b>
+						</label>
+						<div class="inline-flex rounded-md border border-border p-0.5 font-mono text-[11px]" role="group" aria-label="Isolation level">
+							<button type="button" class="db-seg" data-iso="RR" aria-pressed="true">REPEATABLE READ</button>
+							<button type="button" class="db-seg" data-iso="RC" aria-pressed="false">READ COMMITTED</button>
+						</div>
+					</div>
+					<div id="mvcc-chain" class="db-mvcc"></div>
+					<p id="mvcc-note" class="mt-3 text-[12.5px] leading-relaxed text-muted"></p>
+				</DbPanel>
+
+				<!-- RDS -->
+				<DbPanel id="panel-rds" title="Amazon RDS instance">
+					<Fragment slot="source"><span id="rds-engine">MySQL Community 8.4.3</span></Fragment>
+					<div class="mb-3 grid grid-cols-2 gap-x-4 gap-y-2 font-mono text-[11.5px] sm:grid-cols-3">
+						<div class="db-kv2"><span>DB identifier</span><b>{DATABASE_NAME}-prod</b></div>
+						<div class="db-kv2"><span>Class</span><b>db.r7g.2xlarge</b></div>
+						<div class="db-kv2"><span>Status</span><b id="rds-status" class="text-ok">available</b></div>
+						<div class="db-kv2"><span>Multi-AZ</span><b>Yes (3 readers)</b></div>
+						<div class="db-kv2"><span>Storage</span><b>gp3 400 GiB · 12,000 IOPS</b></div>
+						<div class="db-kv2"><span>Parameter group</span><b id="rds-pg">default.mysql8.4</b></div>
+					</div>
+					<div class="grid grid-cols-2 gap-3">
+						{
+							[
+								['cpu', 'CPUUtilization', '%'],
+								['connections', 'DatabaseConnections', ''],
+								['readIops', 'ReadIOPS', '/s'],
+								['freeMem', 'FreeableMemory', 'GB'],
+							].map(([key, label, unit]) => (
+								<div class="db-spark">
+									<div class="flex items-baseline justify-between font-mono text-[10.5px] text-muted">
+										<span>{label}</span>
+										<b class="text-text" data-spark-value={key}>—{unit}</b>
+									</div>
+									<svg data-spark={key} viewBox="0 0 200 48" preserveAspectRatio="none" aria-hidden="true">
+										<path class="db-spark-fill" d="" />
+										<path class="db-spark-line" d="" />
+									</svg>
+								</div>
+							))
+						}
+					</div>
+					<div class="mt-4 rounded-xl border border-border/70 bg-elevated/40 p-3">
+						<div class="flex items-baseline justify-between font-mono text-[11px] text-muted">
+							<span>FinOps meter · monthly run-rate</span>
+							<span><b class="text-ok">−35%</b> vs on-demand</span>
+						</div>
+						<div class="db-cost mt-2" aria-hidden="true">
+							<div class="db-cost-bar is-before" style="width:100%"><span>on-demand $18,420</span></div>
+							<div class="db-cost-bar is-after" style="width:65%"><span>optimised $11,973</span></div>
+						</div>
+						<div class="mt-2 grid grid-cols-3 gap-2 font-mono text-[10.5px] text-muted">
+							<span>Savings Plan coverage <b class="text-text">87%</b></span>
+							<span>Right-sizing <b class="text-text">r6g → r7g</b></span>
+							<span>Fleet impact <b class="text-text">$40M+/yr</b></span>
+						</div>
+					</div>
+				</DbPanel>
+
+				<!-- SRE -->
+				<DbPanel id="panel-sre" title="Reliability">
+					<Fragment slot="source"><span>SLO · error budget · on-call</span></Fragment>
+					<div class="grid grid-cols-2 gap-3">
+						<div class="db-stat col-span-2">
+							<span>uptime since first production shift</span>
+							<b id="sre-uptime" class="tabular-nums text-lg">—</b>
+						</div>
+						<div class="db-stat"><span>availability SLO</span><b>99.99%</b></div>
+						<div class="db-stat"><span>achieved (30d)</span><b id="sre-achieved" class="text-ok">99.999%</b></div>
+					</div>
+					<div class="mt-3">
+						<div class="flex items-baseline justify-between font-mono text-[11px] text-muted">
+							<span>error budget remaining</span>
+							<b id="sre-budget-pct" class="text-text">100%</b>
+						</div>
+						<div class="db-budget mt-1"><div id="sre-budget-bar" class="db-budget-fill" style="width:100%"></div></div>
+					</div>
+					<div class="mt-3 grid grid-cols-2 gap-3 font-mono text-[11.5px]">
+						<div class="db-kv2"><span>on-call primary</span><b id="sre-oncall">{profile.name.split(' ')[0]} · 24/7</b></div>
+						<div class="db-kv2"><span>MTTR (sim)</span><b id="sre-mttr">—</b></div>
+					</div>
+					<p class="mt-3 font-mono text-[11px] uppercase tracking-[0.14em] text-muted">incident log</p>
+					<ol id="sre-incidents" class="mt-1 space-y-1 font-mono text-[11px]">
+						<li class="text-muted">No incidents. Try "Simulate AZ failure" in the replication panel.</li>
+					</ol>
+					<a
+						href={profile.linkedin}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white transition hover:brightness-110"
+					>
+						Page the on-call (LinkedIn)
+					</a>
+				</DbPanel>
+			</div>
+		</div>
+	</main>
+
+	<footer class="border-t border-border/70 py-6">
+		<div class="mx-auto flex w-full max-w-[1600px] flex-col gap-2 px-4 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
+			<p>&copy; {year} {profile.name}. Simulated internals; real career.</p>
+			<p>
+				<a href="/" class="transition hover:text-text">Classic résumé</a> · <a href={profile.resumePdf} download class="transition hover:text-text">PDF</a>
+			</p>
+		</div>
+	</footer>
+
+	<script>
+		import '../scripts/db-console';
+	</script>
+</BaseLayout>
