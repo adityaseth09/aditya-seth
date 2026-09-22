@@ -1,0 +1,50 @@
+---
+import Section from './Section.astro';
+import resume from '../data/resume.json';
+
+const { experience } = resume;
+---
+
+<Section
+	id="experience"
+	eyebrow="git log --experience"
+	title="Ten years of shipping consumer web"
+	intro="From an internship in Berlin to owning the payment surface of a food-delivery platform in nine markets."
+>
+	<ol class="relative space-y-8">
+		{
+			experience.map((role, index) => (
+				<li class="tl-line relative pl-10 last:before:hidden reveal" data-reveal style={`transition-delay:${index * 60}ms`}>
+					<span class="tl-dot" aria-hidden="true" />
+					<article class="card-surface p-6 sm:p-7">
+						<div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+							<div>
+								<h3 class="font-display text-xl font-semibold text-text">{role.role}</h3>
+								<p class="mt-1 text-base text-muted">
+									<span class="font-medium text-text">{role.company}</span> · {role.location}
+								</p>
+							</div>
+							<p class="chip shrink-0 self-start">
+								{role.start} → {role.end}
+							</p>
+						</div>
+						<p class="mt-3 text-sm italic leading-relaxed text-muted">{role.blurb}</p>
+						<ul class="mt-4 space-y-2.5">
+							{role.highlights.map((h) => (
+								<li class="flex gap-3 text-[15px] leading-relaxed text-text/90">
+									<span class="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" aria-hidden="true" />
+									<span>{h}</span>
+								</li>
+							))}
+						</ul>
+						<div class="mt-5 flex flex-wrap gap-2">
+							{role.tags.map((tag) => (
+								<span class="chip">{tag}</span>
+							))}
+						</div>
+					</article>
+				</li>
+			))
+		}
+	</ol>
+</Section>

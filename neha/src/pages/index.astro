@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ImpactMetrics from '../components/ImpactMetrics.astro';
+import Timeline from '../components/Timeline.astro';
+import SkillsMatrix from '../components/SkillsMatrix.astro';
+import Education from '../components/Education.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout>
+	<Fragment slot="head">
+		<script is:inline>
+			(function () {
+				try {
+					if (localStorage.getItem('neha-view') === 'devtools') {
+						location.replace('/devtools');
+					}
+				} catch (e) {}
+			})();
+		</script>
+	</Fragment>
+	<Nav />
+	<main id="main">
+		<Hero />
+		<ImpactMetrics />
+		<Timeline />
+		<SkillsMatrix />
+		<Education />
+	</main>
+	<Footer />
+</BaseLayout>
