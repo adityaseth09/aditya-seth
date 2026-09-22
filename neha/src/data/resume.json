@@ -1,0 +1,476 @@
+{
+	"profile": {
+		"name": "Neha Seth",
+		"initials": "NS",
+		"title": "Frontend Engineer",
+		"tagline": "10+ years building consumer-facing web apps — the last three on payments and checkout, where every pixel touches money.",
+		"hook": "I like the parts of the frontend nobody sees until they break: payment flows across nine markets, error taxonomies that page the right team, and the conversion review that turns a 0.4% drop into next sprint's work.",
+		"location": "Amsterdam, Netherlands",
+		"photo": "/neha.jpg",
+		"resumePdf": "/neha-seth-resume.pdf",
+		"availability": "Open to Senior Frontend roles — Netherlands, EU or remote",
+		"linkedin": "https://www.linkedin.com/in/neha-seth01/",
+		"email": "neha.1feb@gmail.com",
+		"languages": ["English (Fluent)", "Hindi (Native)"],
+		"workEligibility": "Eligible to work full-time in the Netherlands",
+		"focus": "Payments & checkout",
+		"stack": ["TypeScript", "React", "Next.js", "Vue 3"]
+	},
+	"metrics": [
+		{ "value": 10, "suffix": "+", "label": "Years building for the web" },
+		{ "value": 15, "label": "Payment methods integrated" },
+		{ "value": 9, "label": "European markets" },
+		{ "value": 3, "label": "Legacy payment paths retired" },
+		{ "value": 1, "label": "Payments service founded" }
+	],
+	"navigation": [
+		{ "label": "Experience", "href": "#experience" },
+		{ "label": "Skills", "href": "#skills" },
+		{ "label": "Education", "href": "#education" },
+		{ "label": "Contact", "href": "#contact" }
+	],
+	"experience": [
+		{
+			"id": "jet",
+			"company": "Just Eat Takeaway.com",
+			"short": "JET",
+			"role": "Frontend Developer",
+			"start": "Sep 2023",
+			"end": "Present",
+			"startISO": "2023-09",
+			"endISO": null,
+			"location": "Amsterdam, Netherlands",
+			"blurb": "Global online food delivery marketplace in 20+ countries. Payments and checkout for the consumer web platform.",
+			"highlights": [
+				"Integrated 15 payment methods across nine European markets — Apple Pay, Google Pay, Amazon Pay, PayPal, iDEAL and local bank schemes — covering saved cards, recurring payments and market-specific rules.",
+				"Founded a new payments frontend service as its first engineer: chose the stack, built the repository and CI foundations, and shipped the first release behind a feature flag.",
+				"Owned payment error monitoring for web: built the logging taxonomy mapping frontend payment failures to DataDog dashboards and alerts, aligned with iOS so both platforms alert consistently.",
+				"Led the team's recurring payment-conversion review — success rates by market, method and device — turning drops into prioritised engineering work.",
+				"Diagnosed and fixed high-impact checkout defects across frontend and backend, including an Apple Pay / Google Pay total-amount mismatch and a race condition that blocked Apple Pay for iOS 18 users.",
+				"Delivered features at scale with feature flags and A/B experiments, instrumenting analytics to measure payment-option and voucher behaviour in production.",
+				"Retired three legacy payment code paths without regressing checkout; wrote the checkout architecture review and onboarding docs now used across the department.",
+				"Built partner-facing invoicing — search, filters, bulk export, invoice preview — in a Vue 3 micro-frontend on a shared component library."
+			],
+			"tags": ["TypeScript", "React", "Vue 3", "Micro-frontends", "Payments", "DataDog", "A/B testing"]
+		},
+		{
+			"id": "greenbone",
+			"company": "Greenbone AG",
+			"short": "Greenbone",
+			"role": "Frontend Software Engineer",
+			"start": "Apr 2023",
+			"end": "Sep 2023",
+			"startISO": "2023-04",
+			"endISO": "2023-09",
+			"location": "Berlin, Germany",
+			"blurb": "Vulnerability management platform helping companies find and fix security gaps in their infrastructure.",
+			"highlights": [
+				"Developed and maintained React web interfaces for Greenbone's vulnerability management products in a cross-functional team.",
+				"Partnered with backend and product engineers on API integration and application performance across the product surface."
+			],
+			"tags": ["React", "Security", "Performance"]
+		},
+		{
+			"id": "smava",
+			"company": "Smava GmbH",
+			"short": "Smava",
+			"role": "Software Engineer",
+			"start": "Jan 2020",
+			"end": "Nov 2022",
+			"startISO": "2020-01",
+			"endISO": "2022-11",
+			"location": "Berlin, Germany",
+			"blurb": "One of Germany's largest online comparison portals for consumer loans.",
+			"highlights": [
+				"Built the homepage and landing pages from scratch in React, Next.js and TypeScript, and maintained them in a cross-functional team.",
+				"Owned the offer stage of the loan application journey — the conversion-critical step where users compare and select a loan offer.",
+				"Acted as process lead for the team, coordinating initiatives with management and dependent teams.",
+				"Maintained a domain of interconnected projects together with the development and infrastructure tooling around them."
+			],
+			"tags": ["Next.js", "React", "TypeScript", "SSR", "Conversion"]
+		},
+		{
+			"id": "bonify-fe",
+			"company": "Bonify",
+			"short": "Bonify",
+			"role": "Frontend Developer",
+			"start": "Jan 2018",
+			"end": "Nov 2019",
+			"startISO": "2018-01",
+			"endISO": "2019-11",
+			"location": "Berlin, Germany",
+			"blurb": "Berlin fintech giving consumers free access to their credit score and financial data.",
+			"highlights": [
+				"Built the customer-facing web application in React and parts of the mobile application in React Native.",
+				"Translated design templates into responsive, accessible UI as the frontend owner of assigned features.",
+				"Integrated REST APIs in an agile, microservice-based environment, coordinating with backend teams on contract changes."
+			],
+			"tags": ["React", "React Native", "REST", "Accessibility"]
+		},
+		{
+			"id": "bonify-jr",
+			"company": "Bonify",
+			"short": "Bonify",
+			"role": "Intern → Junior Frontend Developer",
+			"start": "Feb 2016",
+			"end": "Dec 2017",
+			"startISO": "2016-02",
+			"endISO": "2017-12",
+			"location": "Berlin, Germany",
+			"blurb": "Joined as an intern and was promoted to Junior Frontend Developer within the year.",
+			"highlights": [
+				"Contributed to the consumer web application in React, JavaScript, HTML and CSS.",
+				"Delivered UI features from design templates in a Scrum team, collaborating with design and backend engineers."
+			],
+			"tags": ["React", "JavaScript", "HTML", "CSS"]
+		}
+	],
+	"education": [
+		{
+			"school": "Udacity",
+			"degree": "React Developer Nanodegree",
+			"years": "",
+			"note": "Component architecture, state management, React Native."
+		},
+		{
+			"school": "Uttar Pradesh Technical University, India",
+			"degree": "Master of Computer Applications",
+			"years": "2004 – 2007",
+			"note": ""
+		},
+		{
+			"school": "Chaudhary Charan Singh University, India",
+			"degree": "Bachelor of Computer Applications",
+			"years": "2001 – 2004",
+			"note": ""
+		}
+	],
+	"beforeTech": "Before moving to Berlin in 2016, Neha taught computer applications at educational institutions in India — which is where the habit of writing onboarding docs people actually read comes from.",
+	"skills": [
+		{
+			"group": "Languages",
+			"items": [
+				{ "name": "TypeScript", "years": 7, "level": 95 },
+				{ "name": "JavaScript (ES6+)", "years": 10, "level": 97 },
+				{ "name": "HTML5", "years": 10, "level": 98 },
+				{ "name": "CSS3", "years": 10, "level": 95 }
+			]
+		},
+		{
+			"group": "Frameworks & libraries",
+			"items": [
+				{ "name": "React", "years": 10, "level": 96 },
+				{ "name": "Next.js", "years": 5, "level": 90 },
+				{ "name": "Vue 3", "years": 3, "level": 84 },
+				{ "name": "Node.js / Express", "years": 6, "level": 78 },
+				{ "name": "Redux / Redux-Saga", "years": 6, "level": 86 },
+				{ "name": "React Native", "years": 2, "level": 70 }
+			]
+		},
+		{
+			"group": "Architecture",
+			"items": [
+				{ "name": "Micro-frontends (single-spa)", "years": 3, "level": 88 },
+				{ "name": "Server-side rendering", "years": 5, "level": 90 },
+				{ "name": "Backend-for-Frontend", "years": 3, "level": 82 },
+				{ "name": "REST & GraphQL", "years": 8, "level": 90 },
+				{ "name": "Shared component libraries", "years": 4, "level": 88 }
+			]
+		},
+		{
+			"group": "Payments",
+			"items": [
+				{ "name": "Adyen", "years": 3, "level": 92 },
+				{ "name": "Apple Pay & Google Pay", "years": 3, "level": 94 },
+				{ "name": "PayPal & Amazon Pay", "years": 3, "level": 90 },
+				{ "name": "iDEAL, Twint, Bancontact, EPS, Dankort", "years": 3, "level": 90 },
+				{ "name": "Stored credentials & recurring", "years": 3, "level": 88 },
+				{ "name": "Open Banking & meal vouchers", "years": 2, "level": 84 }
+			]
+		},
+		{
+			"group": "Testing & delivery",
+			"items": [
+				{ "name": "Jest & React Testing Library", "years": 7, "level": 92 },
+				{ "name": "Playwright (multi-market E2E)", "years": 3, "level": 86 },
+				{ "name": "Feature flags", "years": 4, "level": 92 },
+				{ "name": "A/B experimentation", "years": 4, "level": 88 }
+			]
+		},
+		{
+			"group": "Observability & analytics",
+			"items": [
+				{ "name": "DataDog", "years": 3, "level": 90 },
+				{ "name": "Sentry", "years": 5, "level": 86 },
+				{ "name": "Snowplow", "years": 3, "level": 80 },
+				{ "name": "Tableau", "years": 2, "level": 70 }
+			]
+		},
+		{
+			"group": "Tooling & quality",
+			"items": [
+				{ "name": "Git, GitHub, GitLab, Bitbucket", "years": 10, "level": 95 },
+				{ "name": "Vite, Vercel, Docker, AWS", "years": 5, "level": 80 },
+				{ "name": "Sanity CMS", "years": 2, "level": 74 },
+				{ "name": "WCAG accessibility", "years": 8, "level": 92 },
+				{ "name": "Lighthouse, bundle & load-time optimisation", "years": 6, "level": 90 }
+			]
+		}
+	],
+	"markets": [
+		{ "code": "NL", "name": "Netherlands", "currency": "EUR", "locale": "nl-NL", "flag": "🇳🇱", "methods": ["ideal", "card", "applepay", "googlepay", "paypal", "saved-card", "recurring"] },
+		{ "code": "BE", "name": "Belgium", "currency": "EUR", "locale": "nl-BE", "flag": "🇧🇪", "methods": ["bancontact", "payconiq", "card", "applepay", "googlepay", "paypal", "meal-voucher", "saved-card"] },
+		{ "code": "DE", "name": "Germany", "currency": "EUR", "locale": "de-DE", "flag": "🇩🇪", "methods": ["paypal", "card", "amazonpay", "applepay", "googlepay", "saved-card", "recurring"] },
+		{ "code": "AT", "name": "Austria", "currency": "EUR", "locale": "de-AT", "flag": "🇦🇹", "methods": ["eps", "card", "paypal", "applepay", "googlepay", "saved-card"] },
+		{ "code": "CH", "name": "Switzerland", "currency": "CHF", "locale": "de-CH", "flag": "🇨🇭", "methods": ["twint", "card", "applepay", "googlepay", "paypal", "saved-card"] },
+		{ "code": "DK", "name": "Denmark", "currency": "DKK", "locale": "da-DK", "flag": "🇩🇰", "methods": ["dankort", "card", "applepay", "googlepay", "paypal", "saved-card"] },
+		{ "code": "GB", "name": "United Kingdom", "currency": "GBP", "locale": "en-GB", "flag": "🇬🇧", "methods": ["card", "applepay", "googlepay", "paypal", "openbanking", "saved-card", "recurring"] },
+		{ "code": "IE", "name": "Ireland", "currency": "EUR", "locale": "en-IE", "flag": "🇮🇪", "methods": ["card", "applepay", "googlepay", "paypal", "saved-card"] },
+		{ "code": "ES", "name": "Spain", "currency": "EUR", "locale": "es-ES", "flag": "🇪🇸", "methods": ["card", "applepay", "googlepay", "paypal", "saved-card", "recurring"] }
+	],
+	"paymentMethods": [
+		{
+			"id": "card",
+			"name": "Credit / debit card",
+			"kind": "card",
+			"provider": "Adyen",
+			"flow": "3-D Secure 2 challenge on risky transactions",
+			"story": "The baseline every market shares. Hosted Adyen fields keep PAN data out of our DOM; 3DS2 challenges render in an iframe and the result is reconciled against the order total before confirmation.",
+			"requests": [
+				{ "method": "POST", "path": "/payments/sessions", "status": 201, "ms": 180, "kb": 1.2 },
+				{ "method": "GET", "path": "/checkoutshopper/v71/paymentMethods", "status": 200, "ms": 140, "kb": 3.8 },
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 640, "kb": 0.9 },
+				{ "method": "POST", "path": "/payments/details", "status": 200, "ms": 320, "kb": 0.6 }
+			]
+		},
+		{
+			"id": "saved-card",
+			"name": "Saved card",
+			"kind": "card",
+			"provider": "Adyen · stored credentials",
+			"flow": "Tokenised stored credential, CVC-less where the scheme allows",
+			"story": "Stored credentials are where conversion lives: one tap instead of sixteen digits. The tricky part is market-specific rules — some schemes require CVC re-entry, some don't — encoded once and tested per market in Playwright.",
+			"requests": [
+				{ "method": "GET", "path": "/consumer/stored-payment-methods", "status": 200, "ms": 110, "kb": 0.7 },
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 410, "kb": 0.8 }
+			]
+		},
+		{
+			"id": "recurring",
+			"name": "Recurring / subscription",
+			"kind": "card",
+			"provider": "Adyen · recurring",
+			"flow": "Merchant-initiated transactions on a stored token",
+			"story": "Subscriptions mean merchant-initiated transactions with no shopper present, so the initial consent flow has to capture exactly the right recurringProcessingModel or the renewals fail silently weeks later.",
+			"requests": [
+				{ "method": "POST", "path": "/payments?recurringProcessingModel=Subscription", "status": 200, "ms": 520, "kb": 1.0 }
+			]
+		},
+		{
+			"id": "applepay",
+			"name": "Apple Pay",
+			"kind": "wallet",
+			"provider": "Apple · via Adyen",
+			"flow": "Payment sheet, merchant validation, token decryption server-side",
+			"devices": ["ios", "mac"],
+			"story": "Two production bugs live here. A total-amount mismatch between the payment sheet and the order (fixed by deriving the sheet total from the same source as the order summary), and a race condition that blocked Apple Pay entirely on iOS 18 — the sheet was requested before merchant validation settled. Toggle the iOS 18 device to see the fix.",
+			"requests": [
+				{ "method": "POST", "path": "/applepay/merchant-validation", "status": 200, "ms": 260, "kb": 2.1 },
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 580, "kb": 1.4 }
+			]
+		},
+		{
+			"id": "googlepay",
+			"name": "Google Pay",
+			"kind": "wallet",
+			"provider": "Google · via Adyen",
+			"flow": "PaymentsClient.isReadyToPay → loadPaymentData",
+			"devices": ["android", "desktop", "mac"],
+			"story": "Shares the total-amount fix with Apple Pay. isReadyToPay gates the button so users never see a wallet they can't use — a small thing that removed a whole class of 'button does nothing' support tickets.",
+			"requests": [
+				{ "method": "POST", "path": "https://pay.google.com/gp/p/js/pay.js", "status": 200, "ms": 90, "kb": 42.0, "type": "script" },
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 560, "kb": 1.3 }
+			]
+		},
+		{
+			"id": "amazonpay",
+			"name": "Amazon Pay",
+			"kind": "wallet",
+			"provider": "Amazon",
+			"flow": "Hosted button → Amazon checkout session → return URL",
+			"story": "A redirect flow with a twist: the return URL must rehydrate the entire checkout state, including vouchers and tips. Built as a resumable state machine so a round-trip through Amazon lands the user exactly where they left.",
+			"requests": [
+				{ "method": "POST", "path": "/amazonpay/checkout-session", "status": 201, "ms": 340, "kb": 1.1 },
+				{ "method": "GET", "path": "/checkout/return?amazonCheckoutSessionId=…", "status": 302, "ms": 45, "kb": 0.1 },
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 600, "kb": 1.2 }
+			]
+		},
+		{
+			"id": "paypal",
+			"name": "PayPal",
+			"kind": "wallet",
+			"provider": "PayPal · via Adyen",
+			"flow": "Smart button, popup approval, server capture",
+			"story": "Popup-based approval that has to survive Safari's popup blocker and users switching tabs mid-flow. Instrumented every exit path so a closed popup logs as an abandon, not an error.",
+			"requests": [
+				{ "method": "GET", "path": "https://www.paypal.com/sdk/js?client-id=…", "status": 200, "ms": 130, "kb": 78.0, "type": "script" },
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 720, "kb": 1.0 },
+				{ "method": "POST", "path": "/payments/details", "status": 200, "ms": 300, "kb": 0.5 }
+			]
+		},
+		{
+			"id": "ideal",
+			"name": "iDEAL",
+			"kind": "bank",
+			"provider": "Currence · via Adyen",
+			"flow": "Bank redirect, webhook-confirmed",
+			"story": "The Dutch default. The redirect result page can arrive before the webhook, so the UI polls payment status with backoff and renders a calm 'confirming with your bank' state instead of a false failure.",
+			"requests": [
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 380, "kb": 0.9 },
+				{ "method": "GET", "path": "https://ideal.example-bank.nl/…", "status": 302, "ms": 60, "kb": 0.1 },
+				{ "method": "GET", "path": "/payments/status?ref=…", "status": 200, "ms": 95, "kb": 0.3 }
+			]
+		},
+		{
+			"id": "bancontact",
+			"name": "Bancontact",
+			"kind": "bank",
+			"provider": "Bancontact Payconiq Company",
+			"flow": "Card-like scheme, app or card, redirect-confirmed",
+			"story": "Belgium's card scheme that behaves like a bank redirect on mobile. The mobile flow deep-links into the bank app and back, so the checkout has to be re-entrant.",
+			"requests": [
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 400, "kb": 0.9 },
+				{ "method": "GET", "path": "/checkout/return?resultCode=Authorised", "status": 200, "ms": 70, "kb": 0.2 }
+			]
+		},
+		{
+			"id": "payconiq",
+			"name": "Payconiq",
+			"kind": "bank",
+			"provider": "Bancontact Payconiq Company",
+			"flow": "QR on desktop, app deep-link on mobile",
+			"story": "Same company as Bancontact, opposite UX: a QR code on desktop and an app switch on mobile. Device detection decides which to render, and the QR refreshes before it expires.",
+			"requests": [
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 350, "kb": 1.6 },
+				{ "method": "GET", "path": "/payments/status?ref=…", "status": 200, "ms": 90, "kb": 0.3 }
+			]
+		},
+		{
+			"id": "eps",
+			"name": "EPS",
+			"kind": "bank",
+			"provider": "Austrian banks · via Adyen",
+			"flow": "Issuer selection, bank redirect",
+			"story": "Austria's online bank transfer. The issuer list changes, so it's fetched at runtime rather than hardcoded — one of the market-specific rules that made the config-driven approach pay off.",
+			"requests": [
+				{ "method": "GET", "path": "/checkoutshopper/v71/paymentMethods?countryCode=AT", "status": 200, "ms": 150, "kb": 4.2 },
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 420, "kb": 0.9 }
+			]
+		},
+		{
+			"id": "twint",
+			"name": "Twint",
+			"kind": "wallet",
+			"provider": "Twint AG · via Adyen",
+			"flow": "QR / app switch, CHF only",
+			"story": "Switzerland's mobile wallet. CHF rounding rules (to 0.05) surfaced a display mismatch between the sheet and the order summary — the same class of bug as the Apple Pay total, caught by a multi-market Playwright suite.",
+			"requests": [
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 390, "kb": 1.2 },
+				{ "method": "GET", "path": "/payments/status?ref=…", "status": 200, "ms": 100, "kb": 0.3 }
+			]
+		},
+		{
+			"id": "dankort",
+			"name": "Dankort",
+			"kind": "card",
+			"provider": "Nets · via Adyen",
+			"flow": "Domestic Danish card, co-branded with Visa",
+			"story": "Co-branded cards mean the BIN can route to Dankort or Visa; the checkout has to present the right brand logo and fee disclosure, which is regulated in Denmark.",
+			"requests": [
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 460, "kb": 0.9 }
+			]
+		},
+		{
+			"id": "openbanking",
+			"name": "Open Banking",
+			"kind": "bank",
+			"provider": "UK PSD2 · via Adyen",
+			"flow": "Bank selection, app redirect, consent",
+			"story": "UK account-to-account payments. Low fees, but the consent journey is long; measured drop-off per step in the conversion review and shortened the bank picker with recently-used banks first.",
+			"requests": [
+				{ "method": "POST", "path": "/payments", "status": 200, "ms": 430, "kb": 1.0 },
+				{ "method": "GET", "path": "https://bank.example.co.uk/consent/…", "status": 302, "ms": 55, "kb": 0.1 },
+				{ "method": "GET", "path": "/payments/status?ref=…", "status": 200, "ms": 95, "kb": 0.3 }
+			]
+		},
+		{
+			"id": "meal-voucher",
+			"name": "Meal voucher",
+			"kind": "voucher",
+			"provider": "Edenred · Monizze · Sodexo",
+			"flow": "Voucher balance covers eligible items, remainder on another method",
+			"story": "Split payments: vouchers only cover eligible items, so the order summary has to explain why €4.20 is left over and offer a second method for it. Instrumented voucher usage with Snowplow to measure how often the split confuses people.",
+			"requests": [
+				{ "method": "GET", "path": "/vouchers/eligibility?orderId=…", "status": 200, "ms": 120, "kb": 0.6 },
+				{ "method": "POST", "path": "/payments/split", "status": 200, "ms": 510, "kb": 1.3 }
+			]
+		}
+	],
+	"devices": [
+		{ "id": "desktop", "name": "Desktop · Chrome", "width": 1280, "ua": "Chrome 128 / macOS" },
+		{ "id": "ios", "name": "iPhone 15 · iOS 18 Safari", "width": 393, "ua": "Safari 18 / iOS 18" },
+		{ "id": "android", "name": "Pixel 8 · Android Chrome", "width": 412, "ua": "Chrome 128 / Android 14" }
+	],
+	"consoleFacts": [
+		"payments.web · 15 methods · 9 markets · 3 legacy paths retired",
+		"Error taxonomy: 42 frontend failure codes → 9 DataDog monitors, aligned with iOS",
+		"Weekly conversion review: success rate by market × method × device",
+		"Founded payments-frontend service: repo, CI, first release behind a flag"
+	],
+	"lighthouse": [
+		{
+			"id": "craft",
+			"label": "Frontend craft",
+			"score": 97,
+			"audits": [
+				{ "pass": true, "title": "TypeScript strict mode across React, Next.js and Vue 3 codebases" },
+				{ "pass": true, "title": "Server-side rendering and micro-frontends in production" },
+				{ "pass": true, "title": "Shared component library consumer and contributor" },
+				{ "pass": true, "title": "Bundle and load-time budgets enforced in CI" }
+			]
+		},
+		{
+			"id": "a11y",
+			"label": "Accessibility",
+			"score": 100,
+			"audits": [
+				{ "pass": true, "title": "WCAG 2.1 AA colour contrast on payment tiles and buttons" },
+				{ "pass": true, "title": "Payment method radios have accessible names and roles" },
+				{ "pass": true, "title": "Focus order survives 3DS iframe and wallet popups" },
+				{ "pass": true, "title": "Status changes announced via aria-live during bank confirmation" }
+			]
+		},
+		{
+			"id": "payments",
+			"label": "Payments & checkout",
+			"score": 96,
+			"audits": [
+				{ "pass": true, "title": "15 payment methods integrated across 9 markets" },
+				{ "pass": true, "title": "Apple Pay iOS 18 race condition fixed" },
+				{ "pass": true, "title": "Wallet total-amount mismatch fixed at the source" },
+				{ "pass": true, "title": "Three legacy payment code paths retired with no checkout regression" }
+			]
+		},
+		{
+			"id": "delivery",
+			"label": "Delivery & ownership",
+			"score": 94,
+			"audits": [
+				{ "pass": true, "title": "Features shipped behind flags with A/B measurement" },
+				{ "pass": true, "title": "Owns payment error monitoring and alerting for web" },
+				{ "pass": true, "title": "Leads the recurring payment-conversion review" },
+				{ "pass": true, "title": "Checkout architecture review and onboarding docs adopted department-wide" }
+			]
+		}
+	]
+}
