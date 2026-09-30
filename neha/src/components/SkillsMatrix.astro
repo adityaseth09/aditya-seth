@@ -1,0 +1,62 @@
+---
+import Section from './Section.astro';
+import resume from '../data/resume.json';
+
+const { skills } = resume;
+const top = skills
+	.flatMap((g) => g.items)
+	.sort((a, b) => b.level - a.level)
+	.slice(0, 10);
+---
+
+<Section
+	id="skills"
+	eyebrow="package.json"
+	title="Skills, with the years behind them"
+	intro="Every bar is years of production use, not a self-rating. The dependencies block lists what she reaches for first."
+>
+	<div class="grid gap-6 lg:grid-cols-[1fr_minmax(0,22rem)]">
+		<div class="grid gap-5 sm:grid-cols-2">
+			{
+				skills.map((group, index) => (
+					<article class="card-surface reveal p-5" data-reveal style={`transition-delay:${index * 50}ms`}>
+						<h3 class="font-display text-sm font-semibold uppercase tracking-[0.14em] text-muted">{group.group}</h3>
+						<ul class="mt-4 space-y-3.5">
+							{group.items.map((item) => (
+								<li>
+									<div class="flex items-baseline justify-between gap-3 text-sm">
+										<span class="text-text">{item.name}</span>
+										<span class="shrink-0 font-mono text-[11px] text-muted">{item.years}y</span>
+									</div>
+									<div class="meter mt-1.5" role="img" aria-label={`${item.name}: ${item.years} years`}>
+										<span style={`--w:${item.level}%`} />
+									</div>
+								</li>
+							))}
+						</ul>
+					</article>
+				))
+			}
+		</div>
+
+		<aside class="card-surface reveal self-start overflow-hidden lg:sticky lg:top-24" data-reveal>
+			<div class="browser-chrome">
+				<span class="font-mono text-[11px] text-muted">package.json</span>
+			</div>
+			<pre class="overflow-x-auto p-5 font-mono text-[12.5px] leading-relaxed text-muted"><code>{`{`}
+  <span class="text-info">"name"</span>: <span class="text-ok">"neha-seth"</span>,
+  <span class="text-info">"version"</span>: <span class="text-ok">"10.0.0"</span>,
+  <span class="text-info">"description"</span>: <span class="text-ok">"frontend engineer, payments & checkout"</span>,
+  <span class="text-info">"dependencies"</span>: {`{`}
+{top.map((s, i) => (<Fragment>    <span class="text-accent">"{s.name.toLowerCase().replace(/[^a-z0-9+]+/g, '-').replace(/-$/, '')}"</span>: <span class="text-ok">"^{s.years}.0.0"</span>{i < top.length - 1 ? ',' : ''}
+</Fragment>))}  {`}`},
+  <span class="text-info">"peerDependencies"</span>: {`{`}
+    <span class="text-accent">"design"</span>: <span class="text-ok">"*"</span>,
+    <span class="text-accent">"backend"</span>: <span class="text-ok">"*"</span>,
+    <span class="text-accent">"product"</span>: <span class="text-ok">"*"</span>
+  {`}`},
+  <span class="text-info">"engines"</span>: {`{`} <span class="text-accent">"coffee"</span>: <span class="text-ok">">=1"</span> {`}`}
+{`}`}</code></pre>
+		</aside>
+	</div>
+</Section>

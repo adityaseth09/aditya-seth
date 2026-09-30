@@ -1,0 +1,29 @@
+---
+import resume from '../data/resume.json';
+
+const { metrics } = resume;
+---
+
+<section id="impact" class="scroll-mt-20 py-8">
+	<div class="section-shell">
+		<div class="reveal grid gap-4 sm:grid-cols-2 lg:grid-cols-5" data-reveal>
+			{
+				metrics.map((metric, index) => (
+					<article class="card-surface group relative overflow-hidden p-5" style={`transition-delay:${index * 60}ms`}>
+						<div class="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gradient-to-br from-accent/20 to-accent-2/20 blur-2xl transition group-hover:scale-150" aria-hidden="true" />
+						<p
+							class="font-display text-4xl font-semibold tracking-tight text-text tabular-nums"
+							data-count-up
+							data-value={metric.value}
+							data-prefix={'prefix' in metric ? metric.prefix : ''}
+							data-suffix={'suffix' in metric ? metric.suffix : ''}
+						>
+							0
+						</p>
+						<p class="mt-2 text-sm text-muted">{metric.label}</p>
+					</article>
+				))
+			}
+		</div>
+	</div>
+</section>

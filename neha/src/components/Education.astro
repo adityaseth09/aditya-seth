@@ -1,0 +1,35 @@
+---
+import Section from './Section.astro';
+import resume from '../data/resume.json';
+
+const { education, profile, beforeTech } = resume;
+---
+
+<Section id="education" eyebrow="import { foundations }" title="Education & background">
+	<div class="grid gap-5 lg:grid-cols-3">
+		{
+			education.map((item, index) => (
+				<article class="card-surface reveal p-6" data-reveal style={`transition-delay:${index * 60}ms`}>
+					<p class="eyebrow">{item.years || 'Certification'}</p>
+					<h3 class="mt-2 font-display text-lg font-semibold text-text">{item.degree}</h3>
+					<p class="mt-1 text-sm text-muted">{item.school}</p>
+					{item.note && <p class="mt-3 text-sm leading-relaxed text-muted">{item.note}</p>}
+				</article>
+			))
+		}
+	</div>
+
+	<div class="reveal mt-6 grid gap-5 lg:grid-cols-[1fr_minmax(0,22rem)]" data-reveal>
+		<article class="card-surface p-6">
+			<p class="eyebrow">// before 2016</p>
+			<p class="mt-2 text-[15px] leading-relaxed text-text/90">{beforeTech}</p>
+		</article>
+		<article class="card-surface p-6">
+			<p class="eyebrow">languages & eligibility</p>
+			<ul class="mt-3 space-y-2 text-sm text-text">
+				{profile.languages.map((l) => <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-accent-2" />{l}</li>)}
+				<li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-ok" />{profile.workEligibility}</li>
+			</ul>
+		</article>
+	</div>
+</Section>

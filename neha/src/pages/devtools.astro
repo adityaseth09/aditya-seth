@@ -1,0 +1,312 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import resume from '../data/resume.json';
+import { SOURCES } from '../lib/devtools/sources';
+import '../styles/devtools.css';
+
+const { profile, devices, markets, paymentMethods, lighthouse } = resume;
+const title = `${profile.name} — résumé, inspected`;
+const description = `Open ${profile.name}'s résumé in DevTools: inspect the DOM of her career, watch ${paymentMethods.length} payment methods fire across ${markets.length} markets in the Network panel, run Lighthouse on her skills, and edit a live component in Sources.`;
+
+const tabs = [
+	['elements', 'Elements'],
+	['console', 'Console'],
+	['network', 'Network'],
+	['sources', 'Sources'],
+	['components', 'Components'],
+	['lighthouse', 'Lighthouse'],
+	['performance', 'Performance'],
+] as const;
+
+const dirs = new Map<string, typeof SOURCES>();
+for (const f of SOURCES) {
+	const dir = f.path.split('/').slice(0, -1).join('/');
+	dirs.set(dir, [...(dirs.get(dir) ?? []), f]);
+}
+---
+
+<BaseLayout title={title} description={description}>
+	<Fragment slot="head">
+		<script is:inline>
+			try {
+				localStorage.setItem('neha-view', 'devtools');
+			} catch (e) {}
+			document.documentElement.classList.add('dt');
+		</script>
+	</Fragment>
+
+	<div class="dt-app" id="dt-app">
+		<!-- Top bar -->
+		<header class="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-border bg-surface px-3 sm:px-4">
+			<a href="/devtools" class="flex min-w-0 items-center gap-2.5 font-mono text-[12.5px] text-text" aria-label="DevTools view home">
+				<svg class="h-4.5 w-4.5 shrink-0 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="m8 8-4 4 4 4m8-8 4 4-4 4M14 4l-4 16" />
+				</svg>
+				<span class="truncate"><span class="text-muted">DevTools —</span> <b class="font-medium">{profile.name}</b><span class="hidden text-muted sm:inline"> · résumé, inspected</span></span>
+			</a>
+			<div class="flex items-center gap-2">
+				<a href="/" id="classic-view" class="hidden h-8 items-center gap-1.5 rounded-lg border border-border px-3 text-[12.5px] text-muted transition hover:border-accent/50 hover:text-text md:inline-flex">
+					<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" /></svg>
+					Classic view
+				</a>
+				<a href={profile.linkedin} target="_blank" rel="noopener noreferrer" class="hidden h-8 items-center rounded-lg border border-border px-3 text-[12.5px] text-muted transition hover:border-accent/50 hover:text-text sm:inline-flex">LinkedIn</a>
+				<a href={profile.resumePdf} download class="hidden h-8 items-center rounded-lg border border-border px-3 text-[12.5px] text-muted transition hover:border-accent/50 hover:text-text sm:inline-flex">PDF</a>
+				<a href="/" class="inline-flex h-8 items-center rounded-lg border border-border px-3 text-[12.5px] text-muted md:hidden">Classic</a>
+				<ThemeToggle />
+			</div>
+		</header>
+
+		<!-- Browser -->
+		<div class="dt-browser">
+			<div class="dt-chrome">
+				<div class="dt-tabstrip" aria-hidden="true">
+					<div class="dt-tab"><i class="fav"></i><span id="tab-title">Checkout — Sunday Ramen Club</span><span class="text-muted">×</span></div>
+					<div class="dt-tab-ghost">{profile.name} — {profile.title}</div>
+					<div class="dt-tab-ghost">+</div>
+				</div>
+				<div class="dt-addr">
+					<button class="dt-navbtn" type="button" aria-label="Back" id="nav-back">
+						<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 6l-6 6 6 6" /></svg>
+					</button>
+					<button class="dt-navbtn" type="button" aria-label="Reload" id="nav-reload">
+						<svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5" /></svg>
+					</button>
+					<div class="dt-url" id="url-bar">
+						<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>
+						<span><b>checkout.example</b>/pay?market=<span id="url-market">NL</span>&amp;device=<span id="url-device">desktop</span></span>
+					</div>
+					<select class="dt-select device" id="device-select" aria-label="Emulated device">
+						{devices.map((d) => <option value={d.id}>{d.name}</option>)}
+					</select>
+					<select class="dt-select" id="market-select-top" aria-label="Market">
+						{markets.map((m) => <option value={m.code}>{m.flag} {m.code}</option>)}
+					</select>
+				</div>
+			</div>
+
+			<div class="dt-viewport" id="viewport" data-device="desktop">
+				<div class="dt-frame" id="frame">
+					<div class="dt-statusbar" aria-hidden="true"><span id="status-time">09:41</span><span>●●●● 5G ▮</span></div>
+					<div class="ck" id="page" aria-label="Checkout page under inspection"></div>
+				</div>
+				<div class="dt-device-label" id="device-label"></div>
+			</div>
+		</div>
+
+		<div class="dt-resize" id="resize" role="separator" aria-orientation="horizontal" aria-label="Resize DevTools panel" tabindex="0"></div>
+
+		<!-- DevTools panel -->
+		<section class="dt-panel" aria-label="Developer tools">
+			<div class="dt-tabs" role="tablist">
+				<button class="dt-iconbtn" id="inspect-toggle" type="button" aria-pressed="false" title="Select an element in the page to inspect it (Ctrl/⌘+Shift+C)" aria-label="Inspect element">
+					<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h10v2H6v8H4V4zm7 7 9 3.5-4 1.5-1.5 4L11 11z" /></svg>
+				</button>
+				<button class="dt-iconbtn" id="device-toggle" type="button" aria-pressed="false" title="Toggle device toolbar" aria-label="Toggle device emulation">
+					<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg>
+				</button>
+				<span class="sep"></span>
+				{
+					tabs.map(([id, label], i) => (
+						<button class="dt-tabbtn" role="tab" type="button" id={`tab-${id}`} data-tab={id} aria-selected={i === 0 ? 'true' : 'false'} aria-controls={`pane-${id}`}>
+							{label}
+							{id === 'console' && <span class="dt-badge" id="console-badge" />}
+							{id === 'network' && <span class="dt-badge is-warn" id="network-badge" />}
+						</button>
+					))
+				}
+				<span class="grow ml-auto"></span>
+				<span class="hidden items-center gap-1.5 font-mono text-[10.5px] text-muted lg:inline-flex" id="dt-status"><span class="inline-block h-1.5 w-1.5 rounded-full bg-ok"></span>{profile.name} · available for hire</span>
+			</div>
+
+			<div class="dt-panes">
+				<!-- Elements -->
+				<div class="dt-pane is-active" id="pane-elements" role="tabpanel" aria-labelledby="tab-elements">
+					<div class="flex min-h-0 flex-1 flex-col">
+						<div class="dt-split">
+							<div class="flex min-h-0 flex-col">
+								<div class="dt-tree" id="dom-tree"></div>
+							</div>
+							<div class="dt-styles" id="styles-pane">
+								<div class="dt-empty">Select a node to see its styles.</div>
+							</div>
+						</div>
+						<div class="dt-crumbs" id="crumbs"></div>
+					</div>
+				</div>
+
+				<!-- Console -->
+				<div class="dt-pane" id="pane-console" role="tabpanel" aria-labelledby="tab-console">
+					<div class="dt-console">
+						<div class="dt-toolbar">
+							<button class="dt-iconbtn" id="console-clear" type="button" title="Clear console" aria-label="Clear console">
+								<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="m6.5 6.5 11 11" /></svg>
+							</button>
+							<span class="sep"></span>
+							<label><input type="checkbox" id="console-preserve" checked /> Preserve log</label>
+							<span class="grow"></span>
+							<span class="dt-mono hidden sm:inline">top ▾</span>
+							<span class="hidden sm:inline">Default levels ▾</span>
+						</div>
+						<div class="dt-log" id="console-log" aria-live="polite"></div>
+						<form class="dt-prompt" id="console-form" autocomplete="off">
+							<span class="chev">&gt;</span>
+							<input id="console-input" type="text" spellcheck="false" placeholder="try help()" aria-label="Console input" />
+							<span class="hint" id="console-hint"><b>Tab</b> to autocomplete · <b>↑</b> history</span>
+						</form>
+					</div>
+				</div>
+
+				<!-- Network -->
+				<div class="dt-pane" id="pane-network" role="tabpanel" aria-labelledby="tab-network">
+					<div class="dt-net">
+						<div class="dt-toolbar">
+							<button class="dt-iconbtn" id="net-clear" type="button" title="Clear" aria-label="Clear network log">
+								<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="8" /><path d="m6.5 6.5 11 11" /></svg>
+							</button>
+							<span class="sep"></span>
+							<input class="dt-search" id="net-filter" type="search" placeholder="Filter" aria-label="Filter requests" />
+							<div class="flex gap-1" role="group" aria-label="Request type">
+								{['All', 'Fetch/XHR', 'Doc', 'JS', 'CSS', 'Img'].map((t, i) => <button class="dt-chipbtn" type="button" data-type={t} aria-pressed={i === 0 ? 'true' : 'false'}>{t}</button>)}
+							</div>
+							<span class="grow"></span>
+							<label><input type="checkbox" id="net-preserve" checked /> Preserve log</label>
+							<select class="dt-select" id="net-throttle" aria-label="Network throttling" style="height:22px;font-size:11px;padding-right:24px">
+								<option value="1">No throttling</option>
+								<option value="1.8">Fast 4G</option>
+								<option value="4">Slow 3G</option>
+							</select>
+						</div>
+						<div class="dt-net-body" id="net-body">
+							<div>
+								<table class="dt-net-table">
+									<colgroup><col style="width:34%" /><col style="width:8%" /><col style="width:10%" /><col style="width:16%" /><col style="width:9%" /><col style="width:9%" /><col /></colgroup>
+									<thead><tr><th>Name</th><th>Status</th><th>Type</th><th>Initiator</th><th>Size</th><th>Time</th><th>Waterfall</th></tr></thead>
+									<tbody id="net-rows"></tbody>
+								</table>
+							</div>
+							<div class="dt-net-detail" id="net-detail" hidden></div>
+						</div>
+						<div class="dt-net-summary" id="net-summary"></div>
+					</div>
+				</div>
+
+				<!-- Sources -->
+				<div class="dt-pane" id="pane-sources" role="tabpanel" aria-labelledby="tab-sources">
+					<div class="dt-sources">
+						<div class="dt-files" id="files">
+							{
+								[...dirs.entries()].map(([dir, files]) => (
+									<Fragment>
+										<div class="dir">▾ {dir}</div>
+										{files.map((f) => (
+											<button type="button" data-file={f.path} aria-selected="false">
+												<span class={`ext ${f.lang}`}>{f.lang}</span>
+												{f.path.split('/').pop()}
+												{f.editable && <span class="dot" title="Editable" />}
+											</button>
+										))}
+									</Fragment>
+								))
+							}
+						</div>
+						<div class="dt-editor">
+							<div class="dt-toolbar">
+								<span class="path" id="editor-path"></span>
+								<span class="flex shrink-0 items-center gap-2">
+									<button class="dt-chipbtn" id="editor-reset" type="button">Reset</button>
+									<button class="dt-chipbtn" id="editor-format" type="button" title="Toggle word wrap">Wrap</button>
+								</span>
+							</div>
+							<div class="dt-code-wrap" id="code-wrap">
+								<div class="dt-gutter" id="gutter"></div>
+								<pre class="dt-code" id="code-view"></pre>
+								<textarea class="dt-textarea" id="code-edit" spellcheck="false" hidden aria-label="Code editor"></textarea>
+							</div>
+							<div class="dt-note" id="editor-note"></div>
+						</div>
+						<div class="dt-preview">
+							<div class="dt-toolbar"><span>Live preview</span><span class="grow"></span><span class="dt-mono" id="preview-status">idle</span></div>
+							<iframe id="preview" title="Playground preview" sandbox="allow-scripts"></iframe>
+						</div>
+					</div>
+				</div>
+
+				<!-- Components -->
+				<div class="dt-pane" id="pane-components" role="tabpanel" aria-labelledby="tab-components">
+					<div class="flex min-h-0 flex-1 flex-col">
+						<div class="dt-toolbar">
+							<input class="dt-search" id="comp-filter" type="search" placeholder="Search (text or /regex/)" aria-label="Search components" />
+							<span class="grow"></span>
+							<span class="hidden sm:inline">⚛ React DevTools · Storybook controls</span>
+						</div>
+						<div class="dt-split">
+							<div class="dt-comp-tree" id="comp-tree"></div>
+							<div class="dt-props" id="comp-props"><div class="dt-empty">Select a component to see its props and controls.</div></div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Lighthouse -->
+				<div class="dt-pane" id="pane-lighthouse" role="tabpanel" aria-labelledby="tab-lighthouse">
+					<div class="dt-lh">
+						<div class="dt-lh-head">
+							<div>
+								<h3>Lighthouse report · {profile.name}</h3>
+								<p>Categories are her practice areas; audits are things that shipped. Click a gauge to see its audits.</p>
+							</div>
+							<button class="dt-btn" id="lh-run" type="button">
+								<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+								Analyze
+							</button>
+						</div>
+						<div class="dt-gauges" id="lh-gauges">
+							{
+								lighthouse.map((cat, i) => (
+									<button class="dt-gauge" type="button" data-cat={cat.id} aria-pressed={i === 2 ? 'true' : 'false'}>
+										<svg viewBox="0 0 84 84" aria-hidden="true">
+											<circle class="track" cx="42" cy="42" r="36" />
+											<circle class="arc" cx="42" cy="42" r="36" data-score={cat.score} />
+											<text class="num" x="42" y="42">0</text>
+										</svg>
+										<span class="lbl">{cat.label}</span>
+									</button>
+								))
+							}
+						</div>
+						<div class="dt-lh-metrics" id="lh-metrics">
+							<div><span>First Contentful Commit</span><b>Feb 2016</b></div>
+							<div><span>Largest Contentful Payment</span><b>15 methods</b></div>
+							<div><span>Markets to Interactive</span><b>9</b></div>
+							<div><span>Cumulative Legacy Shift</span><b>−3 paths</b></div>
+							<div><span>Total Blocking Bugs</span><b>0 open</b></div>
+						</div>
+						<div class="dt-audits" id="lh-audits"></div>
+					</div>
+				</div>
+
+				<!-- Performance -->
+				<div class="dt-pane" id="pane-performance" role="tabpanel" aria-labelledby="tab-performance">
+					<div class="dt-perf">
+						<div class="dt-toolbar">
+							<span>Career trace · 2016 → today</span>
+							<span class="grow"></span>
+							<span class="hidden items-center gap-3 sm:inline-flex">
+								<span class="inline-flex items-center gap-1"><i class="inline-block h-2 w-2 rounded-sm bg-accent-2"></i> roles</span>
+								<span class="inline-flex items-center gap-1"><i class="inline-block h-2 w-2 rounded-sm bg-info"></i> stack</span>
+								<span class="inline-flex items-center gap-1"><i class="inline-block h-2 w-2 rounded-sm bg-accent"></i> payments</span>
+								<span class="inline-flex items-center gap-1"><i class="inline-block h-2 w-2 rounded-sm bg-ok"></i> web vitals</span>
+							</span>
+						</div>
+						<div class="dt-perf-scroll" id="perf-scroll"></div>
+						<div class="dt-perf-detail" id="perf-detail"><span>Hover or tap a bar. Web-vital markers are, admittedly, puns.</span></div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+
+	<script>
+		import '../scripts/devtools';
+	</script>
+</BaseLayout>
