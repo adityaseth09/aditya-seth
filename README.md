@@ -20,6 +20,12 @@ npm run preview
 
 Static output is written to `dist/`.
 
+## Database view (`/db`)
+
+The **SQL** button in the header opens the same résumé as a MySQL/PostgreSQL database: a schema explorer, guided saved queries, and live panels for the query plan, B+Tree index walk, buffer pool, replication topology (with a failover simulation), MVCC version chain, statement digest, an RDS-style instance console and an SLO/error-budget panel. The MySQL ⇄ PostgreSQL switch changes SQL, DDL, `EXPLAIN` output and internals vocabulary everywhere. The last-used view is remembered in `localStorage` (`view`), the engine in `db-engine`; dark/light mode is shared with the classic page.
+
+Tables are derived from `resume.json` at build time in `src/lib/db/schema.ts`; saved queries live in `src/lib/db/queries.ts`. No client framework or extra dependencies.
+
 ## Content updates
 
 Edit [`src/data/resume.json`](src/data/resume.json) to change profile info, metrics, experience, education, certifications, skills, or navigation links.
@@ -53,10 +59,14 @@ Update `site` in [`astro.config.mjs`](astro.config.mjs) to your production URL f
 ```text
 src/
 ├── data/resume.json       # Single source of truth
-├── components/            # UI sections
+├── components/            # UI sections (components/db/ = database view)
+├── lib/db/                # Relational model, dialects, queries, B+Tree, simulations
+├── scripts/db-console.ts  # Client controller for /db
 ├── layouts/BaseLayout.astro
-├── pages/index.astro
-└── styles/global.css      # Tailwind @theme tokens
+├── pages/index.astro      # Classic résumé
+├── pages/db.astro         # Database view
+├── styles/global.css      # Tailwind @theme tokens
+└── styles/db.css          # Database view styles
 public/
 ├── favicon.svg
 ├── og-image.svg
