@@ -5,12 +5,37 @@
 		"tagline": "20+ years turning technical infrastructure into high-yield business assets.",
 		"hook": "I love optimizing systems. I have saved over $40M/year on infrastructure by measuring and driving AI-assisted optimizations based on resource usage on cloud and on-prem.",
 		"location": "Amsterdam, Netherlands",
-		"photo": "/aditya.jpg",
 		"resumePdf": "/aditya-kumar-seth-resume.pdf",
 		"availability": "Open to Site Reliability Engineering leadership roles in Europe",
 		"linkedin": "https://www.linkedin.com/in/aditya-seth/",
 		"languages": ["English (Native)", "Hindi (Native)", "German (Basic)"]
 	},
+	"talks": [
+		{
+			"title": "Right-Sizing MySQL EC2 with Production Evidence",
+			"conference": "Percona Live 2026",
+			"location": "Amsterdam, Netherlands",
+			"videoId": "W8SMlWnaWok",
+			"url": "https://www.youtube.com/watch?v=W8SMlWnaWok",
+			"conferenceUrl": "https://perconalive.com/2026-amsterdam/speakers/aditya-seth/",
+			"conferenceLabel": "Percona Speaker Profile",
+			"thumbnail": "https://i.ytimg.com/vi/W8SMlWnaWok/maxresdefault.jpg",
+			"fallbackThumbnail": "https://i.ytimg.com/vi/W8SMlWnaWok/hqdefault.jpg",
+			"tags": ["EC2 Right-Sizing", "Cloud Cost Cutting", "Production Telemetry"]
+		},
+		{
+			"title": "Scaling MySQL at Booking.com",
+			"conference": "Architecture Conference 2025 (Findy)",
+			"location": "Tokyo, Japan",
+			"videoId": "ukYFgtJ_o9c",
+			"url": "https://www.youtube.com/watch?v=ukYFgtJ_o9c&t=4s",
+			"conferenceUrl": "https://conference.findy-code.io/conferences/architecture-con-2025/7/archives/179",
+			"conferenceLabel": "Findy Conference Archive",
+			"thumbnail": "https://i.ytimg.com/vi/ukYFgtJ_o9c/maxresdefault.jpg",
+			"fallbackThumbnail": "https://i.ytimg.com/vi/ukYFgtJ_o9c/hqdefault.jpg",
+			"tags": ["Architecture at Scale", "20k+ MySQL Servers", "On-Prem & Cloud"]
+		}
+	],
 	"metrics": [
 		{ "value": 40, "prefix": "$", "suffix": "M+", "label": "Saved Annually" },
 		{ "value": 20, "suffix": "k+", "label": "MySQL Servers Managed" },
@@ -235,6 +260,7 @@
 		}
 	],
 	"navigation": [
+		{ "label": "Talks", "href": "#talks" },
 		{ "label": "Impact", "href": "#impact" },
 		{ "label": "Experience", "href": "#experience" },
 		{ "label": "Education", "href": "#education" },

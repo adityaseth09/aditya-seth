@@ -133,6 +133,16 @@ const metricRows: Row[] = resume.metrics.map((m, i) => ({
 	suffix: m.suffix,
 }));
 
+const talkRows: Row[] = (resume.talks ?? []).map((t, i) => ({
+	id: i + 1,
+	title: t.title,
+	conference: t.conference,
+	location: t.location,
+	youtube_url: t.url,
+	conference_url: 'conferenceUrl' in t ? (t.conferenceUrl as string) : null,
+	tags: JSON.stringify(t.tags),
+}));
+
 export const DATABASE_NAME = 'aditya_resume';
 
 export const TABLES: TableDef[] = [
@@ -251,6 +261,22 @@ export const TABLES: TableDef[] = [
 		],
 		indexes: [{ name: 'PRIMARY', columns: ['id'], kind: 'primary' }],
 		rows: metricRows,
+		pages: 1,
+	},
+	{
+		name: 'talks',
+		comment: 'Featured conference talks and production evidence keynotes.',
+		columns: [
+			{ name: 'id', type: 'id' },
+			{ name: 'title', type: 'varchar', length: 128 },
+			{ name: 'conference', type: 'varchar', length: 96 },
+			{ name: 'location', type: 'varchar', length: 64 },
+			{ name: 'youtube_url', type: 'url' },
+			{ name: 'conference_url', type: 'url', nullable: true },
+			{ name: 'tags', type: 'json' },
+		],
+		indexes: [{ name: 'PRIMARY', columns: ['id'], kind: 'primary' }],
+		rows: talkRows,
 		pages: 1,
 	},
 ];
