@@ -1,0 +1,94 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const title = "Ira's Games";
+
+// "Ira's Games" as bubble letters, colored one by one
+const letters = ["I", "r", "a", "'", "s", " ", "G", "a", "m", "e", "s", "!"];
+---
+
+<BaseLayout title={title}>
+  <main class="mx-auto max-w-4xl px-4 pt-10 pb-16">
+    <!-- Header -->
+    <header class="text-center mb-12">
+      <h1 class="bubble-letters text-5xl sm:text-7xl leading-tight" aria-label="Ira's Games">
+        {letters.map((ch) => <span>{ch === " " ? "\u00A0" : ch}</span>)}
+      </h1>
+      <p class="mt-4 text-xl sm:text-2xl font-bold text-[color:var(--crayon-blue)]" style="transform: rotate(-1deg);">
+        games I designed myself &mdash; made by Ira, age 8 &#9999;&#65039;
+      </p>
+    </header>
+
+    <!-- Game cards -->
+    <section aria-label="Games" class="grid gap-10 md:grid-cols-2">
+      <!-- Tag Time! -->
+      <article class="sketchy relative bg-white/70 p-5 pt-8 shadow-[4px_5px_0_rgba(65,64,60,0.35)]">
+        <span class="tape" aria-hidden="true"></span>
+        <h2 class="text-3xl font-bold text-[color:var(--crayon-red)]">Tag Time!</h2>
+        <p class="mt-1 text-lg">
+          Jump over the lava, find <strong>key one</strong> and <strong>key two</strong>,
+          grab coins, push the lever&hellip; and open the doors to win!
+          <strong>5 levels</strong> right now &mdash; 50 someday!
+        </p>
+        <a href="/games/tag-time/" class="crayon-btn mt-5">PLAY! &#9654;</a>
+        <figure class="mt-5">
+          <img
+            src="/ira-sketch-tag-time.jpg"
+            alt="Ira's hand-drawn sketch of Tag Time!"
+            loading="lazy"
+            class="sketchy-alt w-full bg-white p-1"
+          />
+          <figcaption class="mt-2 text-base text-[color:var(--ink)]/70">
+            the original design, drawn by Ira
+          </figcaption>
+        </figure>
+      </article>
+
+      <!-- Coming soon -->
+      <article
+        class="sketchy-alt relative bg-white/50 p-5 pt-8 border-dashed shadow-[4px_5px_0_rgba(65,64,60,0.35)]"
+      >
+        <span class="tape" aria-hidden="true" style="background: rgba(224,127,176,0.7);"></span>
+        <h2 class="text-3xl font-bold text-[color:var(--crayon-purple)]">Coming soon&hellip;</h2>
+        <p class="mt-1 text-lg">
+          Two-player team mode, new clothes and dances for the characters&hellip;
+          and lots more levels!
+        </p>
+        <p class="mt-6 text-8xl text-center text-[color:var(--crayon-orange)]" aria-hidden="true">?</p>
+      </article>
+    </section>
+
+    <!-- Design docs: Ira's other sketch -->
+    <section aria-label="Ira's design sketches" class="mt-14">
+      <h2 class="text-2xl font-bold text-[color:var(--crayon-green)]">Ira's design notebook &#128220;</h2>
+      <p class="mt-1 text-lg">Every game starts with pencil and paper:</p>
+      <div class="mt-4 grid gap-6 sm:grid-cols-2">
+        <figure>
+          <img
+            src="/ira-sketch-obstacle-course.jpg"
+            alt="Ira's hand-drawn sketch of the obstacle course with lava, keys, coins, a lever and doors"
+            loading="lazy"
+            class="sketchy w-full bg-white p-1"
+          />
+          <figcaption>The obstacle course &mdash; lava, keys, doors!</figcaption>
+        </figure>
+        <figure>
+          <img
+            src="/ira-sketch-tag-time.jpg"
+            alt="Ira's hand-drawn sketch of the Tag Time! title screen"
+            loading="lazy"
+            class="sketchy-alt w-full bg-white p-1"
+          />
+          <figcaption>The title screen &mdash; tap here to start!</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <footer class="mt-16 text-center text-lg">
+      <p>
+        hand-drawn by Ira &middot; typed by Dad &middot;
+        <a href="/" class="underline decoration-[color:var(--crayon-blue)] decoration-wavy">ira.seth.ltd</a>
+      </p>
+    </footer>
+  </main>
+</BaseLayout>
