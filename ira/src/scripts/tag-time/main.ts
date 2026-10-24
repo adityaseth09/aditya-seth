@@ -147,13 +147,22 @@ function rectOf(x: number, y: number, w: number, h: number): Rect {
   return { x, y, w, h };
 }
 
-function die(): void {
+function die(cause: "lava" | "spikes" | "fall"): void {
   if (phase !== "playing") return;
   phase = "dead";
   deathTimer = 1.3;
   totalCoins = Math.max(0, totalCoins - attemptCoins);
   attemptCoins = 0;
   sounds.death();
+  const msg = document.getElementById("deathMsg");
+  if (msg) {
+    msg.textContent =
+      cause === "lava"
+        ? "You fell in the lava! 🔥"
+        : cause === "spikes"
+          ? "Ouch! The spikes! 💥"
+          : "Whoops, you fell! 😵";
+  }
   showOverlay("death");
 }
 
@@ -214,12 +223,12 @@ function physics(dt: number): void {
   // lava & spikes & falling out of the world
   const body = rectOf(player.x + 3, player.y + 3, PW - 6, PH - 3);
   for (const l of st.level.lava) {
-    if (overlap(body, l, 2)) return die();
+    if (overlap(body, l, 2)) return die("lava");
   }
   for (const s of st.level.spikes) {
-    if (overlap(body, s, 4)) return die();
+    if (overlap(body, s, 4)) return die("spikes");
   }
-  if (player.y > H + 120) return die();
+  if (player.y > H + 120) return die("fall");
 
   // coins
   for (let i = 0; i < st.level.coins.length; i++) {
