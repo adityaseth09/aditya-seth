@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+/* ---- Ira's hand-drawn crayon theme ---- */
+
+:root {
+  --paper: #fdf9ef;
+  --paper-2: #f7f0df;
+  --ink: #41403c;
+  --crayon-red: #e04f4f;
+  --crayon-orange: #ef8f4a;
+  --crayon-yellow: #f2c14e;
+  --crayon-green: #5eaa61;
+  --crayon-blue: #4a90d9;
+  --crayon-purple: #9a6fd0;
+  --crayon-pink: #e07fb0;
+  --font-hand: "Chalkboard SE", "Comic Sans MS", "Comic Neue", "Patrick Hand", "Marker Felt", cursive, sans-serif;
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  font-family: var(--font-hand);
+  color: var(--ink);
+  background-color: var(--paper);
+  /* notebook paper: faint horizontal ruled lines */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 31px,
+    rgba(74, 144, 217, 0.16) 31px,
+    rgba(74, 144, 217, 0.16) 32px
+  );
+  background-size: 100% 32px;
+  margin: 0;
+  min-height: 100dvh;
+}
+
+/* wobbly hand-drawn border */
+.sketchy {
+  border: 3px solid var(--ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+.sketchy-alt {
+  border: 3px solid var(--ink);
+  border-radius: 15px 225px 15px 255px / 225px 15px 255px 15px;
+}
+
+/* crayon-colored bubble letters */
+.bubble-letters span {
+  display: inline-block;
+  font-weight: 700;
+  -webkit-text-stroke: 1px var(--ink);
+  text-shadow: 2px 2px 0 rgba(65, 64, 60, 0.25);
+  animation: floaty 3s ease-in-out infinite;
+}
+
+.bubble-letters span:nth-child(6n + 1) { color: var(--crayon-red); }
+.bubble-letters span:nth-child(6n + 2) { color: var(--crayon-orange); }
+.bubble-letters span:nth-child(6n + 3) { color: var(--crayon-green); }
+.bubble-letters span:nth-child(6n + 4) { color: var(--crayon-blue); }
+.bubble-letters span:nth-child(6n + 5) { color: var(--crayon-purple); }
+.bubble-letters span:nth-child(6n + 6) { color: var(--crayon-pink); }
+
+.bubble-letters span:nth-child(odd) { animation-delay: 0.4s; }
+.bubble-letters span:nth-child(3n) { animation-delay: 0.9s; }
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(-6px) rotate(1.5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble-letters span { animation: none; }
+}
+
+/* buttons that look like crayon doodles */
+.crayon-btn {
+  display: inline-block;
+  font-family: var(--font-hand);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--crayon-green);
+  padding: 0.55em 1.4em;
+  border: 3px solid var(--ink);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: 3px 4px 0 rgba(65, 64, 60, 0.8);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.crayon-btn:hover { transform: translate(-1px, -2px) rotate(-1deg); box-shadow: 5px 6px 0 rgba(65, 64, 60, 0.8); }
+.crayon-btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 rgba(65, 64, 60, 0.8); }
+.crayon-btn:focus-visible { outline: 3px dashed var(--crayon-blue); outline-offset: 3px; }
+
+/* washi-tape decoration on cards */
+.tape {
+  position: absolute;
+  width: 90px;
+  height: 26px;
+  background: rgba(242, 193, 78, 0.75);
+  border-left: 2px dashed rgba(255, 255, 255, 0.8);
+  border-right: 2px dashed rgba(255, 255, 255, 0.8);
+  transform: rotate(-4deg);
+  top: -14px;
+  left: 50%;
+  margin-left: -45px;
+}

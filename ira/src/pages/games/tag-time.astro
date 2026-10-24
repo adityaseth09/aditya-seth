@@ -1,0 +1,134 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { levels } from "../../data/levels.json";
+
+const totalLevels = levels.length;
+---
+
+<BaseLayout title="Tag Time! — Ira's Games" description="Jump over lava, find the keys, push the lever and open the doors! A game designed by Ira, age 8.">
+  <main class="mx-auto max-w-5xl px-2 sm:px-4 pt-4 pb-10">
+    <div class="flex items-center justify-between gap-3 mb-2 flex-wrap">
+      <a href="/" class="text-lg font-bold underline decoration-wavy decoration-[color:var(--crayon-blue)]">&larr; Ira's Games</a>
+      <h1 class="bubble-letters text-3xl sm:text-4xl" aria-label="Tag Time!">
+        <span>T</span><span>a</span><span>g</span><span>&nbsp;</span><span>T</span><span>i</span><span>m</span><span>e</span><span>!</span>
+      </h1>
+      <div class="w-[110px] hidden sm:block" aria-hidden="true"></div>
+    </div>
+
+    <!-- Game stage -->
+    <div id="stage" class="sketchy relative bg-white overflow-hidden select-none" style="aspect-ratio: 16 / 9;">
+      <canvas id="game" class="absolute inset-0 w-full h-full" width="960" height="540" aria-label="Tag Time! game"></canvas>
+
+      <!-- HUD -->
+      <div id="hud" class="absolute top-0 inset-x-0 flex items-center gap-2 sm:gap-4 px-3 py-2 text-sm sm:text-lg font-bold pointer-events-none" style="background: rgba(253,249,239,0.85);">
+        <span id="hudLevel" class="text-[color:var(--crayon-purple)]">Level 1</span>
+        <span class="flex-1"></span>
+        <span id="hudCoins" class="text-[color:var(--crayon-orange)]">coins: 0</span>
+        <span id="hudKey1" class="opacity-30 grayscale">key 1</span>
+        <span id="hudKey2" class="opacity-30 grayscale">key 2</span>
+      </div>
+
+      <!-- Character picker -->
+      <div id="pickerOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-4" style="background: rgba(253,249,239,0.95);">
+        <p class="text-2xl sm:text-3xl font-bold text-center" style="transform: rotate(-1deg);">Pick your character!</p>
+        <div id="charRow" class="flex gap-3 sm:gap-5 flex-wrap justify-center px-4"></div>
+        <p class="text-base sm:text-xl opacity-70">tap one to choose</p>
+      </div>
+
+      <!-- Start screen -->
+      <div id="startOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3 cursor-pointer" style="background: rgba(253,249,239,0.9);">
+        <p id="startTitle" class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-red)]" style="transform: rotate(-2deg);">Ready?</p>
+        <button id="goBtn" class="text-3xl font-bold text-white" aria-label="go! tap here to start"
+          style="width: 110px; height: 110px; border-radius: 9999px; background: var(--crayon-green); border: 4px solid var(--ink); box-shadow: 4px 5px 0 rgba(65,64,60,0.7); transform: rotate(3deg);">
+          go!
+        </button>
+        <p class="text-lg sm:text-xl font-bold">tap here to start</p>
+        <button id="resetProgress" class="hidden text-base underline opacity-60">start over from level 1</button>
+      </div>
+
+      <!-- Death -->
+      <div id="deathOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-2 pointer-events-none" style="background: rgba(224,79,79,0.25);">
+        <p id="deathMsg" class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-red)]" style="transform: rotate(-2deg);">You fell in the lava! 🔥</p>
+        <p class="text-lg sm:text-2xl font-bold">restarting the level&hellip;</p>
+      </div>
+
+      <!-- Level complete -->
+      <div id="levelOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.95);">
+        <p class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-green)]" style="transform: rotate(-1.5deg);">You win! ⭐</p>
+        <p id="levelStats" class="text-lg sm:text-2xl font-bold"></p>
+        <button id="nextBtn" class="crayon-btn">next level &rarr;</button>
+      </div>
+
+      <!-- Game complete -->
+      <div id="winOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.95);">
+        <p class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(2deg);">You finished all {totalLevels} levels! 🏆</p>
+        <p class="text-lg sm:text-2xl font-bold" id="winStats"></p>
+        <button id="againBtn" class="crayon-btn">play again!</button>
+      </div>
+
+      <!-- Touch controls -->
+      <div id="touchControls" class="absolute bottom-0 inset-x-0 hidden justify-between items-end p-4 pointer-events-none">
+        <div class="flex gap-3 pointer-events-auto">
+          <button id="btnLeft" class="touch-btn" aria-label="move left">&#9664;</button>
+          <button id="btnRight" class="touch-btn" aria-label="move right">&#9654;</button>
+        </div>
+        <button id="btnJump" class="touch-btn text-xl" style="padding: 0.6em 1.2em;" aria-label="jump">JUMP</button>
+      </div>
+    </div>
+
+    <p class="mt-3 text-center text-base sm:text-lg">
+      keyboard: <strong>&larr; &rarr;</strong> to move, <strong>space</strong> to jump &middot; or use the buttons on screen
+    </p>
+    <p class="text-center text-base sm:text-lg opacity-70">
+      get <strong>key 1</strong> and <strong>key 2</strong>, then walk through both doors to finish the level!
+    </p>
+  </main>
+</BaseLayout>
+
+<style>
+  .overlay {
+    display: flex;
+  }
+  .overlay.hidden {
+    display: none;
+  }
+  .touch-btn {
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--ink);
+    background: rgba(253, 249, 239, 0.9);
+    border: 3px solid var(--ink);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    padding: 0.5em 0.9em;
+    box-shadow: 3px 4px 0 rgba(65, 64, 60, 0.6);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .touch-btn:active {
+    transform: translate(2px, 3px);
+    box-shadow: 1px 1px 0 rgba(65, 64, 60, 0.6);
+  }
+  .char-card {
+    cursor: pointer;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 15px 225px 15px 255px / 225px 15px 255px 15px;
+    padding: 4px;
+    box-shadow: 3px 4px 0 rgba(65, 64, 60, 0.5);
+    transition: transform 0.1s ease;
+  }
+  .char-card:hover, .char-card:focus-visible {
+    transform: translateY(-4px) rotate(-2deg);
+  }
+  .char-card canvas {
+    display: block;
+    width: 120px;
+    height: 150px;
+  }
+</style>
+
+<script>
+  import "../../scripts/tag-time/main.ts";
+</script>
