@@ -4,7 +4,7 @@
  * then walk through BOTH doors to finish the level.
  */
 import { levels as LEVELS } from "../../data/levels.json";
-import type { LevelData, WorldState } from "./render";
+import type { LevelData, WorldState, EnemyRuntime } from "./render";
 import { drawBackground, drawWorld } from "./render";
 import { CHARACTERS, drawCharacter, type CharacterDef, type Pose } from "./characters";
 import { sounds, unlockAudio } from "./sounds";
@@ -55,6 +55,12 @@ function makeState(i: number): WorldState {
     coinsTaken: new Set(),
     leverPulled: false,
     openDoors: new Set(),
+    enemies: ((LEVELS as LevelData[])[i].enemies ?? []).map((e) => ({
+      ...e,
+      dir: 1,
+      cy: e.y,
+    })) as EnemyRuntime[],
+    deadEnemies: new Set(),
     time: 0,
     hint: "",
     hintT: 0,
@@ -147,8 +153,7 @@ function rectOf(x: number, y: number, w: number, h: number): Rect {
   return { x, y, w, h };
 }
 
-function die(cause: "lava" | "spikes" | "fall"): void {
-  if (phase !== "playing") return;
+function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird"): void {  if (phase !== "playing") return;
   phase = "dead";
   deathTimer = 1.3;
   totalCoins = Math.max(0, totalCoins - attemptCoins);
@@ -161,12 +166,64 @@ function die(cause: "lava" | "spikes" | "fall"): void {
         ? "You fell in the lava! 🔥"
         : cause === "spikes"
           ? "Ouch! The spikes! 💥"
-          : "Whoops, you fell! 😵";
+          : cause === "beast"
+            ? "A beast got you! 👹"
+            : cause === "bird"
+              ? "A bird got you! 🦅"
+              : "Whoops, you fell! 😵";
   }
   showOverlay("death");
 }
 
+/** Move beasts along the ground and birds through the air. */
+function updateEnemies(dt: number): void {
+  for (let i = 0; i < st.enemies.length; i++) {
+    if (st.deadEnemies.has(i)) continue;
+    const e = st.enemies[i];
+    e.x += e.dir * e.speed * dt;
+    if (e.x <= e.min) {
+      e.x = e.min;
+      e.dir = 1;
+    } else if (e.x >= e.max) {
+      e.x = e.max;
+      e.dir = -1;
+    }
+    if (e.type === "bird") {
+      e.cy = e.y + Math.sin(st.time * 3 + e.min * 0.05) * (e.amp ?? 30);
+    } else {
+      e.cy = e.y;
+    }
+  }
+}
+
+/** Player vs enemies: touch = death, but landing on top squashes them! */
+function enemyCollisions(): void {
+  for (let i = 0; i < st.enemies.length; i++) {
+    if (st.deadEnemies.has(i)) continue;
+    const e = st.enemies[i];
+    const box: Rect =
+      e.type === "beast"
+        ? { x: e.x - 14, y: e.cy - 30, w: 28, h: 30 }
+        : { x: e.x - 12, y: e.cy - 12, w: 24, h: 22 };
+    if (!overlap(rectOf(player.x + 2, player.y + 2, PW - 4, PH - 2), box, 2)) continue;
+
+    // stomp: falling and hitting the top half squashes the enemy
+    const stomping = player.vy > 120 && player.y + PH < box.y + box.h * 0.55;
+    if (stomping) {
+      st.deadEnemies.add(i);
+      player.vy = -420; // bounce!
+      sounds.stomp();
+      say(e.type === "beast" ? "squashed it!" : "bonked the bird!");
+    } else {
+      die(e.type);
+      return;
+    }
+  }
+}
+
 function physics(dt: number): void {
+  updateEnemies(dt);
+
   // horizontal
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
   player.vx = dir * MOVE;
@@ -229,6 +286,10 @@ function physics(dt: number): void {
     if (overlap(body, s, 4)) return die("spikes");
   }
   if (player.y > H + 120) return die("fall");
+
+  // beasts and birds
+  enemyCollisions();
+  if (phase !== "playing") return;
 
   // coins
   for (let i = 0; i < st.level.coins.length; i++) {
@@ -457,6 +518,8 @@ window.__tagtime = {
     x: Math.round(player.x),
     y: Math.round(player.y),
     onGround: player.onGround,
+    enemies: st.enemies.map((e) => ({ type: e.type, x: Math.round(e.x), cy: Math.round(e.cy) })),
+    deadEnemies: [...st.deadEnemies],
   }),
   warp: (x: number, y: number) => {
     player.x = x;

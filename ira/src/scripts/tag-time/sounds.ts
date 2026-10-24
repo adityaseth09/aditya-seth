@@ -61,6 +61,10 @@ export const sounds = {
     tone(500, 0.12, "triangle", 0.16);
   },
   locked: () => tone(220, 0.15, "sawtooth", 0, 160, 0.08),
+  stomp: () => {
+    tone(300, 0.08, "square", 0, 120, 0.12);
+    tone(600, 0.1, "triangle", 0.08, undefined, 0.1);
+  },
   death: () => tone(400, 0.5, "sawtooth", 0, 70, 0.16),
   level: () => {
     tone(523, 0.12, "triangle", 0);

@@ -9,8 +9,10 @@ Games are designed on paper by Ira (age 8) and then typed up into code here.
 - **Tag Time!** (`/games/tag-time/`) — the lava obstacle course from Ira's sketch:
   jump over lava and spikes, collect coins, find **key 1** and **key 2**, push the
   lever to raise a bridge, then walk through **both doors** to finish the level.
+  Watch out for **beasts** stomping on the ground and **birds** swooping through
+  the air — touching them means restart, but jumping on their heads squashes them!
   Fall in the lava and you restart the level from the top.
-  5 levels now; Ira's master plan calls for 50.
+  10 levels now (levels 6–10 have the beasts and get tricky); Ira's master plan calls for 50.
 - Works with keyboard (← → move, space jump) and on-screen touch buttons.
 - Pick between 4 crayon-drawn characters: Mia, Ziggy, Whiskers and Robo.
 - Progress (furthest level) and chosen character are saved in `localStorage`.
@@ -32,7 +34,8 @@ npm run build    # static output in ira/dist
 ## Adding a level
 
 All levels are data in [`src/data/levels.json`](src/data/levels.json): platforms,
-lava, spikes, keys, coins, the lever, its bridge, the two doors and the exit
+lava, spikes, enemies (ground `beast`s and flying `bird`s with patrol ranges),
+keys, coins, the lever, its bridge, the two doors and the exit
 zone. Add a new object to the `levels` array — no code changes needed.
 Keep jumps fair: rise ≤ ~100px, gaps ≤ ~140px.
 

@@ -9,6 +9,18 @@ export interface CoinItem { x: number; y: number }
 export interface BridgeItem extends Rect { id: string }
 export interface DoorItem extends Rect { id: number }
 export interface LeverItem { x: number; y: number; links: string[] }
+export interface EnemyItem {
+  type: "beast" | "bird";
+  x: number; y: number;
+  min: number; max: number;
+  speed: number;
+  amp?: number;
+}
+/** Live enemy state: x = current center, cy = current draw y (feet for beasts, center for birds). */
+export interface EnemyRuntime extends EnemyItem {
+  dir: number;
+  cy: number;
+}
 
 export interface LevelData {
   name: string;
@@ -23,6 +35,7 @@ export interface LevelData {
   lever: LeverItem;
   bridges: BridgeItem[];
   doors: DoorItem[];
+  enemies: EnemyItem[];
   exit: Rect;
 }
 
@@ -33,6 +46,8 @@ export interface WorldState {
   coinsTaken: Set<number>;
   leverPulled: boolean;
   openDoors: Set<number>;
+  enemies: EnemyRuntime[];
+  deadEnemies: Set<number>;
   time: number;
   /** small hint text + timer, e.g. "find key 1!" */
   hint: string;
@@ -224,6 +239,14 @@ export function drawWorld(ctx: CanvasRenderingContext2D, st: WorldState): void {
   drawStar(ctx, 14, "#f2c14e", f);
   ctx.restore();
 
+  // enemies: beasts and birds ("they can kill!" — Ira, v2)
+  for (let i = 0; i < st.enemies.length; i++) {
+    if (st.deadEnemies.has(i)) continue;
+    const e = st.enemies[i];
+    if (e.type === "beast") drawBeast(ctx, e, t, f);
+    else drawBird(ctx, e, t, f);
+  }
+
   // hint bubble (e.g. "find key 1!")
   if (st.hintT > 0) {
     const hx = 480;
@@ -261,4 +284,98 @@ function drawStar(ctx: CanvasRenderingContext2D, r: number, fill: string, f: num
 
 function sxb(bi: number, lx: number): number {
   return 100 + bi * 7 + (lx % 97);
+}
+
+/* ---------- enemies (crayon beasts, per Ira's v2 request) ---------- */
+
+const BEAST_BODY = "#9a6fd0";
+const BEAST_DARK = "#7a4ab0";
+const BIRD_BODY = "#4a90d9";
+const BIRD_DARK = "#2d6cb0";
+
+/** A spiky purple beast that stomps along the ground. (cx, feetY) = center-bottom. */
+function drawBeast(ctx: CanvasRenderingContext2D, e: EnemyRuntime, t: number, f: number): void {
+  const cx = e.x;
+  const feet = e.cy;
+  const seed = 200 + Math.round(e.min);
+  const bob = Math.abs(Math.sin(t * e.speed * 0.02)) * 2;
+
+  // legs (stomping)
+  const swing = Math.sin(t * e.speed * 0.04) * 3;
+  sketchLine(ctx, cx - 6, feet - 10, cx - 8 + swing, feet, seed + 1, f, 1, INK, 3);
+  sketchLine(ctx, cx + 6, feet - 10, cx + 8 - swing, feet, seed + 2, f, 1, INK, 3);
+
+  // spiky body
+  const by = feet - 16 - bob;
+  sketchCircle(ctx, cx, by, 12, BEAST_BODY, seed + 3, f, 1.5);
+  for (let i = 0; i < 8; i++) {
+    const a = (Math.PI * 2 * i) / 8 + 0.3;
+    const sx = cx + Math.cos(a) * 12;
+    const sy = by + Math.sin(a) * 12;
+    const tx = cx + Math.cos(a) * 19;
+    const ty = by + Math.sin(a) * 19;
+    sketchLine(ctx, sx, sy, tx, ty, seed + 4 + i, f, 0.8, BEAST_DARK, 3);
+  }
+
+  // angry eyes + fangs
+  sketchCircle(ctx, cx - 5 + e.dir * 2, by - 3, 3, "#fff", seed + 12, f, 0.5);
+  sketchCircle(ctx, cx + 5 + e.dir * 2, by - 3, 3, "#fff", seed + 13, f, 0.5);
+  ctx.fillStyle = INK;
+  ctx.beginPath();
+  ctx.arc(cx - 5 + e.dir * 3, by - 3, 1.3, 0, Math.PI * 2);
+  ctx.arc(cx + 5 + e.dir * 3, by - 3, 1.3, 0, Math.PI * 2);
+  ctx.fill();
+  sketchLine(ctx, cx - 9, by - 8, cx - 2, by - 6, seed + 14, f, 0.5, INK, 2);
+  sketchLine(ctx, cx + 9, by - 8, cx + 2, by - 6, seed + 15, f, 0.5, INK, 2);
+  // fangs
+  ctx.beginPath();
+  ctx.moveTo(cx - 4, by + 5);
+  ctx.lineTo(cx - 2, by + 9);
+  ctx.lineTo(cx, by + 5);
+  ctx.lineTo(cx + 2, by + 9);
+  ctx.lineTo(cx + 4, by + 5);
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+/** An angry blue bird that swoops through the air. (x, cy) = center. */
+function drawBird(ctx: CanvasRenderingContext2D, e: EnemyRuntime, t: number, f: number): void {
+  const cx = e.x;
+  const cy = e.cy;
+  const seed = 300 + Math.round(e.min);
+  const flap = Math.sin(t * 11) * 0.9;
+
+  // tail feathers
+  sketchLine(ctx, cx - 10 * -e.dir, cy + 1, cx - 18 * -e.dir, cy - 3, seed + 1, f, 0.8, BIRD_DARK, 3);
+  sketchLine(ctx, cx - 11 * -e.dir, cy + 3, cx - 19 * -e.dir, cy + 2, seed + 2, f, 0.8, BIRD_DARK, 3);
+
+  // body
+  sketchCircle(ctx, cx, cy + 2, 9, BIRD_BODY, seed + 3, f, 1.2);
+
+  // flapping wings (both, rotated by flap)
+  const wingY = cy - 3;
+  for (const s of [-1, 1]) {
+    ctx.save();
+    ctx.translate(cx, wingY);
+    ctx.rotate(flap * s * 0.5);
+    sketchLine(ctx, 0, 0, -12 * s - e.dir * 4, -10 * Math.cos(flap) - 2, seed + 4 + s, f, 0.8, BIRD_DARK, 4);
+    sketchLine(ctx, -6 * s, -4, -14 * s, -8, seed + 5 + s, f, 0.6, BIRD_DARK, 3);
+    ctx.restore();
+  }
+
+  // head + angry eyes + beak
+  sketchCircle(ctx, cx + e.dir * 7, cy - 5, 5, BIRD_BODY, seed + 6, f, 1);
+  sketchCircle(ctx, cx + e.dir * 6, cy - 6, 1.6, INK, seed + 7, f, 0.3);
+  sketchLine(ctx, cx + e.dir * 4, cy - 9, cx + e.dir * 8, cy - 7, seed + 8, f, 0.4, INK, 2);
+  ctx.beginPath();
+  ctx.moveTo(cx + e.dir * 11, cy - 5);
+  ctx.lineTo(cx + e.dir * 16, cy - 3);
+  ctx.lineTo(cx + e.dir * 10, cy - 1);
+  ctx.closePath();
+  ctx.fillStyle = "#ef8f4a";
+  ctx.fill();
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 2;
+  ctx.stroke();
 }
