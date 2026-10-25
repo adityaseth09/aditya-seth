@@ -57,24 +57,48 @@ export function initInput(
     if (!still) input[m] = false;
   });
 
-  // ---- touch buttons ----
+  // ---- touch buttons (iOS-Safari-proof: pointer events + touch fallback) ----
   const bind = (id: string, prop: "left" | "right" | "jump") => {
     const el = document.getElementById(id);
     if (!el) return;
-    const down = (ev: PointerEvent) => {
+
+    const down = (ev: Event) => {
       ev.preventDefault();
-      onFirstGesture();
-      if (prop === "jump") input.jumpQueued = true;
+      try {
+        onFirstGesture();
+      } catch {
+        /* audio unlock must never block input */
+      }
+      if (prop === "jump" && !input[prop]) input.jumpQueued = true;
       input[prop] = true;
     };
-    const up = (ev: PointerEvent) => {
-      ev.preventDefault();
+    const up = (ev: Event) => {
+      if (ev.cancelable) ev.preventDefault();
       input[prop] = false;
     };
-    el.addEventListener("pointerdown", down);
+
+    // pointer events (modern browsers) — capture the pointer so sliding a
+    // finger off the button doesn't release it early (fixes iOS quirks)
+    el.addEventListener("pointerdown", (ev: PointerEvent) => {
+      try {
+        (ev.currentTarget as HTMLElement).setPointerCapture?.(ev.pointerId);
+      } catch {
+        /* capture is best-effort */
+      }
+      down(ev);
+    });
     el.addEventListener("pointerup", up);
     el.addEventListener("pointercancel", up);
-    el.addEventListener("pointerleave", up);
+
+    // touch fallback (older iOS / WebKit oddities) — passive: false so
+    // preventDefault works and Safari doesn't scroll/zoom mid-jump
+    el.addEventListener("touchstart", down, { passive: false });
+    el.addEventListener("touchend", up, { passive: false });
+    el.addEventListener("touchcancel", up, { passive: false });
+
+    // mouse fallback for desktop clicks on the buttons
+    el.addEventListener("mousedown", down);
+    el.addEventListener("mouseup", up);
     el.addEventListener("contextmenu", (ev) => ev.preventDefault());
   };
 
@@ -82,9 +106,24 @@ export function initInput(
   bind("btnRight", "right");
   bind("btnJump", "jump");
 
+  // safety nets: release everything if the finger lifts anywhere,
+  // the tab loses focus, or iOS drops events for any reason
+  const releaseAll = () => {
+    input.left = false;
+    input.right = false;
+    input.jump = false;
+  };
+  window.addEventListener("blur", releaseAll);
+  window.addEventListener("pagehide", releaseAll);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) releaseAll();
+  });
+
   // show touch controls on coarse pointers / touch devices
   const touchy =
-    window.matchMedia("(pointer: coarse)").matches || "ontouchstart" in window;
+    window.matchMedia("(pointer: coarse)").matches ||
+    "ontouchstart" in window ||
+    navigator.maxTouchPoints > 0;
   if (touchy) {
     document.getElementById("touchControls")?.classList.replace("hidden", "flex");
   }
