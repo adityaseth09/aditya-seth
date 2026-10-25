@@ -28,8 +28,10 @@ Games are designed on paper by Ira (age 8) and then typed up into code here.
 
 - **Ira's Shop** 🛍️ — coins earned in-game are saved between visits (dying only
   loses the coins from that attempt). Spend them on outfits (Party Hat,
-  Fancy Bowtie, Super Cape, Golden Crown) and celebration dances (Wiggle
-  Wiggle, Super Twirl, Star Jumps). Purchases and selections persist.
+  Fancy Bowtie, Super Cape, Golden Crown), celebration dances (Wiggle
+  Wiggle, Super Twirl, Star Jumps) and **songs** for the background music
+  (Bouncy Song, Sleepy Song, Space Song — Ira's Tune is free).
+  Purchases and selections persist.
 
 - **Celebration dance** — when a level is cleared, the character(s) do the
   selected dance from the shop (twirl, wiggle or star jumps) behind the

@@ -3,18 +3,22 @@
  * Purchases and selections persist in localStorage.
  */
 
-import { sounds } from "./sounds";
+import { sounds, currentSongId, setSong } from "./sounds";
 
 export interface ShopItem {
   id: string;
   name: string;
-  kind: "outfit" | "dance";
+  kind: "outfit" | "dance" | "song";
   price: number;
   emoji: string;
   desc: string;
 }
 
 export const SHOP_ITEMS: ShopItem[] = [
+  { id: "ira", name: "Ira's Tune", kind: "song", price: 0, emoji: "🎶", desc: "the classic song — free!" },
+  { id: "bouncy", name: "Bouncy Song", kind: "song", price: 10, emoji: "🎵", desc: "fast and bouncy!" },
+  { id: "sleepy", name: "Sleepy Song", kind: "song", price: 10, emoji: "🌙", desc: "slow and calm…" },
+  { id: "space", name: "Space Song", kind: "song", price: 12, emoji: "🚀", desc: "music from the stars!" },
   { id: "party", name: "Party Hat", kind: "outfit", price: 5, emoji: "🥳", desc: "a hat for parties!" },
   { id: "bowtie", name: "Fancy Bowtie", kind: "outfit", price: 6, emoji: "🎀", desc: "so fancy!" },
   { id: "cape", name: "Super Cape", kind: "outfit", price: 8, emoji: "🦸", desc: "a cape that waves in the wind!" },
@@ -74,10 +78,12 @@ export function buildShop(
     walletEl.textContent = `your coins: ${getCoins()}`;
     row.innerHTML = "";
     for (const item of SHOP_ITEMS) {
-      const isOwned = owned.has(item.id);
+      // the default song is always owned (it's free)
+      const isOwned = item.kind === "song" && item.price === 0 ? true : owned.has(item.id);
       const isSelected =
         (item.kind === "outfit" && selectedOutfit() === item.id) ||
-        (item.kind === "dance" && selectedDance() === item.id);
+        (item.kind === "dance" && selectedDance() === item.id) ||
+        (item.kind === "song" && currentSongId() === item.id);
 
       const card = document.createElement("div");
       card.className = "sketchy bg-white/80 p-3 text-center";
@@ -113,33 +119,39 @@ export function buildShop(
           owned.add(item.id);
           saveOwned(owned);
           localStorage.setItem(
-            item.kind === "outfit" ? LS_OUTFIT : LS_DANCE,
+            item.kind === "outfit" ? LS_OUTFIT : item.kind === "dance" ? LS_DANCE : "tagTime:song",
             item.id,
           );
+          if (item.kind === "song") setSong(item.id);
           sounds.coin();
           onSelectionChange();
           render();
         });
       } else if (isSelected) {
-        btn.textContent = item.kind === "outfit" ? "wearing it!" : "dancing it!";
+        btn.textContent =
+          item.kind === "outfit" ? "wearing it!" : item.kind === "dance" ? "dancing it!" : "playing it!";
         btn.className = "crayon-btn";
         (btn as HTMLButtonElement).style.background = "var(--crayon-green)";
         (btn as HTMLButtonElement).style.fontSize = "1rem";
         btn.addEventListener("click", () => {
-          localStorage.removeItem(item.kind === "outfit" ? LS_OUTFIT : LS_DANCE);
+          if (item.kind === "outfit") localStorage.removeItem(LS_OUTFIT);
+          else if (item.kind === "dance") localStorage.removeItem(LS_DANCE);
+          else if (item.kind === "song") setSong("ira"); // back to the free tune
           onSelectionChange();
           render();
         });
       } else {
-        btn.textContent = item.kind === "outfit" ? "wear it!" : "dance it!";
+        btn.textContent =
+          item.kind === "outfit" ? "wear it!" : item.kind === "dance" ? "dance it!" : "play it!";
         btn.className = "crayon-btn";
         (btn as HTMLButtonElement).style.background = "var(--crayon-blue)";
         (btn as HTMLButtonElement).style.fontSize = "1rem";
         btn.addEventListener("click", () => {
           localStorage.setItem(
-            item.kind === "outfit" ? LS_OUTFIT : LS_DANCE,
+            item.kind === "outfit" ? LS_OUTFIT : item.kind === "dance" ? LS_DANCE : "tagTime:song",
             item.id,
           );
+          if (item.kind === "song") setSong(item.id);
           onSelectionChange();
           render();
         });

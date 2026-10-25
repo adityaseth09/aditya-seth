@@ -107,33 +107,139 @@ function noteAt(freq: number, start: number, dur: number, type: OscillatorType, 
   osc.stop(start + dur + 0.02);
 }
 
-// gentle pentatonic tune (C major), 64 steps, 0.24s per step
+// Ira's soundtrack: every song is a 64-step melody + bass pair.
+// The first song is free; the others are bought in the shop with coins.
+export interface Song {
+  id: string;
+  step: number;
+  melody: number[];
+  bass: number[];
+}
+
 const N = {
-  C3: 130.81, A2: 110.0, F3: 174.61, G3: 196.0,
-  A4: 440.0, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880.0, C6: 1046.5,
+  A2: 110.0, C3: 130.81, E3: 164.81, F3: 174.61, G3: 196.0,
+  G4: 392.0, A4: 440.0, C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.0, C6: 1046.5,
 };
-const MELODY: number[] = [
-  N.E5, 0, N.G5, 0, N.A5, 0, N.G5, 0,
-  N.E5, 0, N.D5, 0, N.C5, 0, N.D5, 0,
-  N.E5, 0, N.G5, 0, N.A5, 0, N.C6, 0,
-  N.A5, 0, N.G5, 0, N.E5, 0, 0, 0,
-  N.G5, 0, N.E5, 0, N.D5, 0, N.E5, 0,
-  N.C5, 0, N.D5, 0, N.E5, 0, N.G5, 0,
-  N.A4, 0, N.C5, 0, N.D5, 0, N.E5, 0,
-  N.D5, 0, N.C5, 0, 0, 0, 0, 0,
+
+const SONGS: Song[] = [
+  {
+    id: "ira",
+    step: 0.24,
+    melody: [
+      N.E5, 0, N.G5, 0, N.A5, 0, N.G5, 0,
+      N.E5, 0, N.D5, 0, N.C5, 0, N.D5, 0,
+      N.E5, 0, N.G5, 0, N.A5, 0, N.C6, 0,
+      N.A5, 0, N.G5, 0, N.E5, 0, 0, 0,
+      N.G5, 0, N.E5, 0, N.D5, 0, N.E5, 0,
+      N.C5, 0, N.D5, 0, N.E5, 0, N.G5, 0,
+      N.A4, 0, N.C5, 0, N.D5, 0, N.E5, 0,
+      N.D5, 0, N.C5, 0, 0, 0, 0, 0,
+    ],
+    bass: [
+      N.C3, 0, 0, 0, N.C3, 0, 0, 0,
+      N.C3, 0, 0, 0, N.C3, 0, 0, 0,
+      N.A2, 0, 0, 0, N.A2, 0, 0, 0,
+      N.A2, 0, 0, 0, N.A2, 0, 0, 0,
+      N.F3, 0, 0, 0, N.F3, 0, 0, 0,
+      N.F3, 0, 0, 0, N.F3, 0, 0, 0,
+      N.G3, 0, 0, 0, N.G3, 0, 0, 0,
+      N.C3, 0, 0, 0, 0, 0, 0, 0,
+    ],
+  },
+  {
+    id: "bouncy",
+    step: 0.18,
+    melody: [
+      N.C5, 0, N.E5, 0, N.G5, 0, N.E5, 0,
+      N.A5, 0, N.G5, 0, N.E5, 0, N.C5, 0,
+      N.D5, 0, N.F5, 0, N.A5, 0, N.F5, 0,
+      N.G5, 0, N.E5, 0, N.D5, 0, N.C5, 0,
+      N.C5, 0, N.E5, 0, N.G5, 0, N.C6, 0,
+      N.A5, 0, N.G5, 0, N.A5, 0, N.C6, 0,
+      N.G5, N.E5, N.D5, N.E5, N.C5, N.D5, N.E5, N.G5,
+      N.E5, 0, N.D5, 0, N.C5, 0, 0, 0,
+    ],
+    bass: [
+      N.C3, 0, N.C3, 0, N.C3, 0, N.C3, 0,
+      N.A2, 0, N.A2, 0, N.C3, 0, N.C3, 0,
+      N.F3, 0, N.F3, 0, N.F3, 0, N.F3, 0,
+      N.C3, 0, N.C3, 0, N.G3, 0, N.G3, 0,
+      N.C3, 0, N.C3, 0, N.C3, 0, N.C3, 0,
+      N.A2, 0, N.A2, 0, N.A2, 0, N.A2, 0,
+      N.G3, 0, N.G3, 0, N.G3, 0, N.G3, 0,
+      N.C3, 0, N.C3, 0, N.C3, 0, 0, 0,
+    ],
+  },
+  {
+    id: "sleepy",
+    step: 0.34,
+    melody: [
+      N.E5, 0, 0, 0, N.G5, 0, 0, 0,
+      N.D5, 0, 0, 0, N.C5, 0, 0, 0,
+      N.A4, 0, 0, 0, N.C5, 0, 0, 0,
+      N.D5, 0, 0, 0, N.E5, 0, 0, 0,
+      N.G5, 0, 0, 0, N.E5, 0, 0, 0,
+      N.D5, 0, 0, 0, N.C5, 0, 0, 0,
+      N.A4, 0, 0, 0, N.G4, 0, 0, 0,
+      N.C5, 0, 0, 0, 0, 0, 0, 0,
+    ],
+    bass: [
+      N.C3, 0, 0, 0, 0, 0, 0, 0,
+      N.G3, 0, 0, 0, 0, 0, 0, 0,
+      N.A2, 0, 0, 0, 0, 0, 0, 0,
+      N.F3, 0, 0, 0, 0, 0, 0, 0,
+      N.C3, 0, 0, 0, 0, 0, 0, 0,
+      N.F3, 0, 0, 0, 0, 0, 0, 0,
+      N.G3, 0, 0, 0, 0, 0, 0, 0,
+      N.C3, 0, 0, 0, 0, 0, 0, 0,
+    ],
+  },
+  {
+    id: "space",
+    step: 0.22,
+    melody: [
+      N.A4, 0, N.C5, 0, N.D5, 0, N.E5, 0,
+      N.G5, 0, N.E5, 0, N.D5, 0, N.C5, 0,
+      N.A4, 0, N.C5, 0, N.D5, 0, N.G4, 0,
+      N.E5, 0, N.D5, 0, N.C5, 0, N.D5, 0,
+      N.A4, 0, N.C5, 0, N.E5, 0, N.G5, 0,
+      N.A5, 0, N.G5, 0, N.E5, 0, N.D5, 0,
+      N.C5, 0, N.D5, 0, N.E5, 0, N.G5, 0,
+      N.A4, 0, 0, 0, 0, 0, 0, 0,
+    ],
+    bass: [
+      N.A2, 0, 0, 0, 0, 0, 0, 0,
+      N.A2, 0, 0, 0, 0, 0, 0, 0,
+      N.E3, 0, 0, 0, 0, 0, 0, 0,
+      N.E3, 0, 0, 0, 0, 0, 0, 0,
+      N.F3, 0, 0, 0, 0, 0, 0, 0,
+      N.F3, 0, 0, 0, 0, 0, 0, 0,
+      N.G3, 0, 0, 0, 0, 0, 0, 0,
+      N.A2, 0, 0, 0, 0, 0, 0, 0,
+    ],
+  },
 ];
-const BASS: number[] = [
-  N.C3, 0, 0, 0, N.C3, 0, 0, 0,
-  N.C3, 0, 0, 0, N.C3, 0, 0, 0,
-  N.A2, 0, 0, 0, N.A2, 0, 0, 0,
-  N.A2, 0, 0, 0, N.A2, 0, 0, 0,
-  N.F3, 0, 0, 0, N.F3, 0, 0, 0,
-  N.F3, 0, 0, 0, N.F3, 0, 0, 0,
-  N.G3, 0, 0, 0, N.G3, 0, 0, 0,
-  N.C3, 0, 0, 0, 0, 0, 0, 0,
-];
-const STEP = 0.24;
-const LOOP = MELODY.length;
+
+const LS_SONG = "tagTime:song";
+
+export function currentSongId(): string {
+  const id = localStorage.getItem(LS_SONG);
+  return id && SONGS.some((s) => s.id === id) ? id : SONGS[0].id;
+}
+
+function songById(id: string): Song {
+  return SONGS.find((s) => s.id === id) ?? SONGS[0];
+}
+
+/** Switch the background tune (bought in the shop); restarts if playing. */
+export function setSong(id: string): void {
+  if (!SONGS.some((s) => s.id === id)) return;
+  localStorage.setItem(LS_SONG, id);
+  if (musicOn) {
+    stopMusic();
+    startMusic();
+  }
+}
 
 let musicOn = false;
 let pumpTimer: number | null = null;
@@ -143,13 +249,14 @@ let nextStepTime = 0;
 function pump(): void {
   const a = ctx();
   if (!a || !musicOn) return;
+  const song = songById(currentSongId());
   while (nextStepTime < a.currentTime + 0.5) {
-    const m = MELODY[stepIdx % LOOP];
-    if (m) noteAt(m, nextStepTime, STEP * 1.8, "triangle", 0.045);
-    const b = BASS[stepIdx % LOOP];
-    if (b) noteAt(b, nextStepTime, STEP * 2.2, "sine", 0.05);
+    const m = song.melody[stepIdx % song.melody.length];
+    if (m) noteAt(m, nextStepTime, song.step * 1.8, "triangle", 0.045);
+    const b = song.bass[stepIdx % song.bass.length];
+    if (b) noteAt(b, nextStepTime, song.step * 2.2, "sine", 0.05);
     stepIdx++;
-    nextStepTime += STEP;
+    nextStepTime += song.step;
   }
 }
 

@@ -6,7 +6,7 @@ import { levels as LEVELS } from "../../data/levels.json";
 import type { LevelData } from "./render";
 import { drawBackground, drawWorld } from "./render";
 import { CHARACTERS, drawCharacter, type CharacterDef, type Pose } from "./characters";
-import { sounds, unlockAudio, startMusic, setMusic, musicPref, isMusicOn } from "./sounds";
+import { sounds, unlockAudio, startMusic, setMusic, musicPref, isMusicOn, currentSongId } from "./sounds";
 import { initInput, setPlayerCount } from "./input";
 import { buildPicker, type PickerHandle } from "./picker";
 import { initUI, showOverlay } from "./ui";
@@ -314,6 +314,7 @@ window.__tagtime = {
     level: E.levelIndex + 1,
     coins: E.totalCoins,
     music: isMusicOn(),
+    song: currentSongId(),
     outfit: selectedOutfit(),
     dance: selectedDance(),
     keys: [...E.st.keysTaken],

@@ -116,12 +116,19 @@ const totalLevels = levels.length;
 
 <style>
   #stage {
-    /* stop iOS Safari from scrolling / rubber-banding / zooming mid-game */
-    touch-action: none;
+    /* stop iOS text selection / long-press callouts during play.
+       NOTE: touch-action is NOT disabled here anymore — that blocked
+       scrolling inside the shop overlay on touch devices. The canvas
+       keeps touch-action: none instead. */
     -webkit-user-select: none;
     -webkit-touch-callout: none;
   }
+  #stage canvas {
+    touch-action: none;
+  }
   .overlay {
+    touch-action: pan-y; /* let touch screens scroll overlays (the shop!) */
+    overscroll-behavior: contain;
     display: flex;
   }
   .overlay.hidden {
