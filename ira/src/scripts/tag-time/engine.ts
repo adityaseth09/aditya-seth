@@ -88,6 +88,7 @@ function respawn(): void {
 
 /* ---------- persistence ---------- */
 const LS_LEVEL = "tagTime:level";
+const LS_COINS = "tagTime:coins";
 
 export function savedLevel(): number {
   const n = parseInt(localStorage.getItem(LS_LEVEL) || "1", 10);
@@ -97,6 +98,23 @@ export function savedLevel(): number {
 
 export function saveLevel(n: number): void {
   localStorage.setItem(LS_LEVEL, String(Math.min(n, LEVELS.length)));
+}
+
+/** Wallet: coins persist between visits so Ira can shop later. */
+export function loadWallet(): void {
+  totalCoins = parseInt(localStorage.getItem(LS_COINS) || "0", 10) || 0;
+}
+
+function saveWallet(): void {
+  localStorage.setItem(LS_COINS, String(totalCoins));
+}
+
+/** Try to spend coins in the shop. Returns false if not enough coins. */
+export function spendCoins(n: number): boolean {
+  if (totalCoins < n) return false;
+  totalCoins -= n;
+  saveWallet();
+  return true;
 }
 
 export function say(text: string): void {
@@ -146,6 +164,7 @@ function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird"): void {
   deathTimer = 1.3;
   totalCoins = Math.max(0, totalCoins - attemptCoins);
   attemptCoins = 0;
+  saveWallet();
   sounds.death();
   setDeathMessage(cause);
   showOverlay("death");
@@ -289,6 +308,7 @@ function stepPlayer(p: number, dt: number): void {
       st.coinsTaken.add(i);
       totalCoins++;
       attemptCoins++;
+      saveWallet();
       sounds.coin();
       hudSync();
     }

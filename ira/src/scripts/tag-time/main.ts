@@ -6,10 +6,11 @@ import { levels as LEVELS } from "../../data/levels.json";
 import type { LevelData } from "./render";
 import { drawBackground, drawWorld } from "./render";
 import { CHARACTERS, drawCharacter, type CharacterDef, type Pose } from "./characters";
-import { sounds, unlockAudio } from "./sounds";
+import { sounds, unlockAudio, startMusic, setMusic, musicPref, isMusicOn } from "./sounds";
 import { initInput, setPlayerCount } from "./input";
 import { buildPicker, type PickerHandle } from "./picker";
 import { initUI, showOverlay } from "./ui";
+import { buildShop, selectedOutfit, selectedDance, type ShopHandle } from "./shop";
 import * as E from "./engine";
 
 const canvas = document.getElementById("game") as HTMLCanvasElement;
@@ -33,7 +34,19 @@ function charDefFor(slot: number): CharacterDef {
 /* ---------- flow: mode → pick → go! → play ---------- */
 
 let picker: PickerHandle | null = null;
+let shop: ShopHandle | null = null;
 let pickingPlayer = 0; // 0 = P1, 1 = P2
+
+/** First user gesture: unlock audio + start music if enabled. */
+function firstGesture(): void {
+  unlockAudio();
+  if (musicPref()) startMusic();
+}
+
+function syncMusicButton(): void {
+  const btn = document.getElementById("btnMusic");
+  if (btn) btn.textContent = isMusicOn() ? "🔊" : "🔇";
+}
 
 function showModeSelect(): void {
   document.getElementById("modeSection")?.classList.remove("hidden");
@@ -52,6 +65,7 @@ function beginPicks(): void {
 }
 
 function onPick(def: CharacterDef): void {
+  firstGesture();
   E.charIds[pickingPlayer] = def.id;
   if (pickingPlayer === 0) {
     localStorage.setItem(LS_CHAR, def.id);
@@ -106,15 +120,44 @@ function setupFlow(): void {
   picker = buildPicker(onPick);
   picker.highlight(localStorage.getItem(LS_CHAR));
 
+  shop = buildShop(
+    () => E.totalCoins,
+    (n) => E.spendCoins(n),
+    () => {
+      // selection changed — nothing else needed live; render picks it up next frame
+    },
+  );
+
+  // shop entries (from the mode screen and the go! screen)
+  for (const id of ["btnShopMode", "btnShopGo"]) {
+    document.getElementById(id)?.addEventListener("click", () => {
+      firstGesture();
+      shop?.open();
+    });
+  }
+  document.getElementById("shopBack")?.addEventListener("click", () => {
+    shop?.close();
+  });
+
+  // music toggle
+  const mbtn = document.getElementById("btnMusic");
+  mbtn?.addEventListener("click", () => {
+    const nowOn = !isMusicOn();
+    setMusic(nowOn);
+    if (nowOn) unlockAudio();
+    syncMusicButton();
+  });
+  syncMusicButton();
+
   document.getElementById("btn1P")?.addEventListener("click", () => {
-    unlockAudio();
+    firstGesture();
     E.setPlayerCount(1);
     setPlayerCount(1);
     syncTouchClusters();
     beginPicks();
   });
   document.getElementById("btn2P")?.addEventListener("click", () => {
-    unlockAudio();
+    firstGesture();
     E.setPlayerCount(2);
     setPlayerCount(2);
     syncTouchClusters();
@@ -122,13 +165,13 @@ function setupFlow(): void {
   });
 
   document.getElementById("goBtn")?.addEventListener("click", () => {
-    unlockAudio();
+    firstGesture();
     E.startLevel(E.savedLevel() - 1);
   });
   document.getElementById("startOverlay")?.addEventListener("click", (e) => {
     const target = e.target as HTMLElement;
     if (target.id === "startOverlay" || target.id === "goSection") {
-      unlockAudio();
+      firstGesture();
       E.startLevel(E.savedLevel() - 1);
     }
   });
@@ -193,9 +236,10 @@ function render(time: number): void {
   const camY = H / scale - H;
   ctx.translate(-Math.round(camX), -Math.round(camY));
   drawWorld(ctx, E.st);
+  const charOpts = { outfit: selectedOutfit(), dance: selectedDance() };
   for (let p = 0; p < E.playerCount; p++) {
     const pl = E.players[p];
-    drawCharacter(ctx, charDefFor(p), pl.x + E.PW / 2, pl.y + E.PH, poseOf(p), pl.facing, time, 1.15);
+    drawCharacter(ctx, charDefFor(p), pl.x + E.PW / 2, pl.y + E.PH, poseOf(p), pl.facing, time, 1.15, charOpts);
   }
   ctx.restore();
 }
@@ -216,7 +260,8 @@ function loop(now: number): void {
 /* ---------- boot ---------- */
 
 initUI();
-initInput(unlockAudio, () => E.phase === "playing");
+E.loadWallet();
+initInput(firstGesture, () => E.phase === "playing");
 setupFlow();
 requestAnimationFrame(loop);
 
@@ -250,6 +295,9 @@ window.__tagtime = {
     mode: E.playerCount,
     level: E.levelIndex + 1,
     coins: E.totalCoins,
+    music: isMusicOn(),
+    outfit: selectedOutfit(),
+    dance: selectedDance(),
     keys: [...E.st.keysTaken],
     doors: [...E.st.openDoors],
     lever: E.st.leverPulled,

@@ -24,6 +24,13 @@ export const CHARACTERS: CharacterDef[] = [
 
 export type Pose = "idle" | "run" | "jump" | "fall" | "cheer";
 
+export interface CharOptions {
+  /** equipped outfit id (cape | crown | party | bowtie) */
+  outfit?: string | null;
+  /** selected dance id for the level-clear celebration (twirl | wiggle | stars) */
+  dance?: string | null;
+}
+
 /**
  * Draw a character. (cx, footY) is the center-bottom pivot point.
  * facing: 1 = right, -1 = left. t = seconds for animation.
@@ -37,11 +44,44 @@ export function drawCharacter(
   facing: number,
   t: number,
   scale = 1,
+  opts: CharOptions = {},
 ): void {
   const f = boil(t);
   const seed = def.id.charCodeAt(0) * 31 + 7;
   const s = scale;
+
+  // celebration dance transforms (wrap the whole drawing)
+  if (pose === "cheer" && opts.dance) {
+    ctx.save();
+    if (opts.dance === "twirl") {
+      ctx.translate(cx, footY);
+      ctx.rotate(t * 5);
+      ctx.translate(-cx, -footY);
+    } else if (opts.dance === "wiggle") {
+      ctx.translate(Math.sin(t * 10) * 8, 0);
+      ctx.rotate(Math.sin(t * 10) * 0.08);
+    } else if (opts.dance === "stars") {
+      ctx.translate(0, -Math.abs(Math.sin(t * 5)) * 36);
+    }
+  }
+
   const bodyTop = footY - 26 * s;
+
+  // cape (worn behind everything, waving in the wind)
+  if (opts.outfit === "cape") {
+    const shoulderY = bodyTop - 14 * s;
+    const wave = Math.sin(t * 6) * 4 * s;
+    ctx.beginPath();
+    ctx.moveTo(cx - 4 * s * facing, shoulderY);
+    ctx.lineTo(cx - 18 * s * facing + wave, shoulderY + 22 * s + wave);
+    ctx.lineTo(cx - 2 * s * facing, shoulderY + 20 * s);
+    ctx.closePath();
+    ctx.fillStyle = "#e04f4f";
+    ctx.fill();
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  }
   const headR = 8 * s;
   const headCy = bodyTop - headR - 2 * s;
 
@@ -145,8 +185,57 @@ export function drawCharacter(
     ctx.stroke();
   }
 
-  // name tag under preview figures only (used by the picker)
-  if (pose === "idle" && scale > 1.5) {
-    // no-op: names are rendered in HTML by the picker
+  // hats & accessories (drawn on top)
+  const headTop = headCy - headR - 2 * s;
+  if (opts.outfit === "crown") {
+    ctx.beginPath();
+    const cy0 = headTop - 1;
+    ctx.moveTo(cx - 7 * s, cy0);
+    ctx.lineTo(cx - 7 * s, cy0 - 7 * s);
+    ctx.lineTo(cx - 3.5 * s, cy0 - 3 * s);
+    ctx.lineTo(cx, cy0 - 8 * s);
+    ctx.lineTo(cx + 3.5 * s, cy0 - 3 * s);
+    ctx.lineTo(cx + 7 * s, cy0 - 7 * s);
+    ctx.lineTo(cx + 7 * s, cy0);
+    ctx.closePath();
+    ctx.fillStyle = "#f2c14e";
+    ctx.fill();
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  } else if (opts.outfit === "party") {
+    ctx.beginPath();
+    ctx.moveTo(cx - 6 * s, headTop);
+    ctx.lineTo(cx + Math.sin(t * 3) * 2 * s, headTop - 14 * s);
+    ctx.lineTo(cx + 6 * s, headTop);
+    ctx.closePath();
+    ctx.fillStyle = "#e07fb0";
+    ctx.fill();
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    sketchCircle(ctx, cx + Math.sin(t * 3) * 2 * s, headTop - 15 * s, 2.5 * s, "#4a90d9", seed + 30, f, 0.6);
+  } else if (opts.outfit === "bowtie") {
+    const by = bodyTop - 15 * s;
+    ctx.beginPath();
+    ctx.moveTo(cx, by);
+    ctx.lineTo(cx - 6 * s, by - 3 * s);
+    ctx.lineTo(cx - 6 * s, by + 3 * s);
+    ctx.closePath();
+    ctx.moveTo(cx, by);
+    ctx.lineTo(cx + 6 * s, by - 3 * s);
+    ctx.lineTo(cx + 6 * s, by + 3 * s);
+    ctx.closePath();
+    ctx.fillStyle = "#4a90d9";
+    ctx.fill();
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    sketchCircle(ctx, cx, by, 1.6 * s, "#f2c14e", seed + 31, f, 0.4);
+  }
+
+  // close the dance transform
+  if (pose === "cheer" && opts.dance) {
+    ctx.restore();
   }
 }

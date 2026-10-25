@@ -26,6 +26,7 @@ const totalLevels = levels.length;
         <span id="hudCoins" class="text-[color:var(--crayon-orange)]">coins: 0</span>
         <span id="hudKey1" class="opacity-30 grayscale">key 1</span>
         <span id="hudKey2" class="opacity-30 grayscale">key 2</span>
+        <button id="btnMusic" class="pointer-events-auto text-lg" aria-label="toggle music" style="background:none;border:none;cursor:pointer;font-size:1.3rem;">🔊</button>
       </div>
 
       <!-- Character picker -->
@@ -43,6 +44,7 @@ const totalLevels = levels.length;
             <button id="btn1P" class="crayon-btn" style="background: var(--crayon-green);">1 player</button>
             <button id="btn2P" class="crayon-btn" style="background: var(--crayon-blue);">2 players!</button>
           </div>
+          <button id="btnShopMode" class="crayon-btn" style="background: var(--crayon-orange);">🛍️ Shop</button>
           <p class="text-base sm:text-lg opacity-70">2 players: one on WASD, one on the arrow keys — or share a tablet!</p>
         </div>
         <div id="goSection" class="hidden flex-col items-center gap-3 cursor-pointer">
@@ -52,8 +54,20 @@ const totalLevels = levels.length;
             go!
           </button>
           <p class="text-lg sm:text-xl font-bold">tap here to start</p>
-          <button id="resetProgress" class="hidden text-base underline opacity-60">start over from level 1</button>
+          <div class="flex gap-4 items-center">
+            <button id="btnShopGo" class="crayon-btn" style="background: var(--crayon-orange); font-size: 1rem;">🛍️ Shop</button>
+            <button id="resetProgress" class="hidden text-base underline opacity-60">start over from level 1</button>
+          </div>
         </div>
+      </div>
+
+      <!-- Coin shop -->
+      <div id="shopOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-4 overflow-y-auto py-4" style="background: rgba(253,249,239,0.97);">
+        <p class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(-2deg);">Ira's Shop! 🛍️</p>
+        <p id="shopCoins" class="text-xl font-bold text-[color:var(--crayon-blue)]">your coins: 0</p>
+        <div id="shopRow" class="flex gap-3 flex-wrap justify-center px-4 max-w-[880px]"></div>
+        <button id="shopBack" class="crayon-btn" style="background: var(--crayon-green);">back</button>
+        <p class="text-base opacity-70">earn coins in the game — but careful: dying loses the coins from that level!</p>
       </div>
 
       <!-- Death -->

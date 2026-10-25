@@ -21,6 +21,19 @@ Games are designed on paper by Ira (age 8) and then typed up into code here.
   (P1's on the left, P2's on the right). The camera zooms out to keep both
   players on screen. One player dies → both restart; and you only win when
   **both** players walk through the doors together!
+
+- **Background music** — a gentle looping tune (WebAudio, no audio files) that
+  starts with the first tap and plays throughout. The 🔊/🔇 button in the
+  corner mutes it; the choice is remembered.
+
+- **Ira's Shop** 🛍️ — coins earned in-game are saved between visits (dying only
+  loses the coins from that attempt). Spend them on outfits (Party Hat,
+  Fancy Bowtie, Super Cape, Golden Crown) and celebration dances (Wiggle
+  Wiggle, Super Twirl, Star Jumps). Purchases and selections persist.
+
+- **Celebration dance** — when a level is cleared, the character(s) do the
+  selected dance from the shop (twirl, wiggle or star jumps) behind the
+  "You win!" screen.
 - Works with keyboard (← → move, space jump) and on-screen touch buttons.
 - Pick between 4 crayon-drawn characters: Mia, Ziggy, Whiskers and Robo.
 - Progress (furthest level) and chosen character are saved in `localStorage`.

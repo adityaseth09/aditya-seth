@@ -87,3 +87,102 @@ export const sounds = {
     tone(1319, 0.45, "triangle", 0.6);
   },
 };
+
+/* ---------------- background music ---------------- */
+
+/** Note at an absolute AudioContext time (used by the music sequencer). */
+function noteAt(freq: number, start: number, dur: number, type: OscillatorType, vol: number): void {
+  const a = ctx();
+  if (!a) return;
+  const osc = a.createOscillator();
+  const gain = a.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, start);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.linearRampToValueAtTime(vol, start + 0.02);
+  gain.gain.setValueAtTime(vol, start + dur * 0.6);
+  gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  osc.connect(gain).connect(a.destination);
+  osc.start(start);
+  osc.stop(start + dur + 0.02);
+}
+
+// gentle pentatonic tune (C major), 64 steps, 0.24s per step
+const N = {
+  C3: 130.81, A2: 110.0, F3: 174.61, G3: 196.0,
+  A4: 440.0, C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, A5: 880.0, C6: 1046.5,
+};
+const MELODY: number[] = [
+  N.E5, 0, N.G5, 0, N.A5, 0, N.G5, 0,
+  N.E5, 0, N.D5, 0, N.C5, 0, N.D5, 0,
+  N.E5, 0, N.G5, 0, N.A5, 0, N.C6, 0,
+  N.A5, 0, N.G5, 0, N.E5, 0, 0, 0,
+  N.G5, 0, N.E5, 0, N.D5, 0, N.E5, 0,
+  N.C5, 0, N.D5, 0, N.E5, 0, N.G5, 0,
+  N.A4, 0, N.C5, 0, N.D5, 0, N.E5, 0,
+  N.D5, 0, N.C5, 0, 0, 0, 0, 0,
+];
+const BASS: number[] = [
+  N.C3, 0, 0, 0, N.C3, 0, 0, 0,
+  N.C3, 0, 0, 0, N.C3, 0, 0, 0,
+  N.A2, 0, 0, 0, N.A2, 0, 0, 0,
+  N.A2, 0, 0, 0, N.A2, 0, 0, 0,
+  N.F3, 0, 0, 0, N.F3, 0, 0, 0,
+  N.F3, 0, 0, 0, N.F3, 0, 0, 0,
+  N.G3, 0, 0, 0, N.G3, 0, 0, 0,
+  N.C3, 0, 0, 0, 0, 0, 0, 0,
+];
+const STEP = 0.24;
+const LOOP = MELODY.length;
+
+let musicOn = false;
+let pumpTimer: number | null = null;
+let stepIdx = 0;
+let nextStepTime = 0;
+
+function pump(): void {
+  const a = ctx();
+  if (!a || !musicOn) return;
+  while (nextStepTime < a.currentTime + 0.5) {
+    const m = MELODY[stepIdx % LOOP];
+    if (m) noteAt(m, nextStepTime, STEP * 1.8, "triangle", 0.045);
+    const b = BASS[stepIdx % LOOP];
+    if (b) noteAt(b, nextStepTime, STEP * 2.2, "sine", 0.05);
+    stepIdx++;
+    nextStepTime += STEP;
+  }
+}
+
+export function startMusic(): void {
+  if (musicOn) return;
+  const a = ctx();
+  if (!a) return;
+  musicOn = true;
+  stepIdx = 0;
+  nextStepTime = a.currentTime + 0.1;
+  pump();
+  pumpTimer = window.setInterval(pump, 200);
+}
+
+export function stopMusic(): void {
+  musicOn = false;
+  if (pumpTimer !== null) {
+    window.clearInterval(pumpTimer);
+    pumpTimer = null;
+  }
+}
+
+export function isMusicOn(): boolean {
+  return musicOn;
+}
+
+/** Enable/disable music and remember the choice. */
+export function setMusic(enabled: boolean): void {
+  localStorage.setItem("tagTime:music", enabled ? "1" : "0");
+  if (enabled) startMusic();
+  else stopMusic();
+}
+
+export function musicPref(): boolean {
+  return localStorage.getItem("tagTime:music") !== "0";
+}
