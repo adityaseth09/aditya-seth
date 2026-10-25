@@ -252,22 +252,50 @@ function render(time: number): void {
   ctx.restore();
 
   if (celebrating) {
-    // celebration: dancers render on the TOP canvas, above the white overlay.
-    // 1 player dances on the right; 2 players dance together — one each side.
+    // celebration: dancers are drawn on the fixed full-viewport canvas,
+    // OUTSIDE the foggy game frame — on the white page beside/below it.
     if (dctx) {
-      dctx.clearRect(0, 0, W, H);
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      if (danceCanvas.width !== vw || danceCanvas.height !== vh) {
+        danceCanvas.width = vw;
+        danceCanvas.height = vh;
+      }
+      dctx.clearRect(0, 0, vw, vh);
       const charOpts = { outfit: selectedOutfit(), dance: selectedDance() };
-      const footY = H - 84;
       const big = 2.3;
+      const rect = canvas.getBoundingClientRect();
+      const leftRoom = rect.left;
+      const rightRoom = vw - rect.right;
+      // returns [x, footY] outside the foggy frame; falls back to inside if
+      // the window is too small for the page margins
+      const spot = (side: "left" | "right"): [number, number] => {
+        const room = side === "left" ? leftRoom : rightRoom;
+        if (room > 100) {
+          const x = side === "left" ? rect.left / 2 : rect.right + room / 2;
+          return [x, rect.bottom - 34];
+        }
+        // below the game (over the white page under the instructions)
+        const belowY = rect.bottom + 150;
+        if (belowY < vh - 20) {
+          const cx = rect.left + rect.width / 2;
+          return [cx + (side === "left" ? -140 : 140), belowY];
+        }
+        // last resort: inside the frame (viewport coords, bottom corners)
+        return [side === "left" ? rect.left + 120 : rect.right - 120, rect.bottom - 54];
+      };
       if (E.playerCount === 2) {
-        drawCharacter(dctx, charDefFor(0), 120, footY, "cheer", 1, time, big, charOpts);
-        drawCharacter(dctx, charDefFor(1), W - 120, footY, "cheer", -1, time, big, charOpts);
+        const [lx, ly] = spot("left");
+        const [rx, ry] = spot("right");
+        drawCharacter(dctx, charDefFor(0), lx, ly, "cheer", 1, time, big, charOpts);
+        drawCharacter(dctx, charDefFor(1), rx, ry, "cheer", -1, time, big, charOpts);
       } else {
-        drawCharacter(dctx, charDefFor(0), W - 120, footY, "cheer", -1, time, big, charOpts);
+        const [x, y] = spot("right");
+        drawCharacter(dctx, charDefFor(0), x, y, "cheer", -1, time, big, charOpts);
       }
     }
   } else if (dctx) {
-    dctx.clearRect(0, 0, W, H);
+    dctx.clearRect(0, 0, danceCanvas.width, danceCanvas.height);
   }
 }
 

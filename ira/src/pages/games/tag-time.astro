@@ -74,9 +74,10 @@ const totalLevels = levels.length;
         </div>
       </div>
 
-      <!-- Celebration dancers: drawn on top of the win overlays so the
-           characters are clearly visible over the white screen -->
-      <canvas id="danceCanvas" class="absolute inset-0 w-full h-full pointer-events-none" width="960" height="540" aria-hidden="true"></canvas>
+      <!-- Celebration dancers: a fixed, full-viewport canvas ABOVE everything.
+           The dancers are drawn OUTSIDE the foggy game frame — on the white
+           page area beside/below the game — so they are fully visible. -->
+      <canvas id="danceCanvas" class="pointer-events-none" style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 60;" aria-hidden="true"></canvas>
 
       <!-- Death -->
       <div id="deathOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-2 pointer-events-none" style="background: rgba(224,79,79,0.25);">
