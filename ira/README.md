@@ -13,14 +13,22 @@ Games are designed on paper by Ira (age 8) and then typed up into code here.
   the air — touching them means restart, but jumping on their heads squashes them!
   Fall in the lava and you restart the level from the top.
   10 levels now (levels 6–10 have the beasts and get tricky); Ira's master plan calls for 50.
+
+- **Two-player team mode** (from Ira's sketch: "two people going in a team-work
+  obstacle course… and you both win"): pick "2 players!" at the start, then each
+  player picks their own character. P1 plays on **W A D + space**, P2 on the
+  **arrow keys** — or on a tablet each player gets their own touch buttons
+  (P1's on the left, P2's on the right). The camera zooms out to keep both
+  players on screen. One player dies → both restart; and you only win when
+  **both** players walk through the doors together!
 - Works with keyboard (← → move, space jump) and on-screen touch buttons.
 - Pick between 4 crayon-drawn characters: Mia, Ziggy, Whiskers and Robo.
 - Progress (furthest level) and chosen character are saved in `localStorage`.
 
 ## Ira's future plans (v2 wishlist)
 
-Two-player team mode, clothes and dance customization, character name changes,
-and levels 6–50.
+Clothes and dance customization, character name changes,
+and levels 11–50.
 
 ## Run locally
 

@@ -1,13 +1,45 @@
 /**
- * Keyboard + touch input. Exposes a single `input` object the engine reads.
+ * Per-player input. In 1-player mode both keyboard sets and the single touch
+ * cluster drive player 1. In 2-player mode: P1 = WASD + Space (left touch
+ * cluster), P2 = arrow keys (right touch cluster).
  */
 
-export const input = {
-  left: false,
-  right: false,
-  jump: false,
-  /** consumed by the engine once per press */
-  jumpQueued: false,
+export interface InputState {
+  left: boolean;
+  right: boolean;
+  jump: boolean;
+  jumpQueued: boolean;
+}
+
+export const inputs: InputState[] = [
+  { left: false, right: false, jump: false, jumpQueued: false },
+  { left: false, right: false, jump: false, jumpQueued: false },
+];
+
+/** How many players are active right now (read by the key mapper). */
+let playerCount = 1;
+
+export function setPlayerCount(n: number): void {
+  playerCount = Math.max(1, Math.min(2, n));
+  releaseAll();
+}
+
+interface Action {
+  player: number; // 0-based; -1 means "P1 in solo, split in duo"
+  act: "left" | "right" | "jump";
+  soloPlayer?: number; // in 1-player mode this key maps to this player
+}
+
+const KEYMAP: Record<string, Action> = {
+  // player 1 keys
+  KeyA: { player: 0, act: "left", soloPlayer: 0 },
+  KeyD: { player: 0, act: "right", soloPlayer: 0 },
+  KeyW: { player: 0, act: "jump", soloPlayer: 0 },
+  Space: { player: 0, act: "jump", soloPlayer: 0 },
+  // player 2 keys (in solo mode these also drive player 1, like before)
+  ArrowLeft: { player: 1, act: "left", soloPlayer: 0 },
+  ArrowRight: { player: 1, act: "right", soloPlayer: 0 },
+  ArrowUp: { player: 1, act: "jump", soloPlayer: 0 },
 };
 
 export function initInput(
@@ -16,49 +48,46 @@ export function initInput(
 ): void {
   const keys = new Set<string>();
 
-  const map = (code: string): "left" | "right" | "jump" | null => {
-    switch (code) {
-      case "ArrowLeft":
-      case "KeyA":
-        return "left";
-      case "ArrowRight":
-      case "KeyD":
-        return "right";
-      case "Space":
-      case "ArrowUp":
-      case "KeyW":
-        return "jump";
-      default:
-        return null;
+  const resolve = (code: string): { p: number; act: "left" | "right" | "jump" } | null => {
+    const a = KEYMAP[code];
+    if (!a) return null;
+    if (playerCount === 1) {
+      return { p: a.soloPlayer ?? 0, act: a.act };
     }
+    // duo mode: arrows are P2's; WASD/Space are P1's.
+    // If P2 presses arrows, player 1. If P1 presses arrows in duo... they're P2's.
+    return { p: a.player, act: a.act };
   };
 
   window.addEventListener(
     "keydown",
     (e) => {
-      const m = map(e.code);
-      if (!m) return;
+      const r = resolve(e.code);
+      if (!r) return;
       onFirstGesture();
-      if (m === "jump" && !keys.has(e.code)) input.jumpQueued = true;
+      const inp = inputs[r.p];
+      if (r.act === "jump" && !keys.has(e.code)) inp.jumpQueued = true;
       keys.add(e.code);
-      input[m] = true;
+      inp[r.act] = true;
       if (e.code === "Space") e.preventDefault();
     },
     { passive: false },
   );
 
   window.addEventListener("keyup", (e) => {
-    const m = map(e.code);
-    if (!m) return;
+    const r = resolve(e.code);
+    if (!r) return;
     keys.delete(e.code);
-    // only clear the flag if no other key maps to the same action
     let still = false;
-    for (const k of keys) if (map(k) === m) still = true;
-    if (!still) input[m] = false;
+    for (const k of keys) {
+      const other = resolve(k);
+      if (other && other.p === r.p && other.act === r.act) still = true;
+    }
+    if (!still) inputs[r.p][r.act] = false;
   });
 
   // ---- touch buttons (iOS-Safari-proof: pointer events + touch fallback) ----
-  const bind = (id: string, prop: "left" | "right" | "jump") => {
+  const bind = (id: string, player: number, act: "left" | "right" | "jump") => {
     const el = document.getElementById(id);
     if (!el) return;
 
@@ -69,57 +98,42 @@ export function initInput(
       } catch {
         /* audio unlock must never block input */
       }
-      if (prop === "jump" && !input[prop]) input.jumpQueued = true;
-      input[prop] = true;
+      const inp = inputs[player];
+      if (act === "jump" && !inp.jump) inp.jumpQueued = true;
+      inp[act] = true;
     };
     const up = (ev: Event) => {
       if (ev.cancelable) ev.preventDefault();
-      input[prop] = false;
+      inputs[player][act] = false;
     };
 
-    // pointer events (modern browsers) — capture the pointer so sliding a
-    // finger off the button doesn't release it early (fixes iOS quirks)
     el.addEventListener("pointerdown", (ev: PointerEvent) => {
       try {
         (ev.currentTarget as HTMLElement).setPointerCapture?.(ev.pointerId);
       } catch {
-        /* capture is best-effort */
+        /* best-effort */
       }
       down(ev);
     });
     el.addEventListener("pointerup", up);
     el.addEventListener("pointercancel", up);
-
-    // touch fallback (older iOS / WebKit oddities) — passive: false so
-    // preventDefault works and Safari doesn't scroll/zoom mid-jump
     el.addEventListener("touchstart", down, { passive: false });
     el.addEventListener("touchend", up, { passive: false });
     el.addEventListener("touchcancel", up, { passive: false });
-
-    // mouse fallback for desktop clicks on the buttons
     el.addEventListener("mousedown", down);
     el.addEventListener("mouseup", up);
     el.addEventListener("contextmenu", (ev) => ev.preventDefault());
   };
 
-  bind("btnLeft", "left");
-  bind("btnRight", "right");
-  bind("btnJump", "jump");
+  // P1 cluster (left side) — in solo mode this is the only cluster shown
+  bind("btnLeft1", 0, "left");
+  bind("btnRight1", 0, "right");
+  bind("btnJump1", 0, "jump");
+  // P2 cluster (right side) — only shown in duo mode
+  bind("btnLeft2", 1, "left");
+  bind("btnRight2", 1, "right");
+  bind("btnJump2", 1, "jump");
 
-  // safety nets: release everything if the finger lifts anywhere,
-  // the tab loses focus, or iOS drops events for any reason
-  const releaseAll = () => {
-    input.left = false;
-    input.right = false;
-    input.jump = false;
-  };
-  window.addEventListener("blur", releaseAll);
-  window.addEventListener("pagehide", releaseAll);
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) releaseAll();
-  });
-
-  // show touch controls on coarse pointers / touch devices
   const touchy =
     window.matchMedia("(pointer: coarse)").matches ||
     "ontouchstart" in window ||
@@ -128,10 +142,31 @@ export function initInput(
     document.getElementById("touchControls")?.classList.replace("hidden", "flex");
   }
 
+  const releaseAll = () => {
+    for (const inp of inputs) {
+      inp.left = false;
+      inp.right = false;
+      inp.jump = false;
+    }
+  };
+  window.addEventListener("blur", releaseAll);
+  window.addEventListener("pagehide", releaseAll);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) releaseAll();
+  });
+
   // stop the page from scrolling while playing on touch
   document
     .getElementById("stage")
     ?.addEventListener("touchmove", (e) => {
       if (isPlaying()) e.preventDefault();
     }, { passive: false });
+}
+
+function releaseAll(): void {
+  for (const inp of inputs) {
+    inp.left = false;
+    inp.right = false;
+    inp.jump = false;
+  }
 }
