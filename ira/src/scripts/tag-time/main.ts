@@ -236,12 +236,30 @@ function render(time: number): void {
   const camY = H / scale - H;
   ctx.translate(-Math.round(camX), -Math.round(camY));
   drawWorld(ctx, E.st);
-  const charOpts = { outfit: selectedOutfit(), dance: selectedDance() };
-  for (let p = 0; p < E.playerCount; p++) {
-    const pl = E.players[p];
-    drawCharacter(ctx, charDefFor(p), pl.x + E.PW / 2, pl.y + E.PH, poseOf(p), pl.facing, time, 1.15, charOpts);
+  const celebrating = E.phase === "levelDone" || E.phase === "gameDone";
+  if (!celebrating) {
+    // normal play: characters in the world
+    const charOpts = { outfit: selectedOutfit(), dance: selectedDance() };
+    for (let p = 0; p < E.playerCount; p++) {
+      const pl = E.players[p];
+      drawCharacter(ctx, charDefFor(p), pl.x + E.PW / 2, pl.y + E.PH, poseOf(p), pl.facing, time, 1.15, charOpts);
+    }
   }
   ctx.restore();
+
+  if (celebrating) {
+    // celebration: dancers jump to fixed spots beside the "You win!" panel.
+    // 1 player dances on the right; 2 players dance together — one each side.
+    const charOpts = { outfit: selectedOutfit(), dance: selectedDance() };
+    const footY = H - 84;
+    const big = 2.3;
+    if (E.playerCount === 2) {
+      drawCharacter(ctx, charDefFor(0), 120, footY, "cheer", 1, time, big, charOpts);
+      drawCharacter(ctx, charDefFor(1), W - 120, footY, "cheer", -1, time, big, charOpts);
+    } else {
+      drawCharacter(ctx, charDefFor(0), W - 120, footY, "cheer", -1, time, big, charOpts);
+    }
+  }
 }
 
 /* ---------- main loop ---------- */

@@ -77,14 +77,14 @@ const totalLevels = levels.length;
       </div>
 
       <!-- Level complete -->
-      <div id="levelOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.95);">
+      <div id="levelOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.82);">
         <p class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-green)]" style="transform: rotate(-1.5deg);">You win! ⭐</p>
         <p id="levelStats" class="text-lg sm:text-2xl font-bold"></p>
         <button id="nextBtn" class="crayon-btn">next level &rarr;</button>
       </div>
 
       <!-- Game complete -->
-      <div id="winOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.95);">
+      <div id="winOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.82);">
         <p class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(2deg);">You finished all {totalLevels} levels! 🏆</p>
         <p class="text-lg sm:text-2xl font-bold" id="winStats"></p>
         <button id="againBtn" class="crayon-btn">play again!</button>
