@@ -7,13 +7,20 @@ let ac: AudioContext | null = null;
 
 function ctx(): AudioContext | null {
   if (typeof window === "undefined") return null;
-  if (!ac) {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!AC) return null;
-    ac = new AC();
+  try {
+    if (!ac) {
+      const AC =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AC) return null;
+      ac = new AC();
+    }
+    if (ac.state === "suspended") void ac.resume().catch(() => {});
+    return ac;
+  } catch {
+    // audio must NEVER break gameplay (some iOS modes refuse AudioContext)
+    return null;
   }
-  if (ac.state === "suspended") void ac.resume();
-  return ac;
 }
 
 /** Unlock audio on the first tap/click (required by browsers). */
