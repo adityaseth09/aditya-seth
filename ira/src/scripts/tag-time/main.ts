@@ -17,6 +17,10 @@ const canvas = document.getElementById("game") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
 if (!ctx) throw new Error("canvas 2d not available");
 
+// dancers are drawn HERE (above the white win overlays) so they stay visible
+const danceCanvas = document.getElementById("danceCanvas") as HTMLCanvasElement;
+const dctx = danceCanvas?.getContext("2d");
+
 const W = E.W;
 const H = E.H;
 const TOTAL = (LEVELS as LevelData[]).length;
@@ -248,17 +252,22 @@ function render(time: number): void {
   ctx.restore();
 
   if (celebrating) {
-    // celebration: dancers jump to fixed spots beside the "You win!" panel.
+    // celebration: dancers render on the TOP canvas, above the white overlay.
     // 1 player dances on the right; 2 players dance together — one each side.
-    const charOpts = { outfit: selectedOutfit(), dance: selectedDance() };
-    const footY = H - 84;
-    const big = 2.3;
-    if (E.playerCount === 2) {
-      drawCharacter(ctx, charDefFor(0), 120, footY, "cheer", 1, time, big, charOpts);
-      drawCharacter(ctx, charDefFor(1), W - 120, footY, "cheer", -1, time, big, charOpts);
-    } else {
-      drawCharacter(ctx, charDefFor(0), W - 120, footY, "cheer", -1, time, big, charOpts);
+    if (dctx) {
+      dctx.clearRect(0, 0, W, H);
+      const charOpts = { outfit: selectedOutfit(), dance: selectedDance() };
+      const footY = H - 84;
+      const big = 2.3;
+      if (E.playerCount === 2) {
+        drawCharacter(dctx, charDefFor(0), 120, footY, "cheer", 1, time, big, charOpts);
+        drawCharacter(dctx, charDefFor(1), W - 120, footY, "cheer", -1, time, big, charOpts);
+      } else {
+        drawCharacter(dctx, charDefFor(0), W - 120, footY, "cheer", -1, time, big, charOpts);
+      }
     }
+  } else if (dctx) {
+    dctx.clearRect(0, 0, W, H);
   }
 }
 

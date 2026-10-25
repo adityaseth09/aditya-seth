@@ -62,13 +62,21 @@ const totalLevels = levels.length;
       </div>
 
       <!-- Coin shop -->
-      <div id="shopOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-4 overflow-y-auto py-4" style="background: rgba(253,249,239,0.97);">
-        <p class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(-2deg);">Ira's Shop! 🛍️</p>
-        <p id="shopCoins" class="text-xl font-bold text-[color:var(--crayon-blue)]">your coins: 0</p>
-        <div id="shopRow" class="flex gap-3 flex-wrap justify-center px-4 max-w-[880px]"></div>
-        <button id="shopBack" class="crayon-btn" style="background: var(--crayon-green);">back</button>
-        <p class="text-base opacity-70">earn coins in the game — but careful: dying loses the coins from that level!</p>
+      <div id="shopOverlay" class="overlay absolute inset-0 hidden flex-col items-center overflow-y-auto py-4" style="background: rgba(253,249,239,0.97);">
+        <!-- m-auto wrapper: centers when it fits, but unlike justify-center
+             it never pushes content above the unreachable top (scroll-up fix) -->
+        <div class="m-auto flex flex-col items-center gap-4">
+          <p class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(-2deg);">Ira's Shop! 🛍️</p>
+          <p id="shopCoins" class="text-xl font-bold text-[color:var(--crayon-blue)]">your coins: 0</p>
+          <div id="shopRow" class="flex gap-3 flex-wrap justify-center px-4 max-w-[880px]"></div>
+          <button id="shopBack" class="crayon-btn" style="background: var(--crayon-green);">back</button>
+          <p class="text-base opacity-70">earn coins in the game — but careful: dying loses the coins from that level!</p>
+        </div>
       </div>
+
+      <!-- Celebration dancers: drawn on top of the win overlays so the
+           characters are clearly visible over the white screen -->
+      <canvas id="danceCanvas" class="absolute inset-0 w-full h-full pointer-events-none" width="960" height="540" aria-hidden="true"></canvas>
 
       <!-- Death -->
       <div id="deathOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-2 pointer-events-none" style="background: rgba(224,79,79,0.25);">
