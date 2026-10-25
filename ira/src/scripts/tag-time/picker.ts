@@ -1,6 +1,7 @@
 /**
- * The character picker overlay: 4 crayon character cards.
- * Cards animate in the shared rAF loop while the picker is visible.
+ * The character picker overlay: crayon character cards.
+ * Supports Ira's 2-player flow: "Player 1 — pick!", then "Player 2 — pick!"
+ * (P2 can't choose the same character as P1).
  */
 import { CHARACTERS, drawCharacter, type CharacterDef } from "./characters";
 
@@ -8,10 +9,14 @@ export interface PickerHandle {
   root: HTMLElement;
   /** advance card animations; call each frame while visible */
   tick: (t: number) => void;
-  /** current selection (null until picked) */
-  picked: () => CharacterDef | null;
-  /** pre-select a card (e.g. the saved choice) */
-  select: (id: string) => void;
+  /** pre-highlight a card (e.g. the saved choice) */
+  highlight: (id: string | null) => void;
+  /** change the prompt text ("Player 1 — pick your character!") */
+  setPrompt: (text: string) => void;
+  /** gray out a card (P2 can't reuse P1's character) */
+  exclude: (id: string) => void;
+  /** re-enable all cards */
+  enableAll: () => void;
 }
 
 export function buildPicker(onPick: (def: CharacterDef) => void): PickerHandle {
@@ -19,58 +24,85 @@ export function buildPicker(onPick: (def: CharacterDef) => void): PickerHandle {
   const row = document.getElementById("charRow");
   if (!root || !row) throw new Error("picker markup missing");
 
-  const cards: Array<{ def: CharacterDef; cvs: HTMLCanvasElement; ctx: CanvasRenderingContext2D }> = [];
-  let choice: CharacterDef | null = null;
+  interface Card {
+    def: CharacterDef;
+    cvs: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    el: HTMLButtonElement;
+    disabled: boolean;
+  }
+  const cards: Card[] = [];
 
   for (const def of CHARACTERS) {
-    const card = document.createElement("button");
-    card.type = "button";
-    card.className = "char-card";
-    card.setAttribute("aria-label", `choose ${def.name}`);
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "char-card";
+    el.setAttribute("aria-label", `choose ${def.name}`);
 
     const cvs = document.createElement("canvas");
     cvs.width = 120;
     cvs.height = 150;
-    card.appendChild(cvs);
+    el.appendChild(cvs);
 
     const name = document.createElement("div");
     name.textContent = def.name;
     name.style.cssText =
       "font-weight:700; text-align:center; font-size:1.1rem; padding-bottom:4px;";
-    card.appendChild(name);
+    el.appendChild(name);
 
     const cctx = cvs.getContext("2d");
-    if (cctx) cards.push({ def, cvs, ctx: cctx });
+    const card: Card = { def, cvs, ctx: cctx!, el, disabled: false };
+    if (cctx) cards.push(card);
 
-    card.addEventListener("pointerdown", (ev) => {
+    el.addEventListener("pointerdown", (ev) => {
       ev.preventDefault();
-      choice = def;
+      if (card.disabled) return;
       onPick(def);
     });
+    el.addEventListener("touchstart", (ev) => {
+      ev.preventDefault();
+      if (card.disabled) return;
+      onPick(def);
+    }, { passive: false });
 
-    row.appendChild(card);
+    row.appendChild(el);
   }
 
   return {
     root,
-    picked: () => choice,
-    select: (id: string) => {
-      // visually pre-highlight the saved choice
-      const defs = cards.map((c) => c.def);
-      for (const d of defs) {
-        if (d.id === id) {
-          const idx = cards.findIndex((c) => c.def.id === id);
-          if (idx >= 0) {
-            const el = cards[idx].cvs.parentElement as HTMLElement | null;
-            el?.style.setProperty("transform", "rotate(-2deg) scale(1.06)");
-          }
-        }
-      }
-    },
     tick: (t: number) => {
       for (const { cvs, ctx, def } of cards) {
         ctx.clearRect(0, 0, cvs.width, cvs.height);
+        ctx.globalAlpha = 1;
         drawCharacter(ctx, def, cvs.width / 2, cvs.height - 26, "idle", 1, t, 2.4);
+      }
+    },
+    highlight: (id: string | null) => {
+      for (const c of cards) {
+        c.el.style.removeProperty("transform");
+        if (id && c.def.id === id) {
+          c.el.style.transform = "rotate(-2deg) scale(1.06)";
+        }
+      }
+    },
+    setPrompt: (text: string) => {
+      const p = document.getElementById("pickPrompt");
+      if (p) p.textContent = text;
+    },
+    exclude: (id: string) => {
+      for (const c of cards) {
+        if (c.def.id === id) {
+          c.disabled = true;
+          c.el.style.opacity = "0.35";
+          c.el.style.transform = "none";
+        }
+      }
+    },
+    enableAll: () => {
+      for (const c of cards) {
+        c.disabled = false;
+        c.el.style.opacity = "";
+        c.el.style.removeProperty("transform");
       }
     },
   };
