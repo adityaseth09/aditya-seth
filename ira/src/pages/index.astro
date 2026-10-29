@@ -7,30 +7,35 @@ const title = "Ira's Games";
 // "Ira's Games" as bubble letters, colored one by one
 const letters = ["I", "r", "a", "'", "s", " ", "G", "a", "m", "e", "s", "!"];
 
-/** Friendly labels for each planet theme in levels.json */
-const WORLD_LABELS: Record<string, string> = {
-  home: "Home",
-  wind: "Wind Planet",
-  rain: "Rain Planet",
-  fire: "Fire Planet",
-  storm: "Storm Planet",
-  volcano: "Volcano Planet",
+/** Friendly labels + colors for the four mid-game planet jump buttons */
+const PLANET_META: Record<
+  string,
+  { label: string; emoji: string; color: string }
+> = {
+  wind: { label: "Wind Planet", emoji: "💨", color: "var(--crayon-green)" },
+  rain: { label: "Rain Planet", emoji: "☔", color: "var(--crayon-blue)" },
+  fire: { label: "Fire Planet", emoji: "🔥", color: "var(--crayon-orange)" },
+  storm: { label: "Storm Planet", emoji: "⛈️", color: "var(--crayon-purple)" },
 };
 
-/** Last level of each world — 10, 20, 30, 40, 50. Skip 60 (final level). */
-const planetJumps: { label: string; level: number }[] = [];
+/** Last level of each world from levels.json (10, 20, 30…). */
 const lastByTheme = new Map<string, number>();
 for (let i = 0; i < levels.length; i++) {
   const theme = (levels[i] as { theme?: string }).theme ?? "home";
   lastByTheme.set(theme, i + 1);
 }
-for (const [theme, level] of lastByTheme) {
-  if (level >= levels.length) continue; // no jump link for level 60
-  planetJumps.push({
-    label: WORLD_LABELS[theme] ?? theme,
-    level,
-  });
-}
+
+/** Big homepage buttons: Wind / Rain / Fire / Storm only (levels 20, 30, 40, 50). */
+const planetButtons = (["wind", "rain", "fire", "storm"] as const).map((theme) => {
+  const meta = PLANET_META[theme];
+  return {
+    theme,
+    label: meta.label,
+    emoji: meta.emoji,
+    color: meta.color,
+    level: lastByTheme.get(theme)!,
+  };
+});
 ---
 
 <BaseLayout title={title}>
@@ -59,20 +64,6 @@ for (const [theme, level] of lastByTheme) {
           <strong>60 levels</strong> across 6 planets!
         </p>
         <a href="/games/tag-time/" class="crayon-btn mt-5">PLAY! &#9654;</a>
-        <p class="mt-4 text-base">
-          jump to level:
-          {planetJumps.map((w, i) => (
-            <>
-              {i > 0 ? <span aria-hidden="true"> &middot; </span> : " "}
-              <a
-                href={`/games/tag-time/?level=${w.level}`}
-                class="underline decoration-[color:var(--crayon-orange)] decoration-wavy font-bold"
-              >
-                {w.label} (level {w.level})
-              </a>
-            </>
-          ))}
-        </p>
         <figure class="mt-5">
           <img
             src="/ira-sketch-tag-time.jpg"
@@ -86,17 +77,27 @@ for (const [theme, level] of lastByTheme) {
         </figure>
       </article>
 
-      <!-- Coming soon -->
+      <!-- Planet jump buttons (replaces Coming soon) -->
       <article
-        class="sketchy-alt relative bg-white/50 p-5 pt-8 border-dashed shadow-[4px_5px_0_rgba(65,64,60,0.35)]"
+        class="sketchy-alt relative bg-white/70 p-5 pt-8 shadow-[4px_5px_0_rgba(65,64,60,0.35)]"
       >
         <span class="tape" aria-hidden="true" style="background: rgba(224,127,176,0.7);"></span>
-        <h2 class="text-3xl font-bold text-[color:var(--crayon-purple)]">Coming soon&hellip;</h2>
+        <h2 class="text-3xl font-bold text-[color:var(--crayon-purple)]">Jump to a planet!</h2>
         <p class="mt-1 text-lg">
-          New clothes and dances for the characters&hellip;
-          and lots more levels! (The <strong>2-player team mode</strong> is here already!)
+          Already finished Home? Skip ahead to a new world:
         </p>
-        <p class="mt-6 text-8xl text-center text-[color:var(--crayon-orange)]" aria-hidden="true">?</p>
+        <div class="mt-5 flex flex-col gap-3">
+          {planetButtons.map((p) => (
+            <a
+              href={`/games/tag-time/?level=${p.level}`}
+              class="crayon-btn text-center"
+              style={`background: ${p.color}; font-size: 1.45rem; padding: 0.75em 1.2em; width: 100%;`}
+            >
+              {p.emoji} {p.label}
+              <span style="opacity: 0.85; font-size: 0.85em;"> · level {p.level}</span>
+            </a>
+          ))}
+        </div>
       </article>
     </section>
 

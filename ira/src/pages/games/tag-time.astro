@@ -67,7 +67,14 @@ const totalLevels = levels.length;
              it never pushes content above the unreachable top (scroll-up fix) -->
         <div class="m-auto flex flex-col items-center gap-4">
           <p class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(-2deg);">Ira's Shop! 🛍️</p>
-          <p id="shopCoins" class="text-xl font-bold text-[color:var(--crayon-blue)]">your coins: 0</p>
+          <p
+            id="shopCoins"
+            class="sketchy bg-white/90 px-5 py-2 text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]"
+            style="transform: rotate(-1deg);"
+            aria-live="polite"
+          >
+            you have 0 coins 🪙
+          </p>
           <div id="shopRow" class="flex gap-3 flex-wrap justify-center px-4 max-w-[880px]"></div>
           <button id="shopBack" class="crayon-btn" style="background: var(--crayon-green);">back</button>
           <p class="text-base opacity-70">earn coins in the game — but careful: dying loses the coins from that level!</p>
