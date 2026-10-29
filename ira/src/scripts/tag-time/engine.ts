@@ -62,8 +62,10 @@ function makeState(i: number): WorldState {
       ...e,
       dir: 1,
       cy: e.y,
+      dropT: e.type === "rain" ? 0.5 : undefined,
     })) as EnemyRuntime[],
     deadEnemies: new Set(),
+    drops: [],
     time: 0,
     hint: "",
     hintT: 0,
@@ -117,6 +119,12 @@ export function spendCoins(n: number): boolean {
   return true;
 }
 
+/** "Play again": wipe the wallet and the saved level. */
+export function resetWallet(): void {
+  totalCoins = 0;
+  saveWallet();
+}
+
 export function say(text: string): void {
   st.hint = text;
   st.hintT = 2.2;
@@ -158,7 +166,7 @@ function rectOf(x: number, y: number, w: number, h: number): Rect {
 
 /* ---------- death & progress ---------- */
 
-function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird"): void {
+function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird" | "wind" | "rain" | "fire"): void {
   if (phase !== "playing") return;
   phase = "dead";
   deathTimer = 1.3;
@@ -205,29 +213,96 @@ function updateEnemies(dt: number): void {
       e.x = e.max;
       e.dir = -1;
     }
-    e.cy = e.type === "bird" ? e.y + Math.sin(st.time * 3 + e.min * 0.05) * (e.amp ?? 30) : e.y;
+    // flyers (bird, wind, rain) bob around y; ground villains (beast, fire) sit on it
+    const flies = e.type === "bird" || e.type === "wind" || e.type === "rain";
+    e.cy = flies ? e.y + Math.sin(st.time * 3 + e.min * 0.05) * (e.amp ?? 30) : e.y;
+
+    // rain clouds keep spitting droplets
+    if (e.type === "rain") {
+      e.dropT = (e.dropT ?? 0.5) - dt;
+      if (e.dropT <= 0) {
+        e.dropT = 0.55;
+        st.drops.push({ x: e.x + (Math.sin(st.time * 9) * 10), y: e.cy + 12, vy: 60 });
+      }
+    }
   }
 }
+
+function updateDrops(dt: number): void {
+  for (let i = st.drops.length - 1; i >= 0; i--) {
+    const d = st.drops[i];
+    const prevY = d.y;
+    d.vy += 900 * dt;
+    d.y += d.vy * dt;
+    // splash out when a drop lands on a platform or falls off the world
+    let gone = d.y > 560;
+    if (!gone) {
+      for (const p of st.level.platforms) {
+        if (d.x > p.x && d.x < p.x + p.w && prevY <= p.y + 4 && d.y >= p.y) {
+          gone = true;
+          break;
+        }
+      }
+    }
+    if (gone) st.drops.splice(i, 1);
+  }
+}
+
+function enemyBox(e: EnemyRuntime): Rect {
+  switch (e.type) {
+    case "beast":
+      return { x: e.x - 14, y: e.cy - 30, w: 28, h: 30 };
+    case "bird":
+      return { x: e.x - 12, y: e.cy - 12, w: 24, h: 22 };
+    case "wind":
+      return { x: e.x - 17, y: e.cy - 14, w: 34, h: 26 };
+    case "rain":
+      return { x: e.x - 19, y: e.cy - 14, w: 38, h: 28 };
+    case "fire":
+      return { x: e.x - 11, y: e.cy - 32, w: 22, h: 32 };
+  }
+}
+
+const STOMP_MSG: Record<EnemyRuntime["type"], string> = {
+  beast: "squashed it!",
+  bird: "bonked the bird!",
+  wind: "puffed the gust away!",
+  rain: "splashed the rain cloud!",
+  fire: "put out the fire!",
+};
 
 function enemyCollisions(pl: Player): void {
   for (let i = 0; i < st.enemies.length; i++) {
     if (st.deadEnemies.has(i)) continue;
     const e = st.enemies[i];
-    const box: Rect =
-      e.type === "beast"
-        ? { x: e.x - 14, y: e.cy - 30, w: 28, h: 30 }
-        : { x: e.x - 12, y: e.cy - 12, w: 24, h: 22 };
+    const box = enemyBox(e);
     if (!overlap(rectOf(pl.x + 2, pl.y + 2, PW - 4, PH - 2), box, 2)) continue;
 
     const stomping = pl.vy > 120 && pl.y + PH < box.y + box.h * 0.55;
     if (stomping) {
       st.deadEnemies.add(i);
+      // popping a rain cloud clears its falling drops too
+      if (e.type === "rain") st.drops.length = 0;
       pl.vy = -420;
       sounds.stomp();
-      say(e.type === "beast" ? "squashed it!" : "bonked the bird!");
+      say(STOMP_MSG[e.type]);
     } else {
       die(e.type);
       return;
+    }
+  }
+}
+
+/** Wind villains gently shove you along when you get close (they can't be "dodged" — just avoid the gust zone). */
+function windPush(pl: Player, dt: number): void {
+  for (let i = 0; i < st.enemies.length; i++) {
+    if (st.deadEnemies.has(i)) continue;
+    const e = st.enemies[i];
+    if (e.type !== "wind") continue;
+    const dx = Math.abs(e.x - (pl.x + PW / 2));
+    const dy = Math.abs(e.cy - (pl.y + PH / 2));
+    if (dx < 110 && dy < 70) {
+      pl.x += e.dir * 55 * dt;
     }
   }
 }
@@ -295,8 +370,13 @@ function stepPlayer(p: number, dt: number): void {
   for (const s of st.level.spikes) {
     if (overlap(body, s, 4)) return die("spikes");
   }
+  // raindrops from Drizzle clouds
+  for (const d of st.drops) {
+    if (overlap(body, rectOf(d.x - 4, d.y - 8, 8, 12), 2)) return die("rain");
+  }
   if (pl.y > H + 120) return die("fall");
 
+  windPush(pl, dt);
   enemyCollisions(pl);
   if (phase !== "playing") return;
 
@@ -345,6 +425,7 @@ function stepPlayer(p: number, dt: number): void {
 
 function physics(dt: number): void {
   updateEnemies(dt);
+  updateDrops(dt);
   for (let p = 0; p < playerCount; p++) {
     if (phase !== "playing") return;
     stepPlayer(p, dt);
