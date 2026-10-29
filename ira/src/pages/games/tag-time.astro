@@ -26,6 +26,7 @@ const totalLevels = levels.length;
         <span id="hudCoins" class="text-[color:var(--crayon-orange)]">coins: 0</span>
         <span id="hudKey1" class="opacity-30 grayscale">key 1</span>
         <span id="hudKey2" class="opacity-30 grayscale">key 2</span>
+        <button id="btnMusic" class="pointer-events-auto text-lg" aria-label="toggle music" style="background:none;border:none;cursor:pointer;font-size:1.3rem;">🔊</button>
       </div>
 
       <!-- Character picker -->
@@ -43,6 +44,7 @@ const totalLevels = levels.length;
             <button id="btn1P" class="crayon-btn" style="background: var(--crayon-green);">1 player</button>
             <button id="btn2P" class="crayon-btn" style="background: var(--crayon-blue);">2 players!</button>
           </div>
+          <button id="btnShopMode" class="crayon-btn" style="background: var(--crayon-orange);">🛍️ Shop</button>
           <p class="text-base sm:text-lg opacity-70">2 players: one on WASD, one on the arrow keys — or share a tablet!</p>
         </div>
         <div id="goSection" class="hidden flex-col items-center gap-3 cursor-pointer">
@@ -52,9 +54,30 @@ const totalLevels = levels.length;
             go!
           </button>
           <p class="text-lg sm:text-xl font-bold">tap here to start</p>
-          <button id="resetProgress" class="hidden text-base underline opacity-60">start over from level 1</button>
+          <div class="flex gap-4 items-center">
+            <button id="btnShopGo" class="crayon-btn" style="background: var(--crayon-orange); font-size: 1rem;">🛍️ Shop</button>
+            <button id="resetProgress" class="hidden text-base underline opacity-60">start over from level 1</button>
+          </div>
         </div>
       </div>
+
+      <!-- Coin shop -->
+      <div id="shopOverlay" class="overlay absolute inset-0 hidden flex-col items-center overflow-y-auto py-4" style="background: rgba(253,249,239,0.97);">
+        <!-- m-auto wrapper: centers when it fits, but unlike justify-center
+             it never pushes content above the unreachable top (scroll-up fix) -->
+        <div class="m-auto flex flex-col items-center gap-4">
+          <p class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(-2deg);">Ira's Shop! 🛍️</p>
+          <p id="shopCoins" class="text-xl font-bold text-[color:var(--crayon-blue)]">your coins: 0</p>
+          <div id="shopRow" class="flex gap-3 flex-wrap justify-center px-4 max-w-[880px]"></div>
+          <button id="shopBack" class="crayon-btn" style="background: var(--crayon-green);">back</button>
+          <p class="text-base opacity-70">earn coins in the game — but careful: dying loses the coins from that level!</p>
+        </div>
+      </div>
+
+      <!-- Celebration dancers: a fixed, full-viewport canvas ABOVE everything.
+           The dancers are drawn OUTSIDE the foggy game frame — on the white
+           page area beside/below the game — so they are fully visible. -->
+      <canvas id="danceCanvas" class="pointer-events-none" style="position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 60;" aria-hidden="true"></canvas>
 
       <!-- Death -->
       <div id="deathOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-2 pointer-events-none" style="background: rgba(224,79,79,0.25);">
@@ -63,14 +86,14 @@ const totalLevels = levels.length;
       </div>
 
       <!-- Level complete -->
-      <div id="levelOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.95);">
+      <div id="levelOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.82);">
         <p class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-green)]" style="transform: rotate(-1.5deg);">You win! ⭐</p>
         <p id="levelStats" class="text-lg sm:text-2xl font-bold"></p>
         <button id="nextBtn" class="crayon-btn">next level &rarr;</button>
       </div>
 
       <!-- Game complete -->
-      <div id="winOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.95);">
+      <div id="winOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.82);">
         <p class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(2deg);">You finished all {totalLevels} levels! 🏆</p>
         <p class="text-lg sm:text-2xl font-bold" id="winStats"></p>
         <button id="againBtn" class="crayon-btn">play again!</button>
@@ -102,12 +125,19 @@ const totalLevels = levels.length;
 
 <style>
   #stage {
-    /* stop iOS Safari from scrolling / rubber-banding / zooming mid-game */
-    touch-action: none;
+    /* stop iOS text selection / long-press callouts during play.
+       NOTE: touch-action is NOT disabled here anymore — that blocked
+       scrolling inside the shop overlay on touch devices. The canvas
+       keeps touch-action: none instead. */
     -webkit-user-select: none;
     -webkit-touch-callout: none;
   }
+  #stage canvas {
+    touch-action: none;
+  }
   .overlay {
+    touch-action: pan-y; /* let touch screens scroll overlays (the shop!) */
+    overscroll-behavior: contain;
     display: flex;
   }
   .overlay.hidden {
