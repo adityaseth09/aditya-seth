@@ -1,0 +1,28 @@
+---
+import site from '../data/site.json';
+---
+
+<section id="faq" class="py-20 sm:py-24" aria-label="Frequently asked questions">
+	<div class="section-shell grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
+		<div data-reveal>
+			<p class="eyebrow mb-3">FAQ</p>
+			<h2 class="font-display text-3xl font-bold tracking-tight text-text sm:text-4xl">Questions parents ask</h2>
+			<p class="mt-3 text-[15px] leading-relaxed text-muted">
+				Something else on your mind? Use the contact section below — questions are free and answered in English, German or Hindi.
+			</p>
+		</div>
+		<div class="grid gap-3">
+			{
+				site.faq.map((item) => (
+					<details class="faq-item card-surface group px-5 py-4" data-reveal>
+						<summary class="flex cursor-pointer items-center justify-between gap-4 text-[14.5px] font-semibold text-text marker:content-none">
+							{item.q}
+							<span class="faq-icon shrink-0 font-mono text-lg text-accent transition-transform duration-200">+</span>
+						</summary>
+						<p class="mt-3 border-t border-border/50 pt-3 text-[13.5px] leading-relaxed text-muted">{item.a}</p>
+					</details>
+				))
+			}
+		</div>
+	</div>
+</section>

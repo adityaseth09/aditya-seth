@@ -1,0 +1,40 @@
+---
+import site from '../data/site.json';
+
+const testimonials = site.testimonials;
+---
+
+<section id="testimonials" class="border-y border-border/60 bg-surface/50 py-20 sm:py-24" aria-label="Testimonials">
+	<div class="section-shell">
+		<div class="mb-10 max-w-2xl" data-reveal>
+			<p class="eyebrow mb-3">Pupils &amp; parents</p>
+			<h2 class="font-display text-3xl font-bold tracking-tight text-text sm:text-4xl">Be among the first success stories</h2>
+		</div>
+
+		{
+			testimonials.length > 0 ? (
+				<div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+					{testimonials.map((item: any) => (
+						<figure class="card-surface p-6" data-reveal>
+							<blockquote class="text-[14px] leading-relaxed text-text">&ldquo;{item.quote}&rdquo;</blockquote>
+							<figcaption class="mt-4 flex items-center gap-3">
+								<span class="flex h-9 w-9 items-center justify-center rounded-full bg-accent-soft font-display text-[13px] font-bold text-accent">{item.initials}</span>
+								<span class="text-[13px] font-semibold text-text">{item.author}<span class="block font-normal text-muted">{item.role}</span></span>
+							</figcaption>
+						</figure>
+					))}
+				</div>
+			) : (
+				<div class="card-surface grid items-center gap-6 p-8 sm:grid-cols-[1fr_auto]" data-reveal>
+					<div>
+						<p class="font-display text-lg font-bold text-text">Coaching spots just opened — the first reviews will come from this season's pupils.</p>
+						<p class="mt-2 text-[14px] leading-relaxed text-muted">
+							Until then, his playing record speaks for itself: two Berlin titles, a Dutch club-team championship and a peak rating of 2012 — all verifiable via the links on this page.
+						</p>
+					</div>
+					<a href={site.booking.calendly} target="_blank" rel="noopener" class="btn-primary whitespace-nowrap">Claim a free trial</a>
+				</div>
+			)
+		}
+	</div>
+</section>

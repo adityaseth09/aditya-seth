@@ -1,0 +1,80 @@
+---
+import site from '../data/site.json';
+
+const chapters = [
+	{
+		place: 'Berlin, Germany',
+		years: '2017 – 2023',
+		flag: 'DE',
+		text: 'Aakrit learned chess in Berlin and joined SC Weisse Dame. At age 10 he was already runner-up in the Berlin U10 Blitz Championship; in 2022 he swept the U12 age group, winning both the classical and blitz titles, and was selected for the Berlin state squad (Landeskader).',
+	},
+	{
+		place: 'Amstelveen, Netherlands',
+		years: '2023 – now',
+		flag: 'NL',
+		text: 'With Zukertort Amstelveen he became a Dutch youth club-team champion in 2023, climbed the Dutch team competition (Klasse 3), reached the national youth championship U14 and pushed his FIDE rating past 2000 at age 14 — beating opponents rated 2259, 2200 and 2083 along the way.',
+	},
+	{
+		place: 'Himachal Pradesh, India',
+		years: 'visits',
+		flag: 'IN',
+		text: 'Playing FIDE-rated rapid events in India — including the 1st Kangra International Open — keeps his game sharp against all-ages fields and connects him with the chess community his family comes from.',
+	},
+];
+---
+
+<section id="about" class="py-20 sm:py-24" aria-label="About Aakrit">
+	<div class="section-shell">
+		<div class="mb-10 max-w-2xl" data-reveal>
+			<p class="eyebrow mb-3">About</p>
+			<h2 class="font-display text-3xl font-bold tracking-tight text-text sm:text-4xl">One chess journey, three countries</h2>
+			<p class="mt-3 text-[15px] leading-relaxed text-muted">
+				Born 2011 — {site.profile.name} grew up with a chessboard in three languages. He knows what it is like to be the youngest in the tournament hall, and exactly how to climb from beginner to 2000.
+			</p>
+		</div>
+
+		<div class="grid gap-5 md:grid-cols-3">
+			{
+				chapters.map((chapter) => (
+					<article class="card-surface flex flex-col gap-4 p-6" data-reveal>
+						<div class="flex items-center justify-between">
+							<span class="chip font-semibold text-text">{chapter.flag}</span>
+							<span class="font-mono text-[11px] text-muted">{chapter.years}</span>
+						</div>
+						<h3 class="font-display text-lg font-bold text-text">{chapter.place}</h3>
+						<p class="text-[14px] leading-relaxed text-muted">{chapter.text}</p>
+					</article>
+				))
+			}
+		</div>
+
+		<div class="mt-6 grid gap-5 md:grid-cols-2" data-reveal>
+			<div class="card-surface p-6">
+				<h3 class="font-display text-lg font-bold text-text">Clubs</h3>
+				<ul class="mt-3 grid gap-3">
+					{
+						site.profile.clubs.map((club) => (
+							<li class="flex items-center justify-between gap-3 border-b border-border/60 pb-3 last:border-none last:pb-0">
+								<span class="text-sm font-semibold text-text">{club.name}</span>
+								<span class="chip">{club.country}</span>
+							</li>
+						))
+					}
+				</ul>
+			</div>
+			<div class="card-surface p-6">
+				<h3 class="font-display text-lg font-bold text-text">Languages</h3>
+				<p class="mt-2 text-[14px] text-muted">Your child learns fastest in the language they think in. Lessons are available in all three:</p>
+				<ul class="mt-3 flex flex-wrap gap-2">
+					{
+						site.profile.languages.map((language) => (
+							<li class="chip font-semibold text-text">
+								{language.code} · {language.name} — {language.level}
+							</li>
+						))
+					}
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>

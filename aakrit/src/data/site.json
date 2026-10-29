@@ -1,0 +1,338 @@
+{
+	"profile": {
+		"name": "Aakrit Seth",
+		"title": "FIDE-Rated Chess Coach",
+		"tagline": "Two-time Berlin Youth Champion. Peak FIDE 2012. Online chess coaching for kids and teens — in English, German or Hindi.",
+		"birthYear": 2011,
+		"location": "Amstelveen, Netherlands",
+		"fideId": "34604812",
+		"federation": "NED",
+		"clubs": [
+			{ "name": "Zukertort Amstelveen", "country": "Netherlands", "note": "Dutch team competition, Klasse 3" },
+			{ "name": "SC Weisse Dame", "country": "Berlin, Germany", "note": "Youth club where he won two Berlin titles" }
+		],
+		"languages": [
+			{ "code": "EN", "name": "English", "level": "Fluent" },
+			{ "code": "DE", "name": "German", "level": "Fluent" },
+			{ "code": "HI", "name": "Hindi", "level": "Fluent" }
+		],
+		"email": "aakrit@seth.ltd",
+		"whatsapp": "",
+		"photos": {
+			"hero": "/images/aakrit.jpg",
+			"heroFallbackInitials": "AS"
+		}
+	},
+	"links": {
+		"fide": "https://ratings.fide.com/profile/34604812",
+		"chessever": "https://chessever.com/player/aakrit-seth/34604812",
+		"radarchess": "https://radarchess.com/players/34604812-aakrit-seth",
+		"knsb": "https://barblitz.co/knsb/9032397/",
+		"berlinYouth": "https://www.schachjugend-in-berlin.de/",
+		"zukertort": "https://www.svzukertort.nl/"
+	},
+	"ratings": {
+		"updatedAt": "October 2026 FIDE rating list",
+		"fide": {
+			"classical": 1974,
+			"rapid": 1763,
+			"blitz": 1779,
+			"peakClassical": 2012,
+			"peakClassicalDate": "May 2026",
+			"peakRapid": 1812,
+			"peakBlitz": 1861
+		},
+		"knsb": {
+			"classical": 1989,
+			"rapid": 1876,
+			"blitz": 1810,
+			"peakClassical": 2060,
+			"peakClassicalDate": "May 2026"
+		},
+		"dwz": {
+			"peak": 1704,
+			"peakDate": "2022"
+		}
+	},
+	"ratingHistory": [
+		{ "date": "2023-02", "rating": 1588 },
+		{ "date": "2023-03", "rating": 1543 },
+		{ "date": "2023-04", "rating": 1543 },
+		{ "date": "2023-05", "rating": 1593 },
+		{ "date": "2023-06", "rating": 1649 },
+		{ "date": "2023-07", "rating": 1649 },
+		{ "date": "2023-08", "rating": 1894 },
+		{ "date": "2024-09", "rating": 1882 },
+		{ "date": "2024-11", "rating": 1898 },
+		{ "date": "2024-12", "rating": 1886 },
+		{ "date": "2025-01", "rating": 1870 },
+		{ "date": "2025-02", "rating": 1811 },
+		{ "date": "2025-03", "rating": 1843 },
+		{ "date": "2025-10", "rating": 1892 },
+		{ "date": "2025-11", "rating": 1957 },
+		{ "date": "2025-12", "rating": 1966 },
+		{ "date": "2026-01", "rating": 1966 },
+		{ "date": "2026-02", "rating": 1966 },
+		{ "date": "2026-03", "rating": 1949 },
+		{ "date": "2026-04", "rating": 1975 },
+		{ "date": "2026-05", "rating": 2012 },
+		{ "date": "2026-06", "rating": 2012 },
+		{ "date": "2026-07", "rating": 1974 },
+		{ "date": "2026-10", "rating": 1974 }
+	],
+	"headlineAchievements": [
+		{
+			"title": "2× Berlin Youth Champion U12",
+			"year": "2022",
+			"detail": "Won both the Berlin Youth Individual Championship (classical) and the Berlin Youth Blitz Championship in the U12 age group, playing for SC Weisse Dame.",
+			"source": "https://www.schachjugend-in-berlin.de/bjem-2022/",
+			"featured": true
+		},
+		{
+			"title": "Dutch Youth Club Team Champion",
+			"year": "2023",
+			"detail": "National club-team champion of the Netherlands with Zukertort Amstelveen — the club's first national youth title in 13 years.",
+			"source": "https://www.amstelveensnieuwsblad.nl/sport/denksport/89559/zukertort-jeugd-nederlands-kampioen-schaken-voor-clubteams",
+			"featured": true
+		},
+		{
+			"title": "Peak FIDE rating 2012",
+			"year": "2026",
+			"detail": "Crossed 2000 at age 14. Climbed over 450 rating points in three years — the same journey he now coaches.",
+			"source": "https://ratings.fide.com/profile/34604812",
+			"featured": true
+		}
+	],
+	"achievements": [
+		{
+			"title": "Berliner Jugend-Einzelmeister U12",
+			"year": "2022",
+			"detail": "Berlin Youth Individual Champion (classical), SC Weisse Dame. Qualified him for the German Youth Championship (DEM).",
+			"source": "https://www.schachjugend-in-berlin.de/bjem-2022/"
+		},
+		{
+			"title": "Berliner Jugend-Blitzmeister U12",
+			"year": "2022",
+			"detail": "Berlin Youth Blitz Champion, SC Weisse Dame.",
+			"source": "https://www.schachjugend-in-berlin.de/berliner-jugendblitzmeisterschaft-2022/"
+		},
+		{
+			"title": "Berliner Vizemeister U12 (Rapid)",
+			"year": "2023",
+			"detail": "Runner-up at the Berlin Youth Rapid Championship.",
+			"source": "https://www.schachjugend-in-berlin.de/bjschnellm-am-mueggelsee-2023/"
+		},
+		{
+			"title": "Berliner Blitz-Vizemeister U10",
+			"year": "2021",
+			"detail": "Runner-up at the Berlin Youth Blitz Championship, age 10.",
+			"source": "https://www.schachjugend-in-berlin.de/berliner-jugendblitzmeisterschaft-2021/"
+		},
+		{
+			"title": "Berlin State Squad (Landeskader D3)",
+			"year": "2023/24",
+			"detail": "Selected for the Berlin youth state squad — one of the top players of his age group in Berlin.",
+			"source": "https://www.schachjugend-in-berlin.de/kader-2023-24/"
+		},
+		{
+			"title": "Dutch Youth Club Team Champion",
+			"year": "2023",
+			"detail": "National champion with Zukertort Amstelveen, beating the top 12 youth club teams in the Netherlands.",
+			"source": "https://www.amstelveensnieuwsblad.nl/sport/denksport/89559/zukertort-jeugd-nederlands-kampioen-schaken-voor-clubteams"
+		},
+		{
+			"title": "German Youth Championships (DEM) participant",
+			"year": "2021 & 2022",
+			"detail": "Played DEM U10 2021 (5.5/11) and DEM U12 2022 (4.5/9) — Germany's strongest youth fields.",
+			"source": "https://www.deutsche-schachjugend.de/2022/dem-u12/spieler/16/"
+		},
+		{
+			"title": "German Youth Team Championship (DVM) U10 — board 1",
+			"year": "2021",
+			"detail": "Top board for SC Weisse Dame, scoring 4.5/7 against Germany's best youth club teams.",
+			"source": "https://www.deutsche-schachjugend.de/2021/dvm-u10/sc-weisse-dame/"
+		},
+		{
+			"title": "Dutch Youth Championship U14",
+			"year": "2025",
+			"detail": "Scored 5.5/9 at the national youth championship of the Netherlands.",
+			"source": "https://chessever.com/player/aakrit-seth/34604812/events"
+		},
+		{
+			"title": "Beat a 2259-rated opponent",
+			"year": "2026",
+			"detail": "Defeated Enrique Rodriguez Abreu (2259) at the Tapijtgigant Open ASK 2026, on the way to a performance rating of 2141 — his best tournament performance.",
+			"source": "https://barblitz.co/knsb/9032397/?view=fide"
+		},
+		{
+			"title": "1st Kangra International Open (India)",
+			"year": "2025/26",
+			"detail": "Scored 5.5/8 in the FIDE-rated rapid section against an international field in Himachal Pradesh, gaining +33.6 rapid rating points.",
+			"source": "https://barblitz.co/knsb/9032397/?view=fide"
+		},
+		{
+			"title": "Amsterdam Science Park — dominant group win",
+			"year": "2022",
+			"detail": "Scored 6/7 in Group C, gaining +112 rating points in a single tournament.",
+			"source": "https://barblitz.co/knsb/9032397/"
+		}
+	],
+	"trophies": [],
+	"tournaments": {
+		"Germany": [
+			{ "name": "Berliner Jugend-Einzelmeisterschaft U12", "year": "2022", "result": "1st place — Berlin Champion" },
+			{ "name": "Berliner Jugend-Blitzmeisterschaft U12", "year": "2022", "result": "1st place — Berlin Blitz Champion" },
+			{ "name": "Berliner Jugend-Blitzmeisterschaft U10", "year": "2021", "result": "2nd place" },
+			{ "name": "Berliner Schnellschachmeisterschaft U12", "year": "2023", "result": "2nd place" },
+			{ "name": "Berliner Jugend-Einzelmeisterschaft U12", "year": "2023", "result": "3rd place" },
+			{ "name": "Deutsche Jugend-Einzelmeisterschaft U10", "year": "2021", "result": "5.5/11" },
+			{ "name": "Deutsche Jugend-Einzelmeisterschaft U12", "year": "2022", "result": "4.5/9" },
+			{ "name": "Deutsche Jugendmannschaftsmeisterschaft U10 (board 1)", "year": "2021", "result": "4.5/7 for SC Weisse Dame" },
+			{ "name": "Deutsche Ländermeisterschaft", "year": "2026", "result": "5/7 (4W 2D 1L)" },
+			{ "name": "Bäke-Pokal, Berlin", "year": "2025", "result": "Club youth tournament, SC Weisse Dame" }
+		],
+		"Netherlands": [
+			{ "name": "Dutch Youth Club Team Championship", "year": "2023", "result": "National Champion with Zukertort Amstelveen" },
+			{ "name": "Dutch Youth Championship U14 (NJK)", "year": "2025", "result": "5.5/9" },
+			{ "name": "Open Nederlandse Jeugdkampioenschappen, Group AB", "year": "2025/26", "result": "5.5/9" },
+			{ "name": "Dutch Team Competition (Meesterklasse Klasse 3), Zukertort 2", "year": "2023–", "result": "Regular board, wins vs 2083 and higher-rated opponents" },
+			{ "name": "Tapijtgigant Open ASK, Group A", "year": "2026", "result": "3/6 vs avg 2141 — performance rating 2141, beat a 2259" },
+			{ "name": "Amsterdam Chess Open, Group B2", "year": "2025", "result": "4.5/6 (+50 rating)" },
+			{ "name": "NK Snelschaken (Dutch Blitz Championship)", "year": "2024 & 2025", "result": "Competed in the national blitz championship" },
+			{ "name": "Open NK Rapid", "year": "2025", "result": "5.5/9" },
+			{ "name": "Amsterdam Science Park Chess Tournament", "year": "2022–2025", "result": "Group C 2022: 6/7 (+112); regular competitor" },
+			{ "name": "16e BPB Limburg Open, Group B", "year": "2024", "result": "2.5/6" },
+			{ "name": "HSG Open, Group A", "year": "2024 & 2026", "result": "Top-group Swiss events" },
+			{ "name": "Open Kampioenschap van Utrecht", "year": "2024", "result": "Win vs a 2079-rated opponent" }
+		],
+		"India": [
+			{ "name": "1st Kangra International Open, FIDE-rated Rapid (Himachal Pradesh)", "year": "2025/26", "result": "5.5/8 — 5 wins, 1 draw, 2 losses (+33.6 rapid)" },
+			{ "name": "ChessVeda FIDE Rapid Rating Tournament", "year": "2025", "result": "4/7 against an all-ages Indian field" }
+		]
+	},
+	"coach": {
+		"pitch": "A 15-year-old national-level youth player who was recently where your child is now — and can explain exactly how to make the next jump.",
+		"audience": [
+			"Complete beginners (age 6+) learning the moves",
+			"Club players up to ~1600 rating who want to climb",
+			"Kids and teens preparing for their first rated tournaments",
+			"Adult beginners welcome too"
+		],
+		"format": [
+			"1-on-1 lessons online via Lichess or Chess.com analysis boards",
+			"Video call on Zoom or Google Meet",
+			"Personal game analysis after every lesson",
+			"Homework puzzles and a training plan between lessons"
+		],
+		"method": [
+			{
+				"name": "Openings that grow with you",
+				"detail": "Learn the system Aakrit used to climb from 1543 to 2000+: the Accelerated London as White and the Sicilian Dragon as Black — sound, easy to learn, hard to refute."
+			},
+			{
+				"name": "Tactics that stick",
+				"detail": "Structured puzzle training matched to your level, with patterns to recognise for a lifetime."
+			},
+			{
+				"name": "Your own games as the textbook",
+				"detail": "Every lesson is built around your games: what happened, why, and the one habit to fix next."
+			},
+			{
+				"name": "Tournament preparation",
+				"detail": "Time management, clock technique and nerves — learned from 8 years and 75+ rated tournaments in three countries."
+			}
+		]
+	},
+	"pricing": [
+		{
+			"name": "Free trial lesson",
+			"price": "€0",
+			"per": "20 minutes",
+			"features": [
+				"Meet Aakrit and see how he teaches",
+				"Assess level and set first goals",
+				"No commitment — booking takes 2 minutes"
+			],
+			"cta": "Book free trial",
+			"featured": true,
+			"highlight": "Start here"
+		},
+		{
+			"name": "Single lesson",
+			"price": "€20",
+			"per": "60 minutes",
+			"features": [
+				"1-on-1 online lesson",
+				"Game analysis included",
+				"Lesson notes and puzzle homework"
+			],
+			"cta": "Book a lesson"
+		},
+		{
+			"name": "4-lesson bundle",
+			"price": "€70",
+			"per": "4 × 60 minutes",
+			"features": [
+				"€17.50 per lesson — save €10",
+				"Personal training plan",
+				"Priority scheduling"
+			],
+			"cta": "Get the bundle"
+		}
+	],
+	"booking": {
+		"calendly": "https://calendly.com/your-link/replace-me",
+		"payment": {
+			"tikkie": "",
+			"paypal": ""
+		},
+		"note": "Payment by Tikkie (NL), bank transfer or PayPal after booking."
+	},
+	"testimonials": [],
+	"faq": [
+		{
+			"q": "What level do you coach?",
+			"a": "From complete beginners (learning the moves) up to players around 1600. If you're above that, Aakrit will tell you honestly and can help you find the right trainer."
+		},
+		{
+			"q": "What ages do you teach?",
+			"a": "Mostly kids and teens (6–16), because Aakrit is 15 and pupils relate to a coach close to their age. Adult beginners are also welcome."
+		},
+		{
+			"q": "Which language are the lessons in?",
+			"a": "English, German or Hindi — whichever your child is most comfortable in. Growing up in Berlin and the Netherlands and playing in India, Aakrit speaks all three fluently."
+		},
+		{
+			"q": "How do online lessons work?",
+			"a": "You get a video call link (Zoom or Google Meet) and a shared analysis board on Lichess or Chess.com. All your child needs is a laptop or tablet — no chess set required."
+		},
+		{
+			"q": "Is the trial lesson really free?",
+			"a": "Yes — 20 minutes, no commitment, no payment details. It's the easiest way to see if the coaching is a good fit."
+		},
+		{
+			"q": "How do I book and pay?",
+			"a": "Pick a time via the booking link on this page. Payment is by Tikkie (Netherlands), bank transfer or PayPal — details are confirmed when you book."
+		},
+		{
+			"q": "What time zones do you teach in?",
+			"a": "Aakrit is based in the Netherlands (CET/CEST), so evening slots work well for Europe; weekend mornings also work for families in India."
+		},
+		{
+			"q": "Do you offer group lessons?",
+			"a": "Not yet — 1-on-1 gives the fastest improvement. Small groups (2–4 kids) may be added later; ask via the contact section."
+		}
+	],
+	"gallery": [
+		{
+			"src": "/images/zukertort-champions-2023.jpg",
+			"caption": "Dutch Youth Club Team Champions 2023 — Zukertort Amstelveen (Aakrit, front row)",
+			"credit": "Photo: Amstelveens Nieuwsblad"
+		},
+		{
+			"src": "/images/sc-weisse-dame-dvm-2021.png",
+			"caption": "SC Weisse Dame, German Youth Team Championship U10 2021 — Aakrit on board 1",
+			"credit": "Photo: Deutsche Schachjugend"
+		}
+	]
+}

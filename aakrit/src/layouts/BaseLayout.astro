@@ -1,0 +1,138 @@
+---
+import '../styles/global.css';
+import site from '../data/site.json';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = `${site.profile.name} — ${site.profile.title}`,
+	description = site.profile.tagline,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL('/og-image.svg', Astro.site);
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Person',
+	name: site.profile.name,
+	jobTitle: site.profile.title,
+	url: Astro.site,
+	email: `mailto:${site.profile.email}`,
+	description: site.profile.tagline,
+	knowsLanguage: ['en', 'de', 'hi'],
+	address: {
+		'@type': 'PostalAddress',
+		addressLocality: site.profile.location,
+	},
+	memberOf: site.profile.clubs.map((club) => ({ '@type': 'SportsTeam', name: club.name })),
+	makesOffer: site.pricing
+		.filter((tier) => tier.price !== '€0')
+		.map((tier) => ({
+			'@type': 'Offer',
+			name: tier.name,
+			price: tier.price.replace('€', ''),
+			priceCurrency: 'EUR',
+			availability: 'https://schema.org/InStock',
+		})),
+	sameAs: Object.values(site.links),
+};
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="author" content={site.profile.name} />
+		<meta name="theme-color" content="#0e1310" media="(prefers-color-scheme: dark)" />
+		<meta name="theme-color" content="#f8f4ec" media="(prefers-color-scheme: light)" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="canonical" href={canonicalURL} />
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:image" content={ogImage} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImage} />
+		<title>{title}</title>
+		<script is:inline>
+			(function () {
+				try {
+					if (localStorage.getItem('theme') !== 'light') {
+						document.documentElement.classList.add('dark');
+					}
+				} catch (e) {
+					document.documentElement.classList.add('dark');
+				}
+			})();
+		</script>
+		<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+	</head>
+	<body>
+		<a
+			href="#main"
+			class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-accent focus:px-4 focus:py-2 focus:text-background"
+		>
+			Skip to content
+		</a>
+		<slot />
+		<script is:inline>
+			(function () {
+				const revealElements = document.querySelectorAll('[data-reveal]');
+				if ('IntersectionObserver' in window && revealElements.length) {
+					const observer = new IntersectionObserver(
+						(entries) => {
+							for (const entry of entries) {
+								if (entry.isIntersecting) {
+									entry.target.classList.add('is-visible');
+									observer.unobserve(entry.target);
+								}
+							}
+						},
+						{ threshold: 0.12, rootMargin: '0px 0px -8% 0px' },
+					);
+					revealElements.forEach((element) => observer.observe(element));
+				} else {
+					revealElements.forEach((element) => element.classList.add('is-visible'));
+				}
+
+				const counters = document.querySelectorAll('[data-count-up]');
+				const animateCounter = (element) => {
+					const target = Number(element.dataset.value);
+					const duration = 1200;
+					const start = performance.now();
+					const tick = (now) => {
+						const progress = Math.min((now - start) / duration, 1);
+						const eased = 1 - Math.pow(1 - progress, 3);
+						element.textContent = String(Math.round(target * eased));
+						if (progress < 1) requestAnimationFrame(tick);
+					};
+					requestAnimationFrame(tick);
+				};
+
+				if ('IntersectionObserver' in window && counters.length) {
+					const counterObserver = new IntersectionObserver(
+						(entries) => {
+							for (const entry of entries) {
+								if (entry.isIntersecting) {
+									animateCounter(entry.target);
+									counterObserver.unobserve(entry.target);
+								}
+							}
+						},
+						{ threshold: 0.4 },
+					);
+					counters.forEach((counter) => counterObserver.observe(counter));
+				}
+			})();
+		</script>
+	</body>
+</html>

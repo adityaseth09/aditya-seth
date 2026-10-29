@@ -1,0 +1,159 @@
+@import "tailwindcss";
+@import "@fontsource-variable/manrope";
+@import "@fontsource-variable/sora";
+@import "@fontsource-variable/jetbrains-mono";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--font-sans: "Manrope Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-display: "Sora Variable", ui-sans-serif, system-ui, sans-serif;
+	--font-mono: "JetBrains Mono Variable", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+	/* light — ivory board */
+	--color-background: #f8f4ec;
+	--color-surface: #fffdf9;
+	--color-elevated: #f0e9db;
+	--color-border: #ddd2bb;
+	--color-text: #221c11;
+	--color-muted: #71654f;
+	--color-accent: #b48a1e;
+	--color-accent-soft: #f4ead0;
+	--color-accent-2: #2f7d5a;
+	--color-accent-2-soft: #ddeee5;
+	--color-glow: rgb(180 138 30 / 0.12);
+	--color-glow-2: rgb(47 125 90 / 0.10);
+}
+
+.dark {
+	/* dark — tournament hall green-black */
+	--color-background: #0e1310;
+	--color-surface: #141b16;
+	--color-elevated: #1a241d;
+	--color-border: #2a3830;
+	--color-text: #eef2ec;
+	--color-muted: #9db09e;
+	--color-accent: #e6c35c;
+	--color-accent-soft: #323021;
+	--color-accent-2: #57c793;
+	--color-accent-2-soft: #183027;
+	--color-glow: rgb(230 195 92 / 0.10);
+	--color-glow-2: rgb(87 199 147 / 0.08);
+}
+
+@layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		@apply bg-background text-text font-sans antialiased;
+		background-image:
+			radial-gradient(60rem 40rem at 8% -10%, var(--color-glow), transparent 60%),
+			radial-gradient(50rem 30rem at 100% 0%, var(--color-glow-2), transparent 60%);
+		background-repeat: no-repeat;
+	}
+
+	::selection {
+		background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+	}
+
+	:focus-visible {
+		@apply outline-2 outline-offset-2 outline-accent;
+	}
+}
+
+@layer utilities {
+	.font-display {
+		font-family: var(--font-display);
+	}
+
+	.tabular-nums {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.text-gradient {
+		background: linear-gradient(120deg, var(--color-accent) 0%, var(--color-accent-2) 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+	}
+
+	.card-surface {
+		@apply rounded-2xl border border-border bg-surface/80 backdrop-blur-sm;
+		box-shadow:
+			0 1px 0 rgb(255 255 255 / 0.04) inset,
+			0 20px 50px -30px rgb(0 0 0 / 0.45);
+	}
+
+	.section-shell {
+		@apply mx-auto w-full max-w-6xl px-6 sm:px-8;
+	}
+
+	.chip {
+		@apply inline-flex items-center gap-1.5 rounded-md border border-border bg-elevated/70 px-2.5 py-1 font-mono text-[12px] text-muted;
+	}
+
+	.chip-gold {
+		@apply inline-flex items-center gap-1.5 rounded-md border border-accent/40 bg-accent-soft px-2.5 py-1 font-mono text-[12px] text-accent;
+	}
+
+	.btn-primary {
+		@apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-background transition hover:brightness-110;
+		box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--color-accent) 70%, transparent);
+	}
+
+	.dark .btn-primary {
+		@apply text-background;
+	}
+
+	.btn-ghost {
+		@apply inline-flex items-center justify-center gap-2 rounded-full border border-border bg-surface/70 px-6 py-3 text-sm font-medium text-text transition hover:border-accent/50;
+	}
+
+	.eyebrow {
+		@apply font-mono text-[11px] uppercase tracking-[0.18em] text-accent;
+	}
+
+	/* subtle chessboard pattern */
+	.board-pattern {
+		background-image: conic-gradient(
+			color-mix(in srgb, var(--color-border) 55%, transparent) 0 25%,
+			transparent 0 50%,
+			color-mix(in srgb, var(--color-border) 55%, transparent) 0 75%,
+			transparent 0
+		);
+		background-size: 56px 56px;
+	}
+
+	/* reveal-on-scroll */
+	[data-reveal] {
+		opacity: 0;
+		transform: translateY(14px);
+		transition:
+			opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	[data-reveal].is-visible {
+		opacity: 1;
+		transform: none;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		[data-reveal] {
+			opacity: 1;
+			transform: none;
+			transition: none;
+		}
+	}
+
+	/* faq accordion */
+	details.faq-item summary::-webkit-details-marker {
+		display: none;
+	}
+
+	details.faq-item[open] summary .faq-icon {
+		transform: rotate(45deg);
+	}
+}
