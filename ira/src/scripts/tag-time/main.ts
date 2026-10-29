@@ -5,12 +5,12 @@
 import { levels as LEVELS } from "../../data/levels.json";
 import type { LevelData } from "./render";
 import { drawBackground, drawWorld } from "./render";
-import { CHARACTERS, drawCharacter, type CharacterDef, type Pose } from "./characters";
+import { CHARACTERS, drawCharacter, drawPet, type CharacterDef, type Pose } from "./characters";
 import { sounds, unlockAudio, startMusic, setMusic, musicPref, isMusicOn, currentSongId } from "./sounds";
 import { initInput, setPlayerCount } from "./input";
 import { buildPicker, type PickerHandle } from "./picker";
 import { initUI, showOverlay } from "./ui";
-import { buildShop, selectedOutfit, selectedDance, type ShopHandle } from "./shop";
+import { buildShop, selectedOutfit, selectedDance, selectedPet, type ShopHandle } from "./shop";
 import * as E from "./engine";
 
 const canvas = document.getElementById("game") as HTMLCanvasElement;
@@ -194,7 +194,7 @@ function setupFlow(): void {
 
   document.getElementById("againBtn")?.addEventListener("click", () => {
     E.saveLevel(1);
-    E.totalCoins = 0;
+    E.resetWallet();
     showModeSelect();
   });
 
@@ -209,6 +209,29 @@ function poseOf(p: number): Pose {
   if (!pl.onGround) return pl.vy < 0 ? "jump" : "fall";
   if (Math.abs(pl.vx) > 10) return "run";
   return "idle";
+}
+
+/* ---------- pet sidekick: follows player 1 everywhere ---------- */
+let petX = 0;
+let petY = 0;
+let petSeen = false;
+
+function drawPetInWorld(time: number): void {
+  if (!ctx) return;
+  const petId = selectedPet();
+  if (!petId) return;
+  const pl = E.players[0];
+  // trail a little behind the player, on their back side
+  const tx = pl.x + E.PW / 2 - pl.facing * 44;
+  const ty = pl.y + E.PH;
+  if (!petSeen || Math.hypot(tx - petX, ty - petY) > 260) {
+    petX = tx;
+    petY = ty;
+    petSeen = true;
+  }
+  petX += (tx - petX) * 0.12;
+  petY += (ty - petY) * 0.16;
+  drawPet(ctx, petId, petX, petY, time, 0.9);
 }
 
 function render(time: number): void {
@@ -233,7 +256,7 @@ function render(time: number): void {
     camX = Math.max(0, Math.min(camX, level.width - W));
   }
 
-  drawBackground(ctx, camX, level.width, time);
+  drawBackground(ctx, camX, level.width, time, level.theme);
 
   ctx.save();
   ctx.scale(scale, scale);
@@ -248,6 +271,7 @@ function render(time: number): void {
       const pl = E.players[p];
       drawCharacter(ctx, charDefFor(p), pl.x + E.PW / 2, pl.y + E.PH, poseOf(p), pl.facing, time, 1.15, charOpts);
     }
+    drawPetInWorld(time);
   }
   ctx.restore();
 
@@ -289,9 +313,13 @@ function render(time: number): void {
         const [rx, ry] = spot("right");
         drawCharacter(dctx, charDefFor(0), lx, ly, "cheer", 1, time, big, charOpts);
         drawCharacter(dctx, charDefFor(1), rx, ry, "cheer", -1, time, big, charOpts);
+        const petId = selectedPet();
+        if (petId) drawPet(dctx, petId, lx + 90, ly, time, 1.6);
       } else {
         const [x, y] = spot("right");
         drawCharacter(dctx, charDefFor(0), x, y, "cheer", -1, time, big, charOpts);
+        const petId = selectedPet();
+        if (petId) drawPet(dctx, petId, x + 100, y, time, 1.6);
       }
     }
   } else if (dctx) {
@@ -314,8 +342,18 @@ function loop(now: number): void {
 
 /* ---------- boot ---------- */
 
+/** Homepage planet jump links use /games/tag-time/?level=N */
+function applyLevelQuery(): void {
+  const raw = new URLSearchParams(location.search).get("level");
+  if (!raw) return;
+  const n = parseInt(raw, 10);
+  if (Number.isNaN(n) || n < 1 || n > TOTAL) return;
+  E.saveLevel(n);
+}
+
 initUI();
 E.loadWallet();
+applyLevelQuery();
 initInput(firstGesture, () => E.phase === "playing");
 setupFlow();
 requestAnimationFrame(loop);
@@ -354,6 +392,7 @@ window.__tagtime = {
     song: currentSongId(),
     outfit: selectedOutfit(),
     dance: selectedDance(),
+    pet: selectedPet(),
     keys: [...E.st.keysTaken],
     doors: [...E.st.openDoors],
     lever: E.st.leverPulled,

@@ -71,5 +71,11 @@ export function setDeathMessage(cause: string): void {
           ? "A beast got you! 👹"
           : cause === "bird"
             ? "A bird got you! 🦅"
-            : "Whoops, you fell! 😵";
+            : cause === "wind"
+              ? "The gust blew you away! 💨"
+              : cause === "rain"
+                ? "The raindrop soaked you! ☔"
+                : cause === "fire"
+                  ? "The fire flame got you! 🔥"
+                  : "Whoops, you fell! 😵";
 }

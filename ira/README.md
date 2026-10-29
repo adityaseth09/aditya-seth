@@ -12,7 +12,20 @@ Games are designed on paper by Ira (age 8) and then typed up into code here.
   Watch out for **beasts** stomping on the ground and **birds** swooping through
   the air — touching them means restart, but jumping on their heads squashes them!
   Fall in the lava and you restart the level from the top.
-  10 levels now (levels 6–10 have the beasts and get tricky); Ira's master plan calls for 50.
+
+- **60 levels across 6 worlds** (Ira's master plan, delivered):
+  - **Home** (levels 1–10) — the original levels with the beasts and birds.
+  - **Wind Planet** (11–20) — **Windy** the gust cloud blows you around; duck
+    under the low gusts and jump the gaps, up to boss **Galezilla**.
+  - **Rain Planet** (21–30) — **Drizzle** the rain cloud drips deadly raindrops;
+    stomp her to stop the rain, up to boss **Thunderhead**.
+  - **Fire Planet** (31–40) — **Ember** the flame sprite runs fast along the
+    ground; stomp or dodge the flames, up to boss **Infernita**.
+  - **Storm Planet** (41–50) — wind + rain together, with lightning in the sky,
+    up to boss **The Great Tempest**.
+  - **Volcano Planet** (51–60) — every villain at once, lava waterfalls to jump
+    over, ending with the **Final Boss: Planet Showdown**.
+  Every world gets its own crayon-doodled notebook background.
 
 - **Two-player team mode** (from Ira's sketch: "two people going in a team-work
   obstacle course… and you both win"): pick "2 players!" at the start, then each
@@ -27,23 +40,26 @@ Games are designed on paper by Ira (age 8) and then typed up into code here.
   corner mutes it; the choice is remembered.
 
 - **Ira's Shop** 🛍️ — coins earned in-game are saved between visits (dying only
-  loses the coins from that attempt). Spend them on outfits (Party Hat,
-  Fancy Bowtie, Super Cape, Golden Crown), celebration dances (Wiggle
-  Wiggle, Super Twirl, Star Jumps) and **songs** for the background music
-  (Bouncy Song, Sleepy Song, Space Song — Ira's Tune is free).
+  loses the coins from that attempt). Spend them on:
+  - **Outfits**: Party Hat, Fancy Bowtie, Super Cape, Golden Crown, Flutter
+    Wings, Space Helmet, Cool Sunglasses, Rainbow Socks.
+  - **Celebration dances**: Wiggle Wiggle, Super Twirl, Star Jumps, Moonwalk,
+    Robot Dance, Backflip.
+  - **Songs** for the background music: Ira's Tune (free), Bouncy, Sleepy,
+    Space, Rainy Day, Race, Monster Parade, Gusty, Volcano.
+  - **Pet sidekicks**: **Twinkle the Star** and **Zorp the Alien** follow you
+    through every level and dance beside you when you win!
   Purchases and selections persist.
 
 - **Celebration dance** — when a level is cleared, the character(s) do the
-  selected dance from the shop (twirl, wiggle or star jumps) behind the
-  "You win!" screen.
+  selected dance from the shop behind the "You win!" screen.
 - Works with keyboard (← → move, space jump) and on-screen touch buttons.
 - Pick between 4 crayon-drawn characters: Mia, Ziggy, Whiskers and Robo.
 - Progress (furthest level) and chosen character are saved in `localStorage`.
 
 ## Ira's future plans (v2 wishlist)
 
-Clothes and dance customization, character name changes,
-and levels 11–50.
+Character name changes, more pets, and whatever she sketches next.
 
 ## Run locally
 
@@ -57,10 +73,14 @@ npm run build    # static output in ira/dist
 ## Adding a level
 
 All levels are data in [`src/data/levels.json`](src/data/levels.json): platforms,
-lava, spikes, enemies (ground `beast`s and flying `bird`s with patrol ranges),
-keys, coins, the lever, its bridge, the two doors and the exit
-zone. Add a new object to the `levels` array — no code changes needed.
-Keep jumps fair: rise ≤ ~100px, gaps ≤ ~140px.
+lava (including standing lava "waterfall" columns), spikes, enemies
+(ground `beast`s/`fire` flames and flying `bird`s/`wind` gusts/`rain` clouds
+with patrol ranges), keys, coins, the lever, its bridge, the two doors and the
+exit zone. Every level also has a `theme` (`home`, `wind`, `rain`, `fire`,
+`storm`, `volcano`) that picks the doodled background. Add a new object to the
+`levels` array — no code changes needed.
+Keep jumps fair: rise ≤ ~90px, gaps ≤ ~170px, and don't hover flying villains
+at standing-head height over platforms.
 
 ## Deploy to Cloudflare Pages (free plan)
 

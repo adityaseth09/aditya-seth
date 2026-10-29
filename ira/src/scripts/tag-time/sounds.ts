@@ -290,6 +290,56 @@ const SONGS: Song[] = [
       N.A2, 0, 0, 0, N.A2, 0, 0, 0,
     ],
   },
+  {
+    // whooshy tune for the Wind Planet
+    id: "gusty",
+    step: 0.20,
+    melody: [
+      N.E5, 0, N.G5, 0, N.D5, 0, N.E5, 0,
+      N.C5, 0, N.D5, 0, N.E5, 0, N.G5, 0,
+      N.A5, 0, N.G5, 0, N.E5, 0, N.D5, 0,
+      N.C5, 0, N.D5, 0, 0, 0, 0, 0,
+      N.G4, 0, N.C5, 0, N.E5, 0, N.G5, 0,
+      N.A5, 0, N.G5, 0, N.E5, 0, N.C5, 0,
+      N.D5, 0, N.E5, 0, N.D5, 0, N.C5, 0,
+      N.A4, 0, 0, 0, 0, 0, 0, 0,
+    ],
+    bass: [
+      N.C3, 0, 0, 0, N.G3, 0, 0, 0,
+      N.C3, 0, 0, 0, N.G3, 0, 0, 0,
+      N.A2, 0, 0, 0, N.E3, 0, 0, 0,
+      N.F3, 0, 0, 0, N.G3, 0, 0, 0,
+      N.C3, 0, 0, 0, N.G3, 0, 0, 0,
+      N.A2, 0, 0, 0, N.E3, 0, 0, 0,
+      N.F3, 0, 0, 0, N.G3, 0, 0, 0,
+      N.C3, 0, 0, 0, 0, 0, 0, 0,
+    ],
+  },
+  {
+    // heavy stompy march for the Volcano Planet
+    id: "volcano",
+    step: 0.24,
+    melody: [
+      N.C5, 0, 0, 0, N.C5, 0, 0, 0,
+      N.D5, 0, 0, 0, N.C5, 0, 0, 0,
+      N.E5, 0, N.D5, 0, N.C5, 0, N.D5, 0,
+      N.C5, 0, 0, 0, 0, 0, 0, 0,
+      N.C5, 0, N.C5, 0, N.C5, 0, 0, 0,
+      N.D5, 0, N.D5, 0, N.D5, 0, 0, 0,
+      N.E5, 0, N.E5, 0, N.F5, 0, N.E5, 0,
+      N.D5, 0, N.C5, 0, 0, 0, 0, 0,
+    ],
+    bass: [
+      N.A2, 0, N.A2, 0, N.A2, 0, N.A2, 0,
+      N.F3, 0, N.F3, 0, N.F3, 0, N.F3, 0,
+      N.C3, 0, N.C3, 0, N.C3, 0, N.C3, 0,
+      N.G3, 0, N.G3, 0, N.G3, 0, N.G3, 0,
+      N.A2, 0, N.A2, 0, N.A2, 0, N.A2, 0,
+      N.F3, 0, N.F3, 0, N.F3, 0, N.F3, 0,
+      N.G3, 0, N.G3, 0, N.G3, 0, N.G3, 0,
+      N.C3, 0, N.C3, 0, N.C3, 0, 0, 0,
+    ],
+  },
 ];
 
 const LS_SONG = "tagTime:song";
