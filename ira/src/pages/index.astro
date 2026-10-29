@@ -1,10 +1,36 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { levels } from "../data/levels.json";
 
 const title = "Ira's Games";
 
 // "Ira's Games" as bubble letters, colored one by one
 const letters = ["I", "r", "a", "'", "s", " ", "G", "a", "m", "e", "s", "!"];
+
+/** Friendly labels for each planet theme in levels.json */
+const WORLD_LABELS: Record<string, string> = {
+  home: "Home",
+  wind: "Wind Planet",
+  rain: "Rain Planet",
+  fire: "Fire Planet",
+  storm: "Storm Planet",
+  volcano: "Volcano Planet",
+};
+
+/** Last level of each world — 10, 20, 30, 40, 50. Skip 60 (final level). */
+const planetJumps: { label: string; level: number }[] = [];
+const lastByTheme = new Map<string, number>();
+for (let i = 0; i < levels.length; i++) {
+  const theme = (levels[i] as { theme?: string }).theme ?? "home";
+  lastByTheme.set(theme, i + 1);
+}
+for (const [theme, level] of lastByTheme) {
+  if (level >= levels.length) continue; // no jump link for level 60
+  planetJumps.push({
+    label: WORLD_LABELS[theme] ?? theme,
+    level,
+  });
+}
 ---
 
 <BaseLayout title={title}>
@@ -30,9 +56,23 @@ const letters = ["I", "r", "a", "'", "s", " ", "G", "a", "m", "e", "s", "!"];
           <strong>birds</strong> (or jump on their heads!), find <strong>key one</strong> and
           <strong>key two</strong>, push the lever&hellip; and open the doors to win!
           Play <strong>alone</strong> or <strong>together with a friend</strong> &mdash;
-          <strong>10 levels</strong> right now, 50 someday!
+          <strong>60 levels</strong> across 6 planets!
         </p>
         <a href="/games/tag-time/" class="crayon-btn mt-5">PLAY! &#9654;</a>
+        <p class="mt-4 text-base">
+          jump to level:
+          {planetJumps.map((w, i) => (
+            <>
+              {i > 0 ? <span aria-hidden="true"> &middot; </span> : " "}
+              <a
+                href={`/games/tag-time/?level=${w.level}`}
+                class="underline decoration-[color:var(--crayon-orange)] decoration-wavy font-bold"
+              >
+                {w.label} (level {w.level})
+              </a>
+            </>
+          ))}
+        </p>
         <figure class="mt-5">
           <img
             src="/ira-sketch-tag-time.jpg"

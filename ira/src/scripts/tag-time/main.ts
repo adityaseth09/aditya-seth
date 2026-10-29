@@ -342,8 +342,18 @@ function loop(now: number): void {
 
 /* ---------- boot ---------- */
 
+/** Homepage planet jump links use /games/tag-time/?level=N */
+function applyLevelQuery(): void {
+  const raw = new URLSearchParams(location.search).get("level");
+  if (!raw) return;
+  const n = parseInt(raw, 10);
+  if (Number.isNaN(n) || n < 1 || n > TOTAL) return;
+  E.saveLevel(n);
+}
+
 initUI();
 E.loadWallet();
+applyLevelQuery();
 initInput(firstGesture, () => E.phase === "playing");
 setupFlow();
 requestAnimationFrame(loop);
