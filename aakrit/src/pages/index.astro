@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import site from '../data/site.json';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import StatsBar from '../components/StatsBar.astro';
+import RatingChart from '../components/RatingChart.astro';
+import About from '../components/About.astro';
+import Achievements from '../components/Achievements.astro';
+import TournamentTimeline from '../components/TournamentTimeline.astro';
+import Coaching from '../components/Coaching.astro';
+import Pricing from '../components/Pricing.astro';
+import Testimonials from '../components/Testimonials.astro';
+import FAQ from '../components/FAQ.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout>
+	<Nav />
+	<main>
+		<Hero />
+		<StatsBar />
+		<RatingChart />
+		<About />
+		<Achievements />
+		<TournamentTimeline />
+
+		<!-- monetization: mid-page conversion banner -->
+		<section class="section-shell py-6" aria-label="Trial lesson call to action">
+			<div class="card-surface board-pattern relative overflow-hidden p-8 sm:p-10" data-reveal>
+				<div class="relative flex flex-wrap items-center justify-between gap-6">
+					<div>
+						<p class="eyebrow mb-2">Limited spots</p>
+						<h2 class="font-display text-2xl font-bold tracking-tight text-text sm:text-3xl">
+							The first lesson is free. The improvement is not.
+						</h2>
+						<p class="mt-2 max-w-xl text-[14px] leading-relaxed text-muted">
+							20 minutes online — meet Aakrit, get an honest level assessment and one concrete tip your child can use in their very next game.
+						</p>
+					</div>
+					<a href={site.booking.calendly} target="_blank" rel="noopener" class="btn-primary">Book the free trial</a>
+				</div>
+			</div>
+		</section>
+
+		<Coaching />
+		<Pricing />
+		<Testimonials />
+		<FAQ />
+		<Contact />
+	</main>
+	<Footer />
+</BaseLayout>

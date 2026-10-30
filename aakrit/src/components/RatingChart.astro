@@ -1,0 +1,99 @@
+---
+import site from '../data/site.json';
+
+const history = site.ratingHistory;
+const ratings = history.map((point) => point.rating);
+const minRating = Math.min(...ratings);
+const maxRating = Math.max(...ratings);
+const start = history[0];
+const peakPoint = history.reduce((best, point) => (point.rating > best.rating ? point : best), history[0]);
+const peakIndex = history.indexOf(peakPoint);
+const current = history[history.length - 1];
+
+// chart geometry
+const width = 760;
+const height = 260;
+const padding = { top: 24, right: 96, bottom: 34, left: 52 };
+const innerWidth = width - padding.left - padding.right;
+const innerHeight = height - padding.top - padding.bottom;
+
+const yMin = Math.floor((minRating - 20) / 50) * 50;
+const yMax = Math.ceil((maxRating + 10) / 50) * 50;
+const yTicks = 5;
+
+const xFor = (index: number) => padding.left + (index / (history.length - 1)) * innerWidth;
+const yFor = (rating: number) => padding.top + innerHeight - ((rating - yMin) / (yMax - yMin)) * innerHeight;
+
+const points = history.map((point, index) => ({ x: xFor(index), y: yFor(point.rating), ...point }));
+const polyline = points.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ');
+const area = `M ${padding.left} ${padding.top + innerHeight} L ${polyline.replaceAll(' ', ' L ')} L ${padding.left + innerWidth} ${padding.top + innerHeight} Z`;
+
+const gridLabels = Array.from({ length: yTicks }, (_, i) => yMin + ((yMax - yMin) / (yTicks - 1)) * i);
+
+const formatLabel = (date: string) =>
+	new Date(`${date}-01T00:00:00Z`).toLocaleDateString('en-GB', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+---
+
+<section id="rating-journey" class="py-20 sm:py-24" aria-label="Rating history">
+	<div class="section-shell">
+		<div class="mb-10 max-w-2xl" data-reveal>
+			<p class="eyebrow mb-3">The climb</p>
+			<h2 class="font-display text-3xl font-bold tracking-tight text-text sm:text-4xl">
+				From {start.rating} to {peakPoint.rating} in three years
+			</h2>
+			<p class="mt-3 text-[15px] leading-relaxed text-muted">
+				Official monthly FIDE classical rating. Aakrit did exactly what he now teaches: a repeatable opening system, daily tactics and honest game review.
+				The same path is open to your child.
+			</p>
+		</div>
+
+		<div class="card-surface p-5 sm:p-8" data-reveal>
+			<svg viewBox={`0 0 ${width} ${height}`} class="w-full" role="img" aria-label={`Line chart of Aakrit's FIDE classical rating from ${start.rating} in ${formatLabel(start.date)} to ${current.rating} now, peaking at ${peakPoint.rating} in ${formatLabel(peakPoint.date)}`}>
+				<defs>
+					<linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+						<stop offset="0%" stop-color="var(--color-accent)" stop-opacity="0.28" />
+						<stop offset="100%" stop-color="var(--color-accent)" stop-opacity="0" />
+					</linearGradient>
+				</defs>
+
+				{
+					gridLabels.map((label) => {
+						const y = yFor(Math.round(label));
+						return (
+							<g>
+								<line x1={padding.left} x2={padding.left + innerWidth} y1={y} y2={y} stroke="var(--color-border)" stroke-width="1" stroke-dasharray="3 5" />
+								<text x={padding.left - 10} y={y + 4} text-anchor="end" font-size="11" fill="var(--color-muted)" font-family="var(--font-mono)">
+									{Math.round(label)}
+								</text>
+							</g>
+						);
+					})
+				}
+
+				<line x1={padding.left} x2={padding.left + innerWidth} y1={padding.top + innerHeight} y2={padding.top + innerHeight} stroke="var(--color-border)" stroke-width="1" />
+
+				<path d={area} fill="url(#areaFill)" />
+				<polyline points={polyline} fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" />
+
+				{
+					points.map((point) => <circle cx={point.x} cy={point.y} r="2.6" fill="var(--color-accent)" />)
+				}
+
+				<!-- peak marker -->
+				<circle cx={xFor(peakIndex)} cy={yFor(peakPoint.rating)} r="5" fill="var(--color-accent)" stroke="var(--color-background)" stroke-width="2.5" />
+				<text x={xFor(peakIndex) + 10} y={yFor(peakPoint.rating) - 12} font-size="12" font-weight="700" fill="var(--color-accent)" font-family="var(--font-mono)">
+					Peak {peakPoint.rating} · {formatLabel(peakPoint.date)}
+				</text>
+
+				<!-- start & end labels -->
+				<text x={padding.left} y={padding.top + innerHeight + 26} font-size="12" fill="var(--color-muted)" font-family="var(--font-mono)">
+					{formatLabel(start.date)} · {start.rating}
+				</text>
+				<text x={padding.left + innerWidth} y={padding.top + innerHeight + 26} text-anchor="end" font-size="12" fill="var(--color-muted)" font-family="var(--font-mono)">
+					{formatLabel(current.date)} · {current.rating}
+				</text>
+			</svg>
+			<p class="mt-3 text-right font-mono text-[11px] text-muted">Source: official FIDE monthly lists · <a class="underline decoration-border underline-offset-2 hover:text-text" href={site.links.radarchess} target="_blank" rel="noopener">full history</a></p>
+		</div>
+	</div>
+</section>

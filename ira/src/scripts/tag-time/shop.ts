@@ -99,9 +99,13 @@ export function buildShop(
   const walletEl = document.getElementById("shopCoins");
   if (!root || !row || !walletEl) throw new Error("shop markup missing");
 
+  const showBalance = (msg?: string): void => {
+    walletEl.textContent = msg ?? `you have ${getCoins()} coins 🪙`;
+  };
+
   const render = (): void => {
     const owned = ownedItems();
-    walletEl.textContent = `your coins: ${getCoins()}`;
+    showBalance();
     row.innerHTML = "";
     for (const item of SHOP_ITEMS) {
       // the default song is always owned (it's free)
@@ -140,7 +144,7 @@ export function buildShop(
         (btn as HTMLButtonElement).style.fontSize = "1rem";
         btn.addEventListener("click", () => {
           if (!trySpend(item.price)) {
-            walletEl.textContent = `not enough coins! you have ${getCoins()} — go play a level!`;
+            showBalance(`not enough coins! you have ${getCoins()} — go play a level!`);
             return;
           }
           owned.add(item.id);

@@ -78,9 +78,10 @@ export function buildPicker(onPick: (def: CharacterDef) => void): PickerHandle {
       }
     },
     highlight: (id: string | null) => {
+      const normalized = id === "whiskers" ? "stella" : id;
       for (const c of cards) {
         c.el.style.removeProperty("transform");
-        if (id && c.def.id === id) {
+        if (normalized && c.def.id === normalized) {
           c.el.style.transform = "rotate(-2deg) scale(1.06)";
         }
       }

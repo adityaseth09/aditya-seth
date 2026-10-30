@@ -1,0 +1,59 @@
+---
+import site from '../data/site.json';
+
+const countries = Object.entries(site.tournaments) as [string, { name: string; year: string; result: string }[]][];
+const flagFor: Record<string, string> = {
+	Germany: 'DE',
+	Netherlands: 'NL',
+	India: 'IN',
+};
+---
+
+<section id="journey" class="py-20 sm:py-24" aria-label="Tournament history">
+	<div class="section-shell">
+		<div class="mb-10 max-w-2xl" data-reveal>
+			<p class="eyebrow mb-3">8 years &middot; 75+ rated events</p>
+			<h2 class="font-display text-3xl font-bold tracking-tight text-text sm:text-4xl">The tournament log</h2>
+			<p class="mt-3 text-[15px] leading-relaxed text-muted">
+				From Berlin youth championships to the Dutch team competition and FIDE-rated opens in the Himalayas — the experience your child taps into in every lesson.
+			</p>
+		</div>
+
+		<div class="grid gap-5 lg:grid-cols-3">
+			{
+				countries.map(([country, events]) => (
+					<div class="card-surface overflow-hidden" data-reveal>
+						<div class="flex items-center justify-between border-b border-border/60 bg-elevated/50 px-5 py-3.5">
+							<h3 class="font-display text-[15px] font-bold text-text">{country}</h3>
+							<span class="chip font-semibold text-text">{flagFor[country] ?? country}</span>
+						</div>
+						<ul class="divide-y divide-border/50">
+							{events.map((event) => (
+								<li class="flex flex-col gap-1 px-5 py-3.5">
+									<div class="flex items-baseline justify-between gap-3">
+										<span class="text-[13.5px] font-semibold leading-snug text-text">{event.name}</span>
+										<span class="shrink-0 font-mono text-[11px] text-muted">{event.year}</span>
+									</div>
+									<span class="text-[12.5px] text-muted">{event.result}</span>
+								</li>
+							))}
+						</ul>
+					</div>
+				))
+			}
+		</div>
+
+		<div class="mt-6 grid gap-5 md:grid-cols-2" data-reveal>
+			{
+				site.gallery.map((photo) => (
+					<figure class="card-surface overflow-hidden">
+						<img src={photo.src} alt={photo.caption} loading="lazy" width="960" class="aspect-[16/10] w-full object-cover" />
+						<figcaption class="border-t border-border/60 px-5 py-3 text-[12px] text-muted">
+							{photo.caption} &middot; <span class="opacity-70">{photo.credit}</span>
+						</figcaption>
+					</figure>
+				))
+			}
+		</div>
+	</div>
+</section>

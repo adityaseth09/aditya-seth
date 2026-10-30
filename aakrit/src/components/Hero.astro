@@ -1,0 +1,67 @@
+---
+import { existsSync } from 'node:fs';
+import site from '../data/site.json';
+
+const heroImagePath = new URL(`../../public${site.profile.photos.hero}`, import.meta.url).pathname;
+const hasHeroPhoto = existsSync(heroImagePath);
+const initials = site.profile.photos.heroFallbackInitials;
+const age = new Date().getFullYear() - site.profile.birthYear;
+---
+
+<section id="main" class="relative overflow-hidden pt-16">
+	<div class="board-pattern pointer-events-none absolute inset-0 opacity-[0.35]" aria-hidden="true"></div>
+	<div class="section-shell relative grid items-center gap-12 py-20 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
+		<div data-reveal>
+			<p class="eyebrow mb-4">FIDE {site.profile.fideId} &middot; {site.profile.federation} &middot; age {age}</p>
+			<h1 class="font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-text sm:text-5xl lg:text-6xl">
+				{site.profile.name}
+				<span class="text-gradient block">{site.profile.title}</span>
+			</h1>
+			<p class="mt-5 max-w-xl text-[15px] leading-relaxed text-muted sm:text-base">
+				{site.profile.tagline}
+			</p>
+			<ul class="mt-6 flex flex-wrap gap-2" aria-label="Key achievements">
+				<li class="chip-gold">2&times; Berlin Youth Champion U12</li>
+				<li class="chip-gold">Peak FIDE {site.ratings.fide.peakClassical}</li>
+				<li class="chip-gold">Dutch Club Team Champion 2023</li>
+			</ul>
+			<ul class="mt-4 flex flex-wrap items-center gap-2" aria-label="Languages">
+				<li class="chip">Lessons in:</li>
+				{site.profile.languages.map((language) => (
+					<li class="chip font-semibold text-text">{language.code} · {language.name}</li>
+				))}
+			</ul>
+			<div class="mt-8 flex flex-wrap items-center gap-3">
+				<a href={site.booking.calendly} target="_blank" rel="noopener" class="btn-primary">
+					Book a free 20-min trial
+					<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
+				</a>
+				<a href="#achievements" class="btn-ghost">See his record</a>
+			</div>
+			<p class="mt-4 font-mono text-[12px] text-muted">
+				Verified on <a class="underline decoration-border underline-offset-2 hover:text-text" href={site.links.fide} target="_blank" rel="noopener">FIDE ratings</a> &middot; <a class="underline decoration-border underline-offset-2 hover:text-text" href={site.links.knsb} target="_blank" rel="noopener">KNSB</a>
+			</p>
+		</div>
+
+		<div class="relative" data-reveal>
+			<div class="board-pattern absolute -inset-3 rounded-[28px] opacity-60" aria-hidden="true"></div>
+			<div class="card-surface relative overflow-hidden">
+				{
+					hasHeroPhoto ? (
+						<img src={site.profile.photos.hero} alt={`Portrait of ${site.profile.name}`} width="640" height="720" class="aspect-[8/9] w-full object-cover" />
+					) : (
+						<div class="flex aspect-[8/9] w-full flex-col items-center justify-center gap-4 bg-elevated/60">
+							<span class="font-display text-7xl font-extrabold text-gradient">{initials}</span>
+							<span class="text-5xl text-accent">&#9822;</span>
+							<span class="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">photo coming soon</span>
+						</div>
+					)
+				}
+				<div class="absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-border bg-surface/90 px-5 py-3 backdrop-blur-sm">
+					<span class="font-mono text-[11px] uppercase tracking-[0.18em] text-muted">Classical</span>
+					<span class="font-display text-xl font-bold tabular-nums text-accent">{site.ratings.fide.classical}</span>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

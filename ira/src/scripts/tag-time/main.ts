@@ -5,7 +5,7 @@
 import { levels as LEVELS } from "../../data/levels.json";
 import type { LevelData } from "./render";
 import { drawBackground, drawWorld } from "./render";
-import { CHARACTERS, drawCharacter, drawPet, type CharacterDef, type Pose } from "./characters";
+import { findCharacter, drawCharacter, drawPet, type CharacterDef, type Pose } from "./characters";
 import { sounds, unlockAudio, startMusic, setMusic, musicPref, isMusicOn, currentSongId } from "./sounds";
 import { initInput, setPlayerCount } from "./input";
 import { buildPicker, type PickerHandle } from "./picker";
@@ -31,8 +31,7 @@ const LS_CHAR2 = "tagTime:char2";
 
 function charDefFor(slot: number): CharacterDef {
   const id = slot === 0 ? E.charIds[0] : E.charIds[1];
-  const found = id ? CHARACTERS.find((c) => c.id === id) : undefined;
-  return found ?? CHARACTERS[0];
+  return findCharacter(id);
 }
 
 /* ---------- flow: mode → pick → go! → play ---------- */
@@ -54,7 +53,9 @@ function syncMusicButton(): void {
 
 function showModeSelect(): void {
   document.getElementById("modeSection")?.classList.remove("hidden");
-  document.getElementById("goSection")?.classList.add("hidden");
+  const go = document.getElementById("goSection");
+  go?.classList.add("hidden");
+  go?.classList.remove("flex");
   showOverlay("mode");
 }
 
@@ -88,7 +89,9 @@ function onPick(def: CharacterDef): void {
 
 function showStart(): void {
   document.getElementById("modeSection")?.classList.add("hidden");
-  document.getElementById("goSection")?.classList.remove("hidden");
+  const go = document.getElementById("goSection");
+  go?.classList.remove("hidden");
+  go?.classList.add("flex");
   const title = document.getElementById("startTitle");
   const nxt = E.savedLevel();
   if (title) {

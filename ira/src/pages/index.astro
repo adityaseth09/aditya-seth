@@ -1,128 +1,191 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { levels } from "../data/levels.json";
+import { GAMES } from "../data/games";
+import { levels as tagLevels } from "../data/levels.json";
+import { levels as foodLevels } from "../data/food-run-levels.json";
 
 const title = "Ira's Games";
 
 // "Ira's Games" as bubble letters, colored one by one
-const letters = ["I", "r", "a", "'", "s", " ", "G", "a", "m", "e", "s", "!"];
+const letters = [..."Ira's Games!"];
 
-/** Friendly labels for each planet theme in levels.json */
-const WORLD_LABELS: Record<string, string> = {
-  home: "Home",
-  wind: "Wind Planet",
-  rain: "Rain Planet",
-  fire: "Fire Planet",
-  storm: "Storm Planet",
-  volcano: "Volcano Planet",
+interface JumpLink {
+  label: string;
+  emoji: string;
+  color: string;
+  href: string;
+  level: number;
+}
+
+/* ---- Food Run: one button per food world (first level of each world) ---- */
+const FOOD_WORLDS: Record<string, { label: string; emoji: string; color: string }> = {
+  picnic: { label: "Picnic Park", emoji: "🧺", color: "var(--crayon-green)" },
+  pizza: { label: "Pizza Palace", emoji: "🍕", color: "var(--crayon-red)" },
+  candy: { label: "Candy Kingdom", emoji: "🍭", color: "var(--crayon-pink)" },
+  icecream: { label: "Ice Cream Island", emoji: "🍦", color: "var(--crayon-blue)" },
+};
+const firstByWorld = new Map<string, number>();
+foodLevels.forEach((l, i) => {
+  if (!firstByWorld.has(l.world)) firstByWorld.set(l.world, i + 1);
+});
+const foodJumps: JumpLink[] = [...firstByWorld.entries()].map(([world, level]) => ({
+  ...FOOD_WORLDS[world],
+  level,
+  href: `/games/food-run/?level=${level}`,
+}));
+
+/* ---- Tag Time: Wind / Rain / Fire / Storm planet jumps (levels 20, 30, 40, 50) ---- */
+const PLANETS: Record<string, { label: string; emoji: string; color: string }> = {
+  wind: { label: "Wind Planet", emoji: "💨", color: "var(--crayon-green)" },
+  rain: { label: "Rain Planet", emoji: "☔", color: "var(--crayon-blue)" },
+  fire: { label: "Fire Planet", emoji: "🔥", color: "var(--crayon-orange)" },
+  storm: { label: "Storm Planet", emoji: "⛈️", color: "var(--crayon-purple)" },
+};
+const lastByTheme = new Map<string, number>();
+tagLevels.forEach((l, i) => lastByTheme.set((l as { theme?: string }).theme ?? "home", i + 1));
+const tagJumps: JumpLink[] = Object.entries(PLANETS).map(([theme, meta]) => {
+  const level = lastByTheme.get(theme)!;
+  return { ...meta, level, href: `/games/tag-time/?level=${level}` };
+});
+
+const jumpsFor: Record<string, { heading: string; links: JumpLink[] }> = {
+  "food-run": { heading: "Jump to a food world:", links: foodJumps },
+  "tag-time": { heading: "Already finished Home? Jump to a planet:", links: tagJumps },
 };
 
-/** Last level of each world — 10, 20, 30, 40, 50. Skip 60 (final level). */
-const planetJumps: { label: string; level: number }[] = [];
-const lastByTheme = new Map<string, number>();
-for (let i = 0; i < levels.length; i++) {
-  const theme = (levels[i] as { theme?: string }).theme ?? "home";
-  lastByTheme.set(theme, i + 1);
-}
-for (const [theme, level] of lastByTheme) {
-  if (level >= levels.length) continue; // no jump link for level 60
-  planetJumps.push({
-    label: WORLD_LABELS[theme] ?? theme,
-    level,
-  });
-}
+/** localStorage key that remembers each game's level (for the "you're on level N" sticker) */
+const progressKey: Record<string, string> = {
+  "food-run": "foodRun:level",
+  "tag-time": "tagTime:level",
+};
+
+const crew = [
+  { id: "mia", name: "Mia", note: "loves running!" },
+  { id: "ziggy", name: "Ziggy", note: "super jumper" },
+  { id: "stella", name: "Stella", note: "Ira's dog! 🐶" },
+  { id: "robo", name: "Robo", note: "allergic to sugar!" },
+  { id: "ira", name: "Ira", note: "now playing! ⭐" },
+];
+
+const sketches = [
+  { src: "/ira-sketch-food-run.jpg", alt: "Ira's hand-drawn design for Food Run", caption: "Food Run — the energy bar and the sugar box!" },
+  { src: "/ira-sketch-obstacle-course.jpg", alt: "Ira's hand-drawn sketch of the obstacle course with lava, keys, coins, a lever and doors", caption: "Tag Time — lava, keys, doors!" },
+  { src: "/ira-sketch-tag-time.jpg", alt: "Ira's hand-drawn sketch of the Tag Time! title screen", caption: "Tag Time — tap here to start!" },
+];
 ---
 
 <BaseLayout title={title}>
-  <main class="mx-auto max-w-4xl px-4 pt-10 pb-16">
+  <main class="mx-auto max-w-5xl px-4 pt-8 pb-16">
     <!-- Header -->
-    <header class="text-center mb-12">
-      <h1 class="bubble-letters text-5xl sm:text-7xl leading-tight" aria-label="Ira's Games">
+    <header class="text-center mb-8">
+      <h1 class="bubble-letters text-5xl sm:text-7xl leading-tight" aria-label="Ira's Games!">
         {letters.map((ch) => <span>{ch === " " ? "\u00A0" : ch}</span>)}
       </h1>
-      <p class="mt-4 text-xl sm:text-2xl font-bold text-[color:var(--crayon-blue)]" style="transform: rotate(-1deg);">
+      <p class="mt-3 text-xl sm:text-2xl font-bold text-[color:var(--crayon-blue)]" style="transform: rotate(-1deg);">
         games I designed myself &mdash; made by Ira, age 8 &#9999;&#65039;
+      </p>
+      <p
+        id="coinBadge"
+        class="sketchy inline-block mt-4 bg-white/80 px-5 py-1 text-xl sm:text-2xl font-bold text-[color:var(--crayon-orange)]"
+        style="transform: rotate(1deg);"
+        aria-live="polite"
+      >
+        my coins: <span id="coinCount">0</span> 🪙
       </p>
     </header>
 
-    <!-- Game cards -->
-    <section aria-label="Games" class="grid gap-10 md:grid-cols-2">
-      <!-- Tag Time! -->
-      <article class="sketchy relative bg-white/70 p-5 pt-8 shadow-[4px_5px_0_rgba(65,64,60,0.35)]">
-        <span class="tape" aria-hidden="true"></span>
-        <h2 class="text-3xl font-bold text-[color:var(--crayon-red)]">Tag Time!</h2>
-        <p class="mt-1 text-lg">
-          Jump over the lava and spikes, dodge the <strong>beasts</strong> and
-          <strong>birds</strong> (or jump on their heads!), find <strong>key one</strong> and
-          <strong>key two</strong>, push the lever&hellip; and open the doors to win!
-          Play <strong>alone</strong> or <strong>together with a friend</strong> &mdash;
-          <strong>60 levels</strong> across 6 planets!
-        </p>
-        <a href="/games/tag-time/" class="crayon-btn mt-5">PLAY! &#9654;</a>
-        <p class="mt-4 text-base">
-          jump to level:
-          {planetJumps.map((w, i) => (
-            <>
-              {i > 0 ? <span aria-hidden="true"> &middot; </span> : " "}
-              <a
-                href={`/games/tag-time/?level=${w.level}`}
-                class="underline decoration-[color:var(--crayon-orange)] decoration-wavy font-bold"
-              >
-                {w.label} (level {w.level})
-              </a>
-            </>
-          ))}
-        </p>
-        <figure class="mt-5">
-          <img
-            src="/ira-sketch-tag-time.jpg"
-            alt="Ira's hand-drawn sketch of Tag Time!"
-            loading="lazy"
-            class="sketchy-alt w-full bg-white p-1"
-          />
-          <figcaption class="mt-2 text-base text-[color:var(--ink)]/70">
-            the original design, drawn by Ira
-          </figcaption>
-        </figure>
-      </article>
+    <!-- Game shelf -->
+    <section aria-labelledby="pickHeading">
+      <h2 id="pickHeading" class="text-3xl sm:text-4xl font-bold text-center text-[color:var(--crayon-purple)] mb-8" style="transform: rotate(-1deg);">
+        Pick a game to play! 🎮
+      </h2>
 
-      <!-- Coming soon -->
-      <article
-        class="sketchy-alt relative bg-white/50 p-5 pt-8 border-dashed shadow-[4px_5px_0_rgba(65,64,60,0.35)]"
-      >
-        <span class="tape" aria-hidden="true" style="background: rgba(224,127,176,0.7);"></span>
-        <h2 class="text-3xl font-bold text-[color:var(--crayon-purple)]">Coming soon&hellip;</h2>
-        <p class="mt-1 text-lg">
-          New clothes and dances for the characters&hellip;
-          and lots more levels! (The <strong>2-player team mode</strong> is here already!)
-        </p>
-        <p class="mt-6 text-8xl text-center text-[color:var(--crayon-orange)]" aria-hidden="true">?</p>
-      </article>
+      <div class="grid gap-10 md:grid-cols-2">
+        {GAMES.map((g, gi) => (
+          <article
+            class={`${gi % 2 ? "sketchy-alt" : "sketchy"} relative bg-white/75 p-5 pt-8 flex flex-col shadow-[4px_5px_0_rgba(65,64,60,0.35)]`}
+          >
+            <span class="tape" aria-hidden="true"></span>
+            {g.isNew && <span class="new-sticker" aria-label="new game">NEW!</span>}
+
+            <h3 class="text-4xl font-bold" style={`color: ${g.color};`}>
+              <span aria-hidden="true">{g.emoji}</span> {g.title}
+            </h3>
+            <p class="mt-2 text-lg leading-snug">{g.tagline}</p>
+
+            <ul class="mt-3 flex flex-wrap gap-2" aria-label="about this game">
+              {g.badges.map((b) => <li class="badge">{b}</li>)}
+            </ul>
+
+            <a
+              href={g.href}
+              class="crayon-btn play-btn mt-5 text-center"
+              style={`background: ${g.color};`}
+            >
+              PLAY {g.title.replace("!", "").toUpperCase()}! &#9654;
+            </a>
+            <p class="progress-note mt-2 text-center text-base font-bold opacity-70 hidden" data-key={progressKey[g.id]}></p>
+
+            {jumpsFor[g.id] && (
+              <div class="mt-5">
+                <p class="text-lg font-bold">{jumpsFor[g.id].heading}</p>
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                  {jumpsFor[g.id].links.map((j) => (
+                    <a href={j.href} class="crayon-btn jump-btn" style={`background: ${j.color};`}>
+                      <span aria-hidden="true">{j.emoji}</span> {j.label}
+                      <span class="block text-sm opacity-90">level {j.level}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <figure class="mt-5">
+              <a href={g.href} aria-label={`play ${g.title}`}>
+                <img src={g.sketch.src} alt={g.sketch.alt} loading="lazy" class="sketchy-alt w-full bg-white p-1" />
+              </a>
+              <figcaption class="mt-2 text-base text-[color:var(--ink)]/70">the original design, drawn by Ira</figcaption>
+            </figure>
+          </article>
+        ))}
+
+        <!-- room for the next game -->
+        <article class="coming-soon md:col-span-2 relative p-6 text-center">
+          <p class="text-5xl" aria-hidden="true">✏️📓</p>
+          <h3 class="mt-2 text-3xl font-bold text-[color:var(--crayon-green)]">Ira's next game&hellip;</h3>
+          <p class="mt-1 text-lg">is being drawn right now! Check back soon.</p>
+        </article>
+      </div>
     </section>
 
-    <!-- Design docs: Ira's other sketch -->
-    <section aria-label="Ira's design sketches" class="mt-14">
-      <h2 class="text-2xl font-bold text-[color:var(--crayon-green)]">Ira's design notebook &#128220;</h2>
+    <!-- Meet the crew -->
+    <section aria-labelledby="crewHeading" class="mt-16">
+      <h2 id="crewHeading" class="text-3xl font-bold text-center text-[color:var(--crayon-red)]" style="transform: rotate(1deg);">
+        Meet the characters! 👋
+      </h2>
+      <p class="mt-1 text-lg text-center">pick any of them in every game</p>
+      <ul class="mt-5 flex flex-wrap justify-center gap-4">
+        {crew.map((c, i) => (
+          <li class={`${i % 2 ? "sketchy-alt" : "sketchy"} bg-white/80 p-2 text-center w-[140px]`}>
+            <canvas class="crew-canvas mx-auto block" data-char={c.id} width="120" height="140" aria-hidden="true"></canvas>
+            <p class="text-xl font-bold">{c.name}</p>
+            <p class="text-sm opacity-75">{c.note}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Design notebook -->
+    <section aria-labelledby="notebookHeading" class="mt-16">
+      <h2 id="notebookHeading" class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-green)]">Ira's design notebook &#128220;</h2>
       <p class="mt-1 text-lg">Every game starts with pencil and paper:</p>
-      <div class="mt-4 grid gap-6 sm:grid-cols-2">
-        <figure>
-          <img
-            src="/ira-sketch-obstacle-course.jpg"
-            alt="Ira's hand-drawn sketch of the obstacle course with lava, keys, coins, a lever and doors"
-            loading="lazy"
-            class="sketchy w-full bg-white p-1"
-          />
-          <figcaption>The obstacle course &mdash; lava, keys, doors!</figcaption>
-        </figure>
-        <figure>
-          <img
-            src="/ira-sketch-tag-time.jpg"
-            alt="Ira's hand-drawn sketch of the Tag Time! title screen"
-            loading="lazy"
-            class="sketchy-alt w-full bg-white p-1"
-          />
-          <figcaption>The title screen &mdash; tap here to start!</figcaption>
-        </figure>
+      <div class="mt-4 grid gap-6 sm:grid-cols-3">
+        {sketches.map((s, i) => (
+          <figure>
+            <img src={s.src} alt={s.alt} loading="lazy" class={`${i % 2 ? "sketchy-alt" : "sketchy"} w-full bg-white p-1`} />
+            <figcaption>{s.caption}</figcaption>
+          </figure>
+        ))}
       </div>
     </section>
 
@@ -134,3 +197,86 @@ for (const [theme, level] of lastByTheme) {
     </footer>
   </main>
 </BaseLayout>
+
+<style>
+  .new-sticker {
+    position: absolute;
+    top: -18px;
+    right: -10px;
+    background: var(--crayon-yellow);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 1.3rem;
+    padding: 0.35em 0.8em;
+    border: 3px solid var(--ink);
+    border-radius: 9999px;
+    transform: rotate(12deg);
+    box-shadow: 2px 3px 0 rgba(65, 64, 60, 0.6);
+    animation: wobble 2.4s ease-in-out infinite;
+  }
+  @keyframes wobble {
+    0%, 100% { transform: rotate(12deg) scale(1); }
+    50% { transform: rotate(6deg) scale(1.08); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .new-sticker { animation: none; }
+  }
+  .badge {
+    font-weight: 700;
+    font-size: 1rem;
+    background: var(--paper-2);
+    border: 2px solid var(--ink);
+    border-radius: 15px 225px 15px 255px / 225px 15px 255px 15px;
+    padding: 0.15em 0.7em;
+  }
+  .play-btn {
+    display: block;
+    font-size: 1.7rem;
+    padding: 0.6em 1em;
+  }
+  .jump-btn {
+    font-size: 1.05rem;
+    padding: 0.5em 0.6em;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .coming-soon {
+    border: 3px dashed rgba(65, 64, 60, 0.5);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    background: rgba(255, 255, 255, 0.4);
+  }
+</style>
+
+<script>
+  import { findCharacter, drawCharacter } from "../scripts/tag-time/characters";
+
+  // coins are shared by every game
+  const coins = parseInt(localStorage.getItem("tagTime:coins") || "0", 10) || 0;
+  const coinEl = document.getElementById("coinCount");
+  if (coinEl) coinEl.textContent = String(coins);
+
+  // "you're on level N" sticker under each PLAY button
+  document.querySelectorAll<HTMLElement>(".progress-note").forEach((el) => {
+    const key = el.dataset.key;
+    const n = key ? parseInt(localStorage.getItem(key) || "1", 10) : 1;
+    if (n > 1) {
+      el.textContent = `you're on level ${n}! keep going 💪`;
+      el.classList.remove("hidden");
+    }
+  });
+
+  // animated crayon crew
+  const crew = [...document.querySelectorAll<HTMLCanvasElement>(".crew-canvas")]
+    .map((cvs) => ({ cvs, ctx: cvs.getContext("2d"), def: findCharacter(cvs.dataset.char) }))
+    .filter((c) => c.ctx);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const draw = (now: number) => {
+    const t = now / 1000;
+    for (const { cvs, ctx, def } of crew) {
+      ctx!.clearRect(0, 0, cvs.width, cvs.height);
+      drawCharacter(ctx!, def, cvs.width / 2, cvs.height - 22, "idle", 1, t, 2.4);
+    }
+    if (!reduce) requestAnimationFrame(draw);
+  };
+  requestAnimationFrame(draw);
+</script>

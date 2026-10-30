@@ -1,0 +1,26 @@
+---
+import site from '../data/site.json';
+
+const stats = [
+	{ label: 'Peak FIDE classical', value: site.ratings.fide.peakClassical, note: site.ratings.fide.peakClassicalDate, accent: true },
+	{ label: 'Current FIDE', value: site.ratings.fide.classical, note: 'October 2026 list' },
+	{ label: 'Peak national (KNSB)', value: site.ratings.knsb.peakClassical, note: site.ratings.knsb.peakClassicalDate },
+	{ label: 'Rated events', value: 78, note: 'across Germany, Netherlands & India' },
+];
+---
+
+<section id="ratings" class="border-y border-border/60 bg-surface/50" aria-label="Ratings at a glance">
+	<div class="section-shell grid grid-cols-2 gap-px overflow-hidden lg:grid-cols-4">
+		{
+			stats.map((stat) => (
+				<div class="flex flex-col gap-1 px-2 py-8 text-center sm:py-10">
+					<span class="eyebrow">{stat.label}</span>
+					<span class:list={['font-display text-4xl font-extrabold tabular-nums sm:text-5xl', stat.accent ? 'text-gradient' : 'text-text']}>
+						<span data-count-up data-value={stat.value}>{stat.value}</span>
+					</span>
+					<span class="text-[12px] text-muted">{stat.note}</span>
+				</div>
+			))
+		}
+	</div>
+</section>
