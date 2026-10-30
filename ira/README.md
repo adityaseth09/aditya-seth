@@ -31,6 +31,13 @@ work across every game. Each game keeps its own level/character keys.
 
 ## Games
 
+- **Clam Collector!** (`/games/clam-collector/`) — swim as an octopus (your character's colours),
+  collect **every key**, then open the **clam** and take the **pearl** to finish
+  the level. **Coral** sticks and sends you back to the start; **fish**, **jellies**
+  and **eels** do too. 8 levels in Shallow Bay, Coral Reef and the Pearl Cave.
+  1 or 2 players (both must reach the pearl). Keys + pearl pay coins into the
+  shared shop. Progress key: `clamCollector:level`.
+
 - **Food Run!** (`/games/food-run/`) — from Ira's "Food Run" sketch: run and
   jump on platforms to **eat all the food** in each level, then grab the
   **best food in the world** (it stays locked 🔒 until every food is eaten).

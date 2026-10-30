@@ -13,11 +13,27 @@ export interface GameInfo {
   tagline: string;
   /** little sticker badges on the card */
   badges: string[];
-  sketch: { src: string; alt: string };
+  sketch: { src: string; alt: string; caption?: string };
   isNew?: boolean;
 }
 
 export const GAMES: GameInfo[] = [
+  {
+    id: "clam-collector",
+    title: "Clam Collector!",
+    href: "/games/clam-collector/",
+    emoji: "🐙",
+    color: "var(--crayon-blue)",
+    tagline:
+      "Swim through the sea, collect every key, and open the clam to find the pearl! Watch out — coral sticks to you, and the fish, jellies and eels send you back to the start.",
+    badges: ["👫 1 or 2 players", "🐙 5 octopuses", "🌊 3 seas", "🐚 8 levels"],
+    sketch: {
+      src: "/clam-collector-card.svg",
+      alt: "An octopus swimming past keys and coral toward a clam with a pearl",
+      caption: "swim, grab the keys, open the clam!",
+    },
+    isNew: true,
+  },
   {
     id: "food-run",
     title: "Food Run!",
@@ -28,7 +44,6 @@ export const GAMES: GameInfo[] = [
       "Eat lots of food and find the best food in the world! Grab the Energy Bar to go super fast — and when you find a sack of sugar… do you want sugar? yes or no?",
     badges: ["👫 1 or 2 players", "🐶 5 characters", "🌍 4 food worlds", "🍔 20 levels"],
     sketch: { src: "/ira-sketch-food-run.jpg", alt: "Ira's hand-drawn design for Food Run, with Mia, Ziggy, Stella the dog, Robo and Ira" },
-    isNew: true,
   },
   {
     id: "tag-time",

@@ -1,0 +1,162 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import GameNav from "../../components/GameNav.astro";
+import { levels } from "../../data/clam-collector-levels.json";
+
+const totalLevels = levels.length;
+---
+
+<BaseLayout title="Clam Collector! — Ira's Games" description="Swim as an octopus, collect every key, dodge fish and sticky coral, and open the clam to find the pearl! A game on Ira's arcade.">
+  <main class="mx-auto max-w-5xl px-2 sm:px-4 pt-3 pb-10">
+    <GameNav current="clam-collector" title="Clam Collector!" />
+    <p class="rotate-hint text-center text-base font-bold text-[color:var(--crayon-purple)] mb-2">📱 turn your phone sideways for a bigger game!</p>
+
+    <div id="stage" class="sketchy relative bg-white overflow-hidden select-none" style="aspect-ratio: 16 / 9;">
+      <canvas id="game" class="absolute inset-0 w-full h-full" width="960" height="540" aria-label="Clam Collector game"></canvas>
+
+      <div id="hud" class="absolute top-0 inset-x-0 flex items-center gap-2 sm:gap-4 px-3 py-2 text-sm sm:text-lg font-bold pointer-events-none" style="background: rgba(253,249,239,0.85);">
+        <span id="hudLevel" class="text-[color:var(--crayon-blue)] truncate">Level 1</span>
+        <span class="flex-1"></span>
+        <span id="hudKeys" class="text-[color:var(--crayon-orange)]">🔑 0/0</span>
+        <span id="hudCoins" class="text-[color:var(--crayon-orange)]">🪙 0</span>
+        <button id="btnMusic" class="pointer-events-auto text-lg" aria-label="turn music on or off" style="background:none;border:none;cursor:pointer;font-size:1.3rem;">🔊</button>
+      </div>
+
+      <div id="pickerOverlay" class="overlay absolute inset-0 hidden flex-col items-center overflow-y-auto py-2" style="background: rgba(215,246,255,0.96);">
+        <div class="m-auto flex flex-col items-center gap-2 sm:gap-4">
+          <p id="pickPrompt" class="text-xl sm:text-3xl font-bold text-center" style="transform: rotate(-1deg);">Player 1 — pick your octopus!</p>
+          <div id="charRow" class="flex gap-1 sm:gap-4 flex-wrap justify-center px-1"></div>
+          <p class="text-base sm:text-xl opacity-70">tap one to choose</p>
+        </div>
+      </div>
+
+      <div id="startOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(215,246,255,0.92);">
+        <div id="modeSection" class="flex flex-col items-center gap-2 sm:gap-4">
+          <p class="text-xl sm:text-3xl font-bold text-[color:var(--crayon-blue)]" style="transform: rotate(-2deg);">How many swimmers?</p>
+          <div class="flex gap-3 sm:gap-5">
+            <button id="btn1P" class="crayon-btn" style="background: var(--crayon-green);">1 player</button>
+            <button id="btn2P" class="crayon-btn" style="background: var(--crayon-blue);">2 players!</button>
+          </div>
+          <button id="btnShopMode" class="crayon-btn" style="background: var(--crayon-orange);">🛍️ Shop</button>
+          <p class="hidden sm:block text-lg opacity-70 text-center px-4">find every key, then open the clam for the pearl!</p>
+        </div>
+        <div id="goSection" class="hidden flex-col items-center gap-2 sm:gap-3 cursor-pointer">
+          <p id="startTitle" class="text-lg sm:text-3xl font-bold text-[color:var(--crayon-blue)] text-center px-4" style="transform: rotate(-2deg);">Ready?</p>
+          <button id="goBtn" class="go-btn text-3xl font-bold text-white" aria-label="go! tap here to start" style="background: var(--crayon-green); border-radius: 999px;">GO!</button>
+          <button id="btnShopGo" class="crayon-btn" style="background: var(--crayon-orange);">🛍️ Shop</button>
+        </div>
+      </div>
+
+      <div id="shopOverlay" class="overlay absolute inset-0 hidden flex-col items-center overflow-y-auto py-4" style="background: rgba(253,249,239,0.97);">
+        <div class="m-auto flex flex-col items-center gap-4">
+          <p class="text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]" style="transform: rotate(-2deg);">Ira's Shop! 🛍️</p>
+          <p id="shopCoins" class="sketchy bg-white/90 px-5 py-2 text-2xl sm:text-3xl font-bold text-[color:var(--crayon-orange)]" aria-live="polite">you have 0 coins 🪙</p>
+          <div id="shopRow" class="flex gap-3 flex-wrap justify-center px-4 max-w-[880px]"></div>
+          <button id="shopBack" class="crayon-btn" style="background: var(--crayon-green);">back</button>
+          <p class="text-base opacity-70">keys and pearls make coins! coins work in all of Ira's games.</p>
+        </div>
+      </div>
+
+      <div id="deathOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(253,249,239,0.55);">
+        <div class="sketchy bg-[color:var(--paper)] px-6 py-4 flex flex-col items-center gap-2">
+          <p class="text-3xl font-bold text-[color:var(--crayon-red)]">Oh no!</p>
+          <p id="deathMsg" class="text-lg font-bold text-center">back to the start…</p>
+          <button id="againDeath" class="crayon-btn" style="background: var(--crayon-green);">swim again</button>
+        </div>
+      </div>
+
+      <div id="levelOverlay" class="overlay absolute inset-x-0 top-12 hidden flex-col items-center pointer-events-none">
+        <div class="sketchy bg-[color:var(--paper)]/95 px-6 py-4 flex flex-col items-center gap-2 pointer-events-auto">
+          <p class="text-2xl sm:text-4xl font-bold text-[color:var(--crayon-blue)]">The pearl! 🤍</p>
+          <p id="levelStats" class="text-base sm:text-xl font-bold text-center"></p>
+          <button id="nextBtn" class="crayon-btn" style="background: var(--crayon-green);">next sea &rarr;</button>
+        </div>
+      </div>
+
+      <div id="winOverlay" class="overlay absolute inset-0 hidden flex-col items-center justify-center gap-3" style="background: rgba(215,246,255,0.9);">
+        <p class="text-3xl sm:text-5xl font-bold text-[color:var(--crayon-purple)] text-center px-4">You found all {totalLevels} pearls! 🏆</p>
+        <p class="text-lg sm:text-2xl font-bold" id="winStats"></p>
+        <div class="flex gap-4 flex-wrap justify-center">
+          <button id="againBtn" class="crayon-btn" style="background: var(--crayon-green);">play again!</button>
+          <a href="/" class="crayon-btn" style="background: var(--crayon-blue);">🏠 all games</a>
+        </div>
+      </div>
+
+      <div id="touchControls" class="absolute bottom-0 inset-x-0 hidden justify-between items-end p-3 pointer-events-none">
+        <div id="touchClusterP1" class="flex gap-2 pointer-events-auto">
+          <button id="btnLeft1" class="touch-btn" aria-label="swim left">&#9664;</button>
+          <button id="btnUp1" class="touch-btn" aria-label="swim up">&#9650;</button>
+          <button id="btnDown1" class="touch-btn" aria-label="swim down">&#9660;</button>
+          <button id="btnRight1" class="touch-btn" aria-label="swim right">&#9654;</button>
+        </div>
+        <div id="touchClusterP2" class="flex gap-2 pointer-events-auto hidden">
+          <button id="btnLeft2" class="touch-btn" aria-label="player 2 swim left">&#9664;</button>
+          <button id="btnUp2" class="touch-btn" aria-label="player 2 swim up">&#9650;</button>
+          <button id="btnDown2" class="touch-btn" aria-label="player 2 swim down">&#9660;</button>
+          <button id="btnRight2" class="touch-btn" aria-label="player 2 swim right">&#9654;</button>
+        </div>
+      </div>
+    </div>
+
+    <section class="mt-4 grid gap-3 sm:grid-cols-4 text-center text-base sm:text-lg" aria-label="How to play">
+      <div class="sketchy bg-white/70 p-3"><div class="text-3xl">🐙</div>swim around the sea</div>
+      <div class="sketchy-alt bg-white/70 p-3"><div class="text-3xl">🔑</div>collect <strong>all</strong> the keys</div>
+      <div class="sketchy bg-white/70 p-3"><div class="text-3xl">🐚</div>open the clam and grab the <strong>pearl</strong></div>
+      <div class="sketchy-alt bg-white/70 p-3"><div class="text-3xl">🪸</div>coral sticks — back to the <strong>start</strong></div>
+    </section>
+    <p class="mt-3 text-center text-base sm:text-lg">
+      1 player: <strong>W A S D</strong> or the arrow keys to swim &middot; or the buttons on screen
+    </p>
+    <p class="text-center text-base sm:text-lg opacity-70">
+      2 players: P1 = <strong>W A S D</strong> &middot; P2 = arrow keys &middot; BOTH swimmers reach the pearl!
+    </p>
+    <p class="mt-1 text-center text-base opacity-70">watch out for 🐟 fish, 🪼 jellies, 🐍 eels and sticky coral!</p>
+  </main>
+</BaseLayout>
+
+<style>
+  #stage { -webkit-user-select: none; -webkit-touch-callout: none; }
+  #stage canvas { touch-action: none; }
+  .overlay { touch-action: pan-y; overscroll-behavior: contain; display: flex; }
+  .overlay.hidden { display: none; }
+  .touch-btn {
+    font-family: var(--font-hand);
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--ink);
+    background: rgba(253, 249, 239, 0.9);
+    border: 3px solid var(--ink);
+    border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+    padding: 0.45em 0.75em;
+    box-shadow: 3px 4px 0 rgba(65, 64, 60, 0.6);
+    touch-action: none;
+    user-select: none;
+  }
+  :global(.char-card) {
+    cursor: pointer;
+    background: #fff;
+    border: 3px solid var(--ink);
+    border-radius: 15px 225px 15px 255px / 225px 15px 255px 15px;
+    padding: 4px;
+    box-shadow: 3px 4px 0 rgba(65, 64, 60, 0.5);
+  }
+  :global(.char-card canvas) { display: block; width: 110px; height: 140px; }
+  .go-btn { width: 110px; height: 110px; }
+  @media (max-width: 640px) {
+    .go-btn { width: 72px; height: 72px; font-size: 1.4rem; }
+    :global(.char-card canvas) { width: 46px; height: 58px; }
+    :global(.char-card) { padding: 2px !important; }
+    :global(.char-card div) { font-size: 0.9rem !important; }
+  }
+  .rotate-hint { display: none; }
+  @media (orientation: portrait) and (max-width: 640px) {
+    .rotate-hint { display: block; }
+    #stage { overflow: visible; margin-bottom: 84px; }
+    #touchControls { top: 100%; bottom: auto; padding: 10px 0 0; }
+    #touchControls .touch-btn { font-size: 1.1rem; }
+  }
+</style>
+
+<script>
+  import "../../scripts/clam-collector/main.ts";
+</script>

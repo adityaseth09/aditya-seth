@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-label="Clam Collector: an octopus swimming past keys and coral toward a clam">
+  <rect width="640" height="400" fill="#d7f3fb"/>
+  <path d="M0 320 Q80 300 160 322 T320 318 T480 326 T640 314 V400 H0 Z" fill="#f0ddb0" stroke="#41403c" stroke-width="4"/>
+  <g stroke="#41403c" stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M90 300 C100 240 70 210 100 160" stroke="#e07fb0"/>
+    <path d="M120 310 C130 250 150 220 130 170" stroke="#ef8f4a"/>
+    <path d="M430 300 C440 250 420 220 445 180" stroke="#e07fb0"/>
+  </g>
+  <g fill="#f2c14e" stroke="#41403c" stroke-width="3">
+    <circle cx="180" cy="120" r="10"/>
+    <rect x="176" y="128" width="8" height="18" rx="2"/>
+    <circle cx="300" cy="250" r="10"/>
+    <rect x="296" y="258" width="8" height="18" rx="2"/>
+    <circle cx="430" cy="140" r="10"/>
+    <rect x="426" y="148" width="8" height="18" rx="2"/>
+  </g>
+  <g>
+    <ellipse cx="250" cy="190" rx="36" ry="28" fill="#9a6fd0" stroke="#41403c" stroke-width="4"/>
+    <circle cx="238" cy="182" r="6" fill="#fff" stroke="#41403c" stroke-width="2"/>
+    <circle cx="262" cy="182" r="6" fill="#fff" stroke="#41403c" stroke-width="2"/>
+    <circle cx="240" cy="184" r="2.5" fill="#41403c"/>
+    <circle cx="264" cy="184" r="2.5" fill="#41403c"/>
+    <path d="M230 206 C220 240 200 250 190 270" fill="none" stroke="#9a6fd0" stroke-width="7" stroke-linecap="round"/>
+    <path d="M242 210 C236 248 250 260 246 280" fill="none" stroke="#7a5aad" stroke-width="7" stroke-linecap="round"/>
+    <path d="M258 210 C266 246 258 262 270 278" fill="none" stroke="#9a6fd0" stroke-width="7" stroke-linecap="round"/>
+    <path d="M270 204 C286 236 300 248 310 268" fill="none" stroke="#7a5aad" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(520 200)">
+    <path d="M0 20 Q-28 -10 -8 -28 Q0 -8 8 -28 Q28 -10 0 20 Z" fill="#f4efe4" stroke="#41403c" stroke-width="4"/>
+    <circle cx="0" cy="-2" r="8" fill="#f7f7ff" stroke="#9a6fd0" stroke-width="3"/>
+  </g>
+  <text x="24" y="48" font-family="Chalkboard SE, Comic Sans MS, cursive" font-size="28" font-weight="700" fill="#4a90d9">Clam Collector</text>
+</svg>

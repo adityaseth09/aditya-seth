@@ -3,6 +3,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import { GAMES } from "../data/games";
 import { levels as tagLevels } from "../data/levels.json";
 import { levels as foodLevels } from "../data/food-run-levels.json";
+import { levels as clamLevels } from "../data/clam-collector-levels.json";
 
 const title = "Ira's Games";
 
@@ -48,13 +49,30 @@ const tagJumps: JumpLink[] = Object.entries(PLANETS).map(([theme, meta]) => {
   return { ...meta, level, href: `/games/tag-time/?level=${level}` };
 });
 
+const CLAM_ZONES: Record<string, { label: string; emoji: string; color: string }> = {
+  bay: { label: "Shallow Bay", emoji: "🌊", color: "var(--crayon-blue)" },
+  reef: { label: "Coral Reef", emoji: "🪸", color: "var(--crayon-pink)" },
+  deep: { label: "Pearl Cave", emoji: "🐚", color: "var(--crayon-purple)" },
+};
+const firstClamZone = new Map<string, number>();
+clamLevels.forEach((l, i) => {
+  if (!firstClamZone.has(l.zone)) firstClamZone.set(l.zone, i + 1);
+});
+const clamJumps: JumpLink[] = [...firstClamZone.entries()].map(([zone, level]) => ({
+  ...CLAM_ZONES[zone],
+  level,
+  href: `/games/clam-collector/?level=${level}`,
+}));
+
 const jumpsFor: Record<string, { heading: string; links: JumpLink[] }> = {
+  "clam-collector": { heading: "Jump to a sea:", links: clamJumps },
   "food-run": { heading: "Jump to a food world:", links: foodJumps },
   "tag-time": { heading: "Already finished Home? Jump to a planet:", links: tagJumps },
 };
 
 /** localStorage key that remembers each game's level (for the "you're on level N" sticker) */
 const progressKey: Record<string, string> = {
+  "clam-collector": "clamCollector:level",
   "food-run": "foodRun:level",
   "tag-time": "tagTime:level",
 };
@@ -144,7 +162,7 @@ const sketches = [
               <a href={g.href} aria-label={`play ${g.title}`}>
                 <img src={g.sketch.src} alt={g.sketch.alt} loading="lazy" class="sketchy-alt w-full bg-white p-1" />
               </a>
-              <figcaption class="mt-2 text-base text-[color:var(--ink)]/70">the original design, drawn by Ira</figcaption>
+              <figcaption class="mt-2 text-base text-[color:var(--ink)]/70">{g.sketch.caption ?? "the original design, drawn by Ira"}</figcaption>
             </figure>
           </article>
         ))}
