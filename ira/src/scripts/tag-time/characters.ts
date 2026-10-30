@@ -1,11 +1,11 @@
 /**
- * The four playable characters, drawn as crayon stick figures
- * (two of them straight from Ira's sketch: the girl with long hair
- * and the boy in a t-shirt and shorts).
+ * The five playable characters, drawn as crayon stick figures
+ * straight from Ira's sketches:
+ * Mia, Ziggy, Stella (Ira's dog!), Robo (allergic to sugar!), and Ira!
  */
 import { sketchCircle, sketchLine, sketchRect, boil, hash, INK } from "./draw";
 
-export type CharKind = "girl" | "boy" | "cat" | "robot";
+export type CharKind = "girl" | "boy" | "dog" | "cat" | "robot" | "ira";
 
 export interface CharacterDef {
   id: string;
@@ -18,17 +18,30 @@ export interface CharacterDef {
 export const CHARACTERS: CharacterDef[] = [
   { id: "mia", name: "Mia", kind: "girl", hair: "#7a4a1f", clothes: "#e07fb0" },
   { id: "ziggy", name: "Ziggy", kind: "boy", hair: "#3b3a36", clothes: "#4a90d9" },
-  { id: "whiskers", name: "Whiskers", kind: "cat", hair: "#ef8f4a", clothes: "#f2c14e" },
+  { id: "stella", name: "Stella", kind: "dog", hair: "#ef8f4a", clothes: "#f2c14e" },
   { id: "robo", name: "Robo", kind: "robot", hair: "#9a6fd0", clothes: "#5eaa61" },
+  { id: "ira", name: "Ira", kind: "ira", hair: "#3b2a1e", clothes: "#9a6fd0" },
 ];
 
-export type Pose = "idle" | "run" | "jump" | "fall" | "cheer";
+/** Helper to look up a character by ID (maps legacy "whiskers" to "stella"). */
+export function findCharacter(id: string | null | undefined): CharacterDef {
+  if (id === "whiskers") return CHARACTERS[2];
+  return (id ? CHARACTERS.find((c) => c.id === id) : undefined) ?? CHARACTERS[0];
+}
+
+export type Pose = "idle" | "run" | "jump" | "fall" | "cheer" | "dizzy";
 
 export interface CharOptions {
-  /** equipped outfit id (cape | crown | party | bowtie) */
+  /** equipped outfit id (cape | crown | party | bowtie | wings | helmet | shades | socks) */
   outfit?: string | null;
-  /** selected dance id for the level-clear celebration (twirl | wiggle | stars) */
+  /** selected dance id for the level-clear celebration (twirl | wiggle | stars | moonwalk | robot | backflip) */
   dance?: string | null;
+  /** Robo's X_X sugar allergy / dizzy state */
+  allergic?: boolean;
+  /** Speedy motion trail when boosted by Energy Bar or Sugar Rush */
+  speedy?: boolean;
+  /** Slow / sleepy sugar crash state */
+  slowed?: boolean;
 }
 
 /**
@@ -76,6 +89,23 @@ export function drawCharacter(
       ctx.translate(cx, footY - 20 * s);
       ctx.rotate(t * 7);
       ctx.translate(-cx, -(footY - 20 * s));
+    }
+  }
+
+  // dizzy / allergic wobble transform
+  const isDizzy = pose === "dizzy" || Boolean(opts.allergic);
+  if (isDizzy) {
+    ctx.save();
+    ctx.translate(Math.sin(t * 24) * 3 * s, 0);
+  }
+
+  // speedy motion lines behind the character when boosted
+  if (opts.speedy) {
+    for (let i = 0; i < 3; i++) {
+      const ly = footY - (8 + i * 11) * s;
+      const lx = cx - facing * (12 + i * 5) * s;
+      const len = (10 + ((Math.floor(t * 12) + i) % 3) * 5) * s;
+      sketchLine(ctx, lx, ly, lx - facing * len, ly, seed + 60 + i, f, 0.8, "#f2c14e", 2.5);
     }
   }
 
@@ -138,7 +168,7 @@ export function drawCharacter(
   }
 
   // body / clothes
-  if (def.kind === "girl") {
+  if (def.kind === "girl" || def.kind === "ira") {
     // dress: triangle from shoulders widening to hips
     ctx.beginPath();
     ctx.moveTo(cx - 3 * s, bodyTop - 16 * s);
@@ -155,7 +185,13 @@ export function drawCharacter(
     sketchRect(ctx, cx - 7 * s, bodyTop - 16 * s, 14 * s, 16 * s, def.clothes, seed + 5, f, 1.2);
   } else {
     sketchRect(ctx, cx - 7 * s, bodyTop - 16 * s, 14 * s, 10 * s, def.clothes, seed + 5, f, 1.2);
-    if (def.kind === "boy") sketchRect(ctx, cx - 7 * s, bodyTop - 6 * s, 14 * s, 6 * s, def.hair === INK ? "#8bb8e8" : "#8bb8e8", seed + 6, f, 1.2);
+    if (def.kind === "boy") {
+      sketchRect(ctx, cx - 7 * s, bodyTop - 6 * s, 14 * s, 6 * s, "#8bb8e8", seed + 6, f, 1.2);
+    }
+    if (def.kind === "dog") {
+      // Stella's "0" collar tag / shirt badge from Ira's sketch
+      sketchCircle(ctx, cx, bodyTop - 11 * s, 2.6 * s, "#ffffff", seed + 6, f, 0.5, INK);
+    }
   }
 
   // arms
@@ -163,6 +199,9 @@ export function drawCharacter(
   if (pose === "cheer") {
     sketchLine(ctx, cx - 5 * s, armY, cx - 11 * s, armY - 12 * s, seed + 3, f, 1.2);
     sketchLine(ctx, cx + 5 * s, armY, cx + 11 * s, armY - 12 * s, seed + 4, f, 1.2);
+  } else if (isDizzy) {
+    sketchLine(ctx, cx - 5 * s, armY, cx - 11 * s, armY + Math.sin(t * 18) * 5 * s, seed + 3, f, 1.2);
+    sketchLine(ctx, cx + 5 * s, armY, cx + 11 * s, armY - Math.sin(t * 18) * 5 * s, seed + 4, f, 1.2);
   } else if (pose === "run" || pose === "jump") {
     sketchLine(ctx, cx - 5 * s, armY, cx - 10 * s * facing, armY + 6 * s + swing * 3, seed + 3, f, 1.2);
     sketchLine(ctx, cx + 5 * s, armY, cx + 10 * s * facing, armY + 6 * s - swing * 3, seed + 4, f, 1.2);
@@ -177,11 +216,22 @@ export function drawCharacter(
     sketchRect(ctx, headCx - headR, headCy - headR, headR * 2, headR * 2, "#e8e6df", seed + 8, f, 1.2);
     // antenna
     sketchLine(ctx, headCx, headCy - headR, headCx + 3 * s, headCy - headR - 7 * s, seed + 9, f, 1);
-    sketchCircle(ctx, headCx + 3 * s, headCy - headR - 9 * s, 2.5 * s, def.hair, seed + 10, f, 0.8);
+    sketchCircle(ctx, headCx + 3 * s, headCy - headR - 9 * s, 2.5 * s, isDizzy ? "#e04f4f" : def.hair, seed + 10, f, 0.8);
+    // Robo's face from Ira's sketch: X_X eyes + [___] rectangular mouth!
+    const ex1 = headCx - 3.6 * s;
+    const ex2 = headCx + 3.6 * s;
+    const ey = headCy - 2 * s;
+    const xr = 2.1 * s;
+    sketchLine(ctx, ex1 - xr, ey - xr, ex1 + xr, ey + xr, seed + 20, f, 0.4, INK, 1.8);
+    sketchLine(ctx, ex1 + xr, ey - xr, ex1 - xr, ey + xr, seed + 21, f, 0.4, INK, 1.8);
+    sketchLine(ctx, ex2 - xr, ey - xr, ex2 + xr, ey + xr, seed + 22, f, 0.4, INK, 1.8);
+    sketchLine(ctx, ex2 + xr, ey - xr, ex2 - xr, ey + xr, seed + 23, f, 0.4, INK, 1.8);
+    // rectangular robot mouth
+    sketchRect(ctx, headCx - 4.5 * s, headCy + 2.2 * s, 9 * s, 3.2 * s, isDizzy ? "#e04f4f" : "#ffffff", seed + 24, f, 0.5);
   } else {
     sketchCircle(ctx, headCx, headCy, headR, "#fde7d0", seed + 8, f, 1);
     if (def.kind === "cat") {
-      // ears
+      // pointy ears
       sketchLine(ctx, headCx - headR * 0.8, headCy - headR * 0.7, headCx - headR * 0.9, headCy - headR * 1.7, seed + 11, f, 0.8, def.hair, 3);
       sketchLine(ctx, headCx - headR * 0.9, headCy - headR * 1.7, headCx + 0.5 * s, headCy - headR * 1.05, seed + 12, f, 0.8, def.hair, 3);
       sketchLine(ctx, headCx + headR * 0.8, headCy - headR * 0.7, headCx + headR * 0.9, headCy - headR * 1.7, seed + 13, f, 0.8, def.hair, 3);
@@ -189,37 +239,101 @@ export function drawCharacter(
       // whiskers
       sketchLine(ctx, headCx + facing * headR * 0.9, headCy - 2 * s, headCx + facing * (headR + 8 * s), headCy - 4 * s, seed + 15, f, 0.7, INK, 1.5);
       sketchLine(ctx, headCx + facing * headR * 0.9, headCy, headCx + facing * (headR + 9 * s), headCy + 1 * s, seed + 16, f, 0.7, INK, 1.5);
+    } else if (def.kind === "dog") {
+      // Stella's floppy dog ears on both sides of her head (just like Ira's sketch!)
+      const earWag = Math.sin(t * 6) * 1.2 * s;
+      ctx.save();
+      for (const side of [-1, 1]) {
+        ctx.beginPath();
+        const ex = headCx + side * headR * 0.85;
+        const ey = headCy - headR * 0.4;
+        ctx.ellipse(ex + side * 2 * s, ey + 5 * s + earWag, 3.6 * s, 6.5 * s, side * 0.25, 0, Math.PI * 2);
+        ctx.fillStyle = def.hair;
+        ctx.fill();
+        ctx.strokeStyle = INK;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+      ctx.restore();
+      // wagging dog tail
+      const tailWag = Math.sin(t * 9) * 6 * s;
+      sketchLine(ctx, cx - 8 * s * facing, bodyTop - 2 * s, cx - 15 * s * facing, bodyTop - 11 * s + tailWag, seed + 19, f, 1.2, def.hair, 4);
     }
     // hair
     if (def.kind === "girl") {
-      // long hair: cap + strands on both sides
-      sketchLine(ctx, headCx - headR, headCy, headCx - headR - 2 * s, headCy + 16 * s, seed + 17, f, 1.2, def.hair, 5);
-      sketchLine(ctx, headCx + headR, headCy, headCx + headR + 2 * s, headCy + 16 * s, seed + 18, f, 1.2, def.hair, 5);
+      // Mia: cute top bun (from Food Run sketch) + side strands
+      sketchCircle(ctx, headCx, headCy - headR - 3.5 * s, 3.6 * s, def.hair, seed + 16, f, 0.8);
+      sketchLine(ctx, headCx - headR, headCy, headCx - headR - 2 * s, headCy + 14 * s, seed + 17, f, 1.2, def.hair, 4.5);
+      sketchLine(ctx, headCx + headR, headCy, headCx + headR + 2 * s, headCy + 14 * s, seed + 18, f, 1.2, def.hair, 4.5);
       ctx.beginPath();
       ctx.arc(headCx, headCy - 1 * s, headR + 1.5 * s, Math.PI * 1.05, Math.PI * 1.95);
       ctx.strokeStyle = def.hair;
       ctx.lineWidth = 5;
       ctx.stroke();
+    } else if (def.kind === "ira") {
+      // Ira: long flowing hair down past shoulders
+      sketchLine(ctx, headCx - headR, headCy - 1 * s, headCx - headR - 3 * s, headCy + 18 * s, seed + 17, f, 1.2, def.hair, 5.5);
+      sketchLine(ctx, headCx + headR, headCy - 1 * s, headCx + headR + 3 * s, headCy + 18 * s, seed + 18, f, 1.2, def.hair, 5.5);
+      ctx.beginPath();
+      ctx.arc(headCx, headCy - 1 * s, headR + 1.8 * s, Math.PI * 1.02, Math.PI * 1.98);
+      ctx.strokeStyle = def.hair;
+      ctx.lineWidth = 5.5;
+      ctx.stroke();
     } else if (def.kind === "boy") {
+      // Ziggy: curly top hair
       ctx.beginPath();
       ctx.arc(headCx, headCy - 1 * s, headR + 1.5 * s, Math.PI * 1.08, Math.PI * 1.92);
       ctx.strokeStyle = def.hair;
       ctx.lineWidth = 5;
       ctx.stroke();
+      for (let c = -1; c <= 1; c++) {
+        sketchCircle(ctx, headCx + c * 4 * s, headCy - headR - 1 * s, 2.4 * s, def.hair, seed + 25 + c, f, 0.5);
+      }
     } else if (def.kind === "cat") {
       // tail
       const tailWag = Math.sin(t * 5) * 6 * s;
       sketchLine(ctx, cx - 9 * s * facing, bodyTop - 2 * s, cx - 16 * s * facing, bodyTop - 10 * s + tailWag, seed + 19, f, 1.2, def.hair, 4);
     }
     // face: eyes + smile
-    const eyeDx = 2.8 * s * facing;
-    sketchCircle(ctx, headCx - eyeDx, headCy - 1.5 * s, 1.4 * s, INK, seed + 20, f, 0.4);
-    sketchCircle(ctx, headCx + eyeDx, headCy - 1.5 * s, 1.4 * s, INK, seed + 21, f, 0.4);
+    const eyeDx = 2.8 * s;
+    if (def.kind === "ira") {
+      // Ira's big sparkly dark eyes from her sketch!
+      sketchCircle(ctx, headCx - eyeDx, headCy - 1.5 * s, 2.1 * s, INK, seed + 20, f, 0.4);
+      sketchCircle(ctx, headCx + eyeDx, headCy - 1.5 * s, 2.1 * s, INK, seed + 21, f, 0.4);
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(headCx - eyeDx - 0.5 * s, headCy - 2.1 * s, 0.7 * s, 0, Math.PI * 2);
+      ctx.arc(headCx + eyeDx - 0.5 * s, headCy - 2.1 * s, 0.7 * s, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      sketchCircle(ctx, headCx - eyeDx, headCy - 1.5 * s, 1.4 * s, INK, seed + 20, f, 0.4);
+      sketchCircle(ctx, headCx + eyeDx, headCy - 1.5 * s, 1.4 * s, INK, seed + 21, f, 0.4);
+      if (def.kind === "dog") {
+        // cute little dog nose
+        sketchCircle(ctx, headCx + facing * 1.2 * s, headCy + 0.6 * s, 1.3 * s, INK, seed + 29, f, 0.3);
+      }
+    }
     ctx.beginPath();
     ctx.arc(headCx, headCy + 2.5 * s, 3.5 * s, 0.15 * Math.PI, 0.85 * Math.PI);
     ctx.strokeStyle = INK;
     ctx.lineWidth = 2;
     ctx.stroke();
+  }
+
+  // dizzy stars spinning above head when Robo has his sugar allergy
+  if (isDizzy) {
+    for (let i = 0; i < 3; i++) {
+      const a = t * 6 + (i * Math.PI * 2) / 3;
+      const sx = headCx + Math.cos(a) * 11 * s;
+      const sy = headCy - headR - 10 * s + Math.sin(a) * 3 * s;
+      sketchCircle(ctx, sx, sy, 2.2 * s, "#f2c14e", seed + 70 + i, f, 0.5);
+    }
+  }
+
+  // sleepy drops when slowed (sugar crash)
+  if (opts.slowed) {
+    const dropY = headCy - headR - 4 * s + ((t * 10) % 6) * s;
+    sketchCircle(ctx, headCx - headR - 4 * s, dropY, 1.8 * s, "#4a90d9", seed + 75, f, 0.4);
   }
 
   // hats & accessories (drawn on top)
@@ -306,6 +420,9 @@ export function drawCharacter(
     }
   }
 
+  if (isDizzy) {
+    ctx.restore();
+  }
   // close the dance transform
   if (pose === "cheer" && opts.dance) {
     ctx.restore();

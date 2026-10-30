@@ -1,0 +1,46 @@
+---
+/**
+ * Big, kid-friendly top bar for every game page:
+ * [🏠 All Games]   Game Title   [other games →]
+ */
+import { GAMES } from "../data/games";
+
+interface Props {
+  current: string;
+  title: string;
+}
+
+const { current, title } = Astro.props;
+const others = GAMES.filter((g) => g.id !== current);
+const letters = [...title];
+---
+
+<nav class="game-nav flex items-center justify-between gap-2 mb-3 flex-wrap" aria-label="Ira's games">
+  <a href="/" class="crayon-btn nav-btn" style="background: var(--crayon-blue);" aria-label="Home: all of Ira's games">
+    🏠 <span>All Games</span>
+  </a>
+  <h1 class="bubble-letters text-3xl sm:text-4xl order-first w-full text-center sm:order-none sm:w-auto" aria-label={title}>
+    {letters.map((ch) => <span>{ch === " " ? "\u00A0" : ch}</span>)}
+  </h1>
+  <div class="flex gap-2">
+    {others.map((g) => (
+      <a href={g.href} class="crayon-btn nav-btn" style={`background: ${g.color};`} aria-label={`Switch game: play ${g.title}`}>
+        {g.emoji} <span>{g.title}</span>
+      </a>
+    ))}
+  </div>
+</nav>
+
+<style>
+  .nav-btn {
+    font-size: 1.1rem;
+    padding: 0.45em 1em;
+    white-space: nowrap;
+  }
+  @media (max-width: 420px) {
+    .nav-btn {
+      font-size: 0.95rem;
+      padding: 0.4em 0.7em;
+    }
+  }
+</style>

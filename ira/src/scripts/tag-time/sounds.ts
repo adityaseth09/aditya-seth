@@ -72,6 +72,40 @@ export const sounds = {
     tone(300, 0.08, "square", 0, 120, 0.12);
     tone(600, 0.1, "triangle", 0.08, undefined, 0.1);
   },
+  munch: () => {
+    tone(520, 0.06, "triangle", 0, 740, 0.12);
+    tone(780, 0.08, "triangle", 0.06, 980, 0.12);
+  },
+  energy: () => {
+    tone(440, 0.08, "triangle", 0, undefined, 0.13);
+    tone(554, 0.08, "triangle", 0.07, undefined, 0.13);
+    tone(659, 0.08, "triangle", 0.14, undefined, 0.13);
+    tone(880, 0.22, "triangle", 0.21, 1047, 0.15);
+  },
+  sugarPrompt: () => {
+    tone(587, 0.09, "triangle", 0, undefined, 0.14);
+    tone(880, 0.16, "triangle", 0.09, undefined, 0.14);
+  },
+  sugarRush: () => {
+    tone(523, 0.07, "square", 0, undefined, 0.1);
+    tone(659, 0.07, "square", 0.06, undefined, 0.1);
+    tone(784, 0.07, "square", 0.12, undefined, 0.1);
+    tone(1047, 0.18, "square", 0.18, 1319, 0.11);
+  },
+  sugarCrash: () => {
+    tone(440, 0.28, "sine", 0, 220, 0.12);
+  },
+  allergy: () => {
+    tone(190, 0.16, "sawtooth", 0, 120, 0.14);
+    tone(170, 0.18, "sawtooth", 0.18, 95, 0.14);
+    tone(150, 0.25, "sawtooth", 0.36, 80, 0.14);
+  },
+  bestFood: () => {
+    tone(587, 0.1, "triangle", 0, undefined, 0.15);
+    tone(784, 0.1, "triangle", 0.1, undefined, 0.15);
+    tone(988, 0.1, "triangle", 0.2, undefined, 0.15);
+    tone(1175, 0.28, "triangle", 0.3, undefined, 0.16);
+  },
   death: () => tone(400, 0.5, "sawtooth", 0, 70, 0.16),
   level: () => {
     tone(523, 0.12, "triangle", 0);
