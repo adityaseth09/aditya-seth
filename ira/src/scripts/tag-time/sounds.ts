@@ -63,6 +63,10 @@ export const sounds = {
     tone(1100, 0.18, "triangle", 0.18);
   },
   lever: () => tone(180, 0.12, "square", 0, 90, 0.12),
+  whoosh: () => {
+    tone(380, 0.14, "sine", 0, 920, 0.12);
+    tone(640, 0.16, "triangle", 0.06, 1040, 0.1);
+  },
   door: () => {
     tone(140, 0.15, "square", 0, 90, 0.12);
     tone(500, 0.12, "triangle", 0.16);

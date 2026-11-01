@@ -48,6 +48,13 @@ const tagJumps: JumpLink[] = Object.entries(PLANETS).map(([theme, meta]) => {
   const level = lastByTheme.get(theme)!;
   return { ...meta, level, href: `/games/tag-time/?level=${level}` };
 });
+tagJumps.push({
+  label: "Halloween",
+  emoji: "🎃",
+  color: "var(--crayon-orange)",
+  level: 61,
+  href: "/games/tag-time/?level=61",
+});
 
 const CLAM_ZONES: Record<string, { label: string; emoji: string; color: string }> = {
   bay: { label: "Shallow Bay", emoji: "🌊", color: "var(--crayon-blue)" },

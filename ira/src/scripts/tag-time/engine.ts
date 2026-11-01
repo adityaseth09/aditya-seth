@@ -166,7 +166,7 @@ function rectOf(x: number, y: number, w: number, h: number): Rect {
 
 /* ---------- death & progress ---------- */
 
-function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird" | "wind" | "rain" | "fire"): void {
+function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird" | "wind" | "rain" | "fire" | "bat" | "spider" | "monster"): void {
   if (phase !== "playing") return;
   phase = "dead";
   deathTimer = 1.3;
@@ -213,8 +213,8 @@ function updateEnemies(dt: number): void {
       e.x = e.max;
       e.dir = -1;
     }
-    // flyers (bird, wind, rain) bob around y; ground villains (beast, fire) sit on it
-    const flies = e.type === "bird" || e.type === "wind" || e.type === "rain";
+    // flyers bob around y; ground villains sit on it
+    const flies = e.type === "bird" || e.type === "wind" || e.type === "rain" || e.type === "bat";
     e.cy = flies ? e.y + Math.sin(st.time * 3 + e.min * 0.05) * (e.amp ?? 30) : e.y;
 
     // rain clouds keep spitting droplets
@@ -260,6 +260,12 @@ function enemyBox(e: EnemyRuntime): Rect {
       return { x: e.x - 19, y: e.cy - 14, w: 38, h: 28 };
     case "fire":
       return { x: e.x - 11, y: e.cy - 32, w: 22, h: 32 };
+    case "bat":
+      return { x: e.x - 12, y: e.cy - 12, w: 24, h: 22 };
+    case "spider":
+      return { x: e.x - 16, y: e.cy - 22, w: 32, h: 22 };
+    case "monster":
+      return { x: e.x - 15, y: e.cy - 32, w: 30, h: 32 };
   }
 }
 
@@ -269,6 +275,9 @@ const STOMP_MSG: Record<EnemyRuntime["type"], string> = {
   wind: "puffed the gust away!",
   rain: "splashed the rain cloud!",
   fire: "put out the fire!",
+  bat: "bonked the bat!",
+  spider: "squashed the spider!",
+  monster: "squashed the monster!",
 };
 
 function enemyCollisions(pl: Player): void {
@@ -305,6 +314,23 @@ function windPush(pl: Player, dt: number): void {
       pl.x += e.dir * 55 * dt;
     }
   }
+}
+
+/** Walk into a big pumpkin and pop up onto its sky platform. */
+function enterPumpkin(pl: Player): boolean {
+  const body = rectOf(pl.x + 2, pl.y + 2, PW - 4, PH - 2);
+  for (const pk of st.level.pumpkins ?? []) {
+    if (!overlap(body, rectOf(pk.x - 18, pk.y - 24, 36, 46), 0)) continue;
+    pl.x = pk.tx;
+    pl.y = pk.ty;
+    pl.vx = 0;
+    pl.vy = -220;
+    pl.onGround = false;
+    sounds.whoosh();
+    say("whoosh! up in the sky!");
+    return true;
+  }
+  return false;
 }
 
 /* ---------- per-player physics ---------- */
@@ -361,6 +387,8 @@ function stepPlayer(p: number, dt: number): void {
     }
   }
   if (pl.onGround) pl.coyote = 0.09;
+
+  if (enterPumpkin(pl)) return;
 
   // hazards
   const body = rectOf(pl.x + 3, pl.y + 3, PW - 6, PH - 3);

@@ -52,8 +52,8 @@ export const GAMES: GameInfo[] = [
     emoji: "🔑",
     color: "var(--crayon-red)",
     tagline:
-      "Jump over the lava and spikes, dodge the beasts and birds (or jump on their heads!), find both keys, push the lever… and open the doors to win!",
-    badges: ["👫 1 or 2 players", "🪐 6 planets", "⭐ 60 levels"],
+      "Jump over the lava and spikes, dodge the beasts, birds, bats, spiders and monsters (or jump on their heads!), find both keys, push the lever… and open the doors to win!",
+    badges: ["👫 1 or 2 players", "🪐 7 worlds", "⭐ 70 levels"],
     sketch: { src: "/ira-sketch-tag-time.jpg", alt: "Ira's hand-drawn sketch of Tag Time!" },
   },
 ];

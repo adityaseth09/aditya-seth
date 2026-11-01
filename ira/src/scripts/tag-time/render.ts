@@ -9,7 +9,9 @@ export interface CoinItem { x: number; y: number }
 export interface BridgeItem extends Rect { id: string }
 export interface DoorItem extends Rect { id: number }
 export interface LeverItem { x: number; y: number; links: string[] }
-export type EnemyKind = "beast" | "bird" | "wind" | "rain" | "fire";
+/** A big pumpkin you walk into. (x, y) is its center; (tx, ty) is where the player appears. */
+export interface PumpkinPortal { x: number; y: number; tx: number; ty: number }
+export type EnemyKind = "beast" | "bird" | "wind" | "rain" | "fire" | "bat" | "spider" | "monster";
 export interface EnemyItem {
   type: EnemyKind;
   x: number; y: number;
@@ -31,7 +33,7 @@ export interface DropRuntime {
 }
 
 /** Which planet the level lives on — changes the notebook doodle background. */
-export type Theme = "home" | "wind" | "rain" | "fire" | "storm" | "volcano";
+export type Theme = "home" | "wind" | "rain" | "fire" | "storm" | "volcano" | "halloween";
 
 export interface LevelData {
   name: string;
@@ -48,6 +50,8 @@ export interface LevelData {
   bridges: BridgeItem[];
   doors: DoorItem[];
   enemies: EnemyItem[];
+  /** walk-in pumpkins that pop you up to a sky path. Halloween levels 63–70. */
+  pumpkins?: PumpkinPortal[];
   exit: Rect;
 }
 
@@ -81,6 +85,7 @@ const THEMES: Record<Theme, { paper: string; line: string }> = {
   fire: { paper: "#fdf0e0", line: "rgba(224,120,60,0.16)" },
   storm: { paper: "#e4e8f0", line: "rgba(90,110,160,0.20)" },
   volcano: { paper: "#f6e6da", line: "rgba(210,100,60,0.18)" },
+  halloween: { paper: "#f3e8fb", line: "rgba(239,143,74,0.28)" },
 };
 
 export function drawBackground(
@@ -111,6 +116,8 @@ export function drawBackground(
     drawRainSky(ctx, camX, levelW, t, f, theme === "storm");
   } else if (theme === "fire" || theme === "volcano") {
     drawFireSky(ctx, camX, levelW, t, f, theme === "volcano");
+  } else if (theme === "halloween") {
+    drawHalloweenSky(ctx, camX, levelW, t, f);
   } else {
     // home: wobbly sun doodle (parallax with camera)
     const sunX = 140 - (camX * 0.2) % 960;
@@ -264,6 +271,40 @@ function drawFireSky(
   drawCloudRow(ctx, camX, levelW, t, "#f3ded0");
 }
 
+/** Halloween: a moon, pumpkin doodles, and tiny bats in the notebook sky. */
+function drawHalloweenSky(
+  ctx: CanvasRenderingContext2D, camX: number, levelW: number, t: number, f: number,
+): void {
+  const moonX = 160 - (camX * 0.15) % 960;
+  const mx = moonX < -80 ? moonX + 1040 : moonX;
+  sketchCircle(ctx, mx, 68, 28, "#f6e7a8", 3, f, 1.6);
+  sketchCircle(ctx, mx - 8, 60, 5, "rgba(232,210,140,0.9)", 4, f, 0.6);
+  sketchCircle(ctx, mx + 10, 74, 4, "rgba(232,210,140,0.9)", 5, f, 0.5);
+
+  // little stars
+  for (let i = 0; i < 10; i++) {
+    const sx = ((i * 113 + 40 - camX * 0.08) % 1040 + 1040) % 1040;
+    const sy = 28 + (i * 37) % 90;
+    sketchLine(ctx, sx - 4, sy, sx + 4, sy, 80 + i, f, 0.4, "#f2c14e", 2);
+    sketchLine(ctx, sx, sy - 4, sx, sy + 4, 90 + i, f, 0.4, "#f2c14e", 2);
+  }
+
+  // decorative bats, much smaller than the ones you can stomp
+  for (let i = 0; i < 5; i++) {
+    const bx = ((i * 210 + 80 - camX * 0.35 + t * 18) % (levelW + 300) + levelW + 300) % (levelW + 300) - 150;
+    if (bx < -30 || bx > 990) continue;
+    const by = 48 + (i % 3) * 22;
+    const flap = Math.sin(t * 10 + i) * 6;
+    ctx.strokeStyle = "#4c3f72";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(bx - 8, by + flap);
+    ctx.quadraticCurveTo(bx - 4, by - 6, bx, by);
+    ctx.quadraticCurveTo(bx + 4, by - 6, bx + 8, by + flap);
+    ctx.stroke();
+  }
+}
+
 /* ---------- world ---------- */
 
 export function drawWorld(ctx: CanvasRenderingContext2D, st: WorldState): void {
@@ -375,6 +416,8 @@ export function drawWorld(ctx: CanvasRenderingContext2D, st: WorldState): void {
     crayonText(ctx, "push this!", lv.x, lv.y - 46, 15, INK, f, 63);
   }
 
+  for (const pk of level.pumpkins ?? []) drawPumpkinPortal(ctx, pk, t, f);
+
   // doors (two stacked blocks like the sketch: door 1 top, door 2 bottom)
   for (const d of level.doors) {
     const open = st.openDoors.has(d.id);
@@ -412,7 +455,10 @@ export function drawWorld(ctx: CanvasRenderingContext2D, st: WorldState): void {
     else if (e.type === "bird") drawBird(ctx, e, t, f);
     else if (e.type === "wind") drawWindVillain(ctx, e, t, f);
     else if (e.type === "rain") drawRainVillain(ctx, e, t, f);
-    else drawFireVillain(ctx, e, t, f);
+    else if (e.type === "fire") drawFireVillain(ctx, e, t, f);
+    else if (e.type === "bat") drawBat(ctx, e, t, f);
+    else if (e.type === "spider") drawSpider(ctx, e, t, f);
+    else drawMonster(ctx, e, t, f);
   }
 
   // raindrops spat by rain clouds
@@ -461,6 +507,26 @@ function drawStar(ctx: CanvasRenderingContext2D, r: number, fill: string, f: num
   ctx.strokeStyle = INK;
   ctx.lineWidth = 2.5;
   ctx.stroke();
+}
+
+/** A big pumpkin gate. Walk in, pop up to the sky path. */
+function drawPumpkinPortal(
+  ctx: CanvasRenderingContext2D, pk: PumpkinPortal, t: number, f: number,
+): void {
+  const bob = Math.sin(t * 3 + pk.x) * 2;
+  const cy = pk.y + bob;
+  const seed = 900 + Math.round(pk.x);
+
+  sketchCircle(ctx, pk.x, cy, 20, "#ef8f4a", seed, f, 1.6);
+  sketchLine(ctx, pk.x, cy - 18, pk.x + 3, cy - 30, seed + 1, f, 0.5, "#5eaa61", 4);
+  sketchLine(ctx, pk.x - 7, cy - 2, pk.x - 2, cy + 3, seed + 2, f, 0.3, INK, 2);
+  sketchLine(ctx, pk.x + 7, cy - 2, pk.x + 2, cy + 3, seed + 3, f, 0.3, INK, 2);
+  sketchLine(ctx, pk.x - 6, cy + 8, pk.x + 6, cy + 7, seed + 4, f, 0.4, INK, 2);
+  crayonText(ctx, "up!", pk.x, cy - 40, 16, "#e04f4f", f, seed + 5);
+
+  // a little landing mark on the sky platform
+  const pulse = 8 + Math.sin(t * 5) * 2;
+  sketchCircle(ctx, pk.tx + 12, pk.ty + 28, pulse, "rgba(239,143,74,0.35)", seed + 6, f, 0.8);
 }
 
 function sxb(bi: number, lx: number): number {
@@ -558,6 +624,135 @@ function drawBird(ctx: CanvasRenderingContext2D, e: EnemyRuntime, t: number, f: 
   ctx.fill();
   ctx.strokeStyle = INK;
   ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+const BAT_BODY = "#4c3f72";
+const BAT_WING = "#3a3158";
+const SPIDER_BODY = "#2e2a36";
+const MONSTER_BODY = "#7dbe5a";
+const MONSTER_DARK = "#5e9a42";
+
+/** A flappy purple bat. (x, cy) = center, same as a bird. */
+function drawBat(ctx: CanvasRenderingContext2D, e: EnemyRuntime, t: number, f: number): void {
+  const cx = e.x;
+  const cy = e.cy;
+  const seed = 600 + Math.round(e.min);
+  const flap = Math.sin(t * 12);
+
+  for (const s of [-1, 1]) {
+    ctx.save();
+    ctx.translate(cx, cy - 1);
+    ctx.rotate(flap * s * 0.45);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(s * 6, -2);
+    ctx.lineTo(s * 16, -9);
+    ctx.lineTo(s * 18, 1);
+    ctx.lineTo(s * 7, 3);
+    ctx.closePath();
+    ctx.fillStyle = BAT_WING;
+    ctx.fill();
+    ctx.strokeStyle = INK;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  sketchCircle(ctx, cx, cy + 1, 7, BAT_BODY, seed, f, 1);
+  // pointy ears
+  ctx.beginPath();
+  ctx.moveTo(cx - 4, cy - 4);
+  ctx.lineTo(cx - 7, cy - 14);
+  ctx.lineTo(cx - 1, cy - 5);
+  ctx.lineTo(cx + 1, cy - 5);
+  ctx.lineTo(cx + 7, cy - 14);
+  ctx.lineTo(cx + 4, cy - 4);
+  ctx.closePath();
+  ctx.fillStyle = BAT_BODY;
+  ctx.fill();
+  ctx.strokeStyle = INK;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  sketchCircle(ctx, cx - 2 + e.dir, cy - 1, 1.5, "#fff", seed + 2, f, 0.3);
+  sketchCircle(ctx, cx + 3 + e.dir, cy - 1, 1.5, "#fff", seed + 3, f, 0.3);
+  ctx.fillStyle = INK;
+  ctx.beginPath();
+  ctx.arc(cx - 2 + e.dir * 1.4, cy - 1, 0.7, 0, Math.PI * 2);
+  ctx.arc(cx + 3 + e.dir * 1.4, cy - 1, 0.7, 0, Math.PI * 2);
+  ctx.fill();
+  // little fangs
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - 2, cy + 4);
+  ctx.lineTo(cx - 1, cy + 7);
+  ctx.moveTo(cx + 2, cy + 4);
+  ctx.lineTo(cx + 1, cy + 7);
+  ctx.stroke();
+}
+
+/** A round spider that walks on the ground. (cx, feetY) = center-bottom. */
+function drawSpider(ctx: CanvasRenderingContext2D, e: EnemyRuntime, t: number, f: number): void {
+  const cx = e.x;
+  const feet = e.cy;
+  const seed = 700 + Math.round(e.min);
+  const by = feet - 11;
+  const swing = Math.sin(t * Math.max(2, e.speed * 0.04));
+
+  for (let i = 0; i < 8; i++) {
+    const side = i < 4 ? -1 : 1;
+    const k = i % 4;
+    const lift = swing * (k % 2 === 0 ? 1 : -1) * 3;
+    const hipX = cx + side * 3;
+    const hipY = by + (k - 1.5) * 2;
+    const kneeX = cx + side * (9 + k * 3);
+    const kneeY = by - 7 + lift + k;
+    const toeX = cx + side * (13 + k * 4);
+    const toeY = feet - (k === 0 || k === 3 ? 1 : 0);
+    sketchLine(ctx, hipX, hipY, kneeX, kneeY, seed + i, f, 0.5, SPIDER_BODY, 2.5);
+    sketchLine(ctx, kneeX, kneeY, toeX, toeY, seed + 10 + i, f, 0.5, SPIDER_BODY, 2.5);
+  }
+
+  sketchCircle(ctx, cx - e.dir * 3, by + 1, 7, SPIDER_BODY, seed + 20, f, 1);
+  sketchCircle(ctx, cx + e.dir * 4, by - 1, 5, "#3d3848", seed + 21, f, 0.8);
+  sketchCircle(ctx, cx + e.dir * 6, by - 3, 1.2, "#f2c14e", seed + 22, f, 0.2);
+  sketchCircle(ctx, cx + e.dir * 6, by + 1, 1.2, "#f2c14e", seed + 23, f, 0.2);
+}
+
+/** A lumpy green monster with horns. (cx, feetY) = center-bottom. */
+function drawMonster(ctx: CanvasRenderingContext2D, e: EnemyRuntime, t: number, f: number): void {
+  const cx = e.x;
+  const feet = e.cy;
+  const seed = 800 + Math.round(e.min);
+  const bob = Math.abs(Math.sin(t * e.speed * 0.02)) * 2;
+  const swing = Math.sin(t * e.speed * 0.04) * 4;
+  const by = feet - 16 - bob;
+
+  sketchLine(ctx, cx - 6, feet - 10, cx - 8 + swing, feet, seed + 1, f, 1, INK, 3);
+  sketchLine(ctx, cx + 6, feet - 10, cx + 8 - swing, feet, seed + 2, f, 1, INK, 3);
+
+  sketchCircle(ctx, cx, by, 13, MONSTER_BODY, seed + 3, f, 1.5);
+  sketchCircle(ctx, cx - 7, by + 3, 7, MONSTER_DARK, seed + 4, f, 1);
+  sketchLine(ctx, cx - 8, by - 10, cx - 14, by - 22, seed + 5, f, 0.6, "#ef8f4a", 3);
+  sketchLine(ctx, cx + 8, by - 10, cx + 14, by - 22, seed + 6, f, 0.6, "#ef8f4a", 3);
+
+  sketchCircle(ctx, cx - 5 + e.dir * 2, by - 2, 3.2, "#fff", seed + 7, f, 0.4);
+  sketchCircle(ctx, cx + 5 + e.dir * 2, by - 2, 3.2, "#fff", seed + 8, f, 0.4);
+  ctx.fillStyle = INK;
+  ctx.beginPath();
+  ctx.arc(cx - 5 + e.dir * 3, by - 2, 1.4, 0, Math.PI * 2);
+  ctx.arc(cx + 5 + e.dir * 3, by - 2, 1.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#fff";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(cx - 4, by + 6);
+  ctx.lineTo(cx - 2, by + 11);
+  ctx.lineTo(cx, by + 6);
+  ctx.lineTo(cx + 2, by + 11);
+  ctx.lineTo(cx + 4, by + 6);
   ctx.stroke();
 }
 
