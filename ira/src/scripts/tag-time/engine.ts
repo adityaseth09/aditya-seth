@@ -166,7 +166,7 @@ function rectOf(x: number, y: number, w: number, h: number): Rect {
 
 /* ---------- death & progress ---------- */
 
-function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird" | "wind" | "rain" | "fire"): void {
+function die(cause: "lava" | "spikes" | "fall" | "beast" | "bird" | "wind" | "rain" | "fire" | "bat" | "spider" | "monster"): void {
   if (phase !== "playing") return;
   phase = "dead";
   deathTimer = 1.3;
@@ -213,8 +213,8 @@ function updateEnemies(dt: number): void {
       e.x = e.max;
       e.dir = -1;
     }
-    // flyers (bird, wind, rain) bob around y; ground villains (beast, fire) sit on it
-    const flies = e.type === "bird" || e.type === "wind" || e.type === "rain";
+    // flyers bob around y; ground villains sit on it
+    const flies = e.type === "bird" || e.type === "wind" || e.type === "rain" || e.type === "bat";
     e.cy = flies ? e.y + Math.sin(st.time * 3 + e.min * 0.05) * (e.amp ?? 30) : e.y;
 
     // rain clouds keep spitting droplets
@@ -260,6 +260,12 @@ function enemyBox(e: EnemyRuntime): Rect {
       return { x: e.x - 19, y: e.cy - 14, w: 38, h: 28 };
     case "fire":
       return { x: e.x - 11, y: e.cy - 32, w: 22, h: 32 };
+    case "bat":
+      return { x: e.x - 12, y: e.cy - 12, w: 24, h: 22 };
+    case "spider":
+      return { x: e.x - 16, y: e.cy - 22, w: 32, h: 22 };
+    case "monster":
+      return { x: e.x - 15, y: e.cy - 32, w: 30, h: 32 };
   }
 }
 
@@ -269,6 +275,9 @@ const STOMP_MSG: Record<EnemyRuntime["type"], string> = {
   wind: "puffed the gust away!",
   rain: "splashed the rain cloud!",
   fire: "put out the fire!",
+  bat: "bonked the bat!",
+  spider: "squashed the spider!",
+  monster: "squashed the monster!",
 };
 
 function enemyCollisions(pl: Player): void {

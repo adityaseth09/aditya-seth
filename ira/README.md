@@ -61,11 +61,12 @@ work across every game. Each game keeps its own level/character keys.
 - **Tag Time!** (`/games/tag-time/`) — the lava obstacle course from Ira's sketch:
   jump over lava and spikes, collect coins, find **key 1** and **key 2**, push the
   lever to raise a bridge, then walk through **both doors** to finish the level.
-  Watch out for **beasts** stomping on the ground and **birds** swooping through
+  Watch out for **beasts** and **monsters** stomping on the ground, **spiders**
+  skittering along the platforms, and **birds** and **bats** swooping through
   the air — touching them means restart, but jumping on their heads squashes them!
   Fall in the lava and you restart the level from the top.
 
-- **60 levels across 6 worlds** (Ira's master plan, delivered):
+- **70 levels across 7 worlds** (Ira's master plan, delivered):
   - **Home** (levels 1–10) — the original levels with the beasts and birds.
   - **Wind Planet** (11–20) — **Windy** the gust cloud blows you around; duck
     under the low gusts and jump the gaps, up to boss **Galezilla**.
@@ -77,6 +78,9 @@ work across every game. Each game keeps its own level/character keys.
     up to boss **The Great Tempest**.
   - **Volcano Planet** (51–60) — every villain at once, lava waterfalls to jump
     over, ending with the **Final Boss: Planet Showdown**.
+  - **Halloween** (61–70) — a spooky notebook night with a moon and pumpkins.
+    **Bats** fly like birds, **spiders** and **monsters** walk like beasts,
+    up to boss **The Great Pumpkin**.
   Every world gets its own crayon-doodled notebook background.
 
 - **Two-player team mode** (from Ira's sketch: "two people going in a team-work
@@ -127,10 +131,10 @@ npm run build    # static output in ira/dist
 
 All levels are data in [`src/data/levels.json`](src/data/levels.json): platforms,
 lava (including standing lava "waterfall" columns), spikes, enemies
-(ground `beast`s/`fire` flames and flying `bird`s/`wind` gusts/`rain` clouds
+(ground `beast`s/`fire` flames/`spider`s/`monster`s and flying `bird`s/`bat`s/`wind` gusts/`rain` clouds
 with patrol ranges), keys, coins, the lever, its bridge, the two doors and the
 exit zone. Every level also has a `theme` (`home`, `wind`, `rain`, `fire`,
-`storm`, `volcano`) that picks the doodled background. Add a new object to the
+`storm`, `volcano`, `halloween`) that picks the doodled background. Add a new object to the
 `levels` array — no code changes needed.
 Keep jumps fair: rise ≤ ~90px, gaps ≤ ~170px, and don't hover flying villains
 at standing-head height over platforms.
