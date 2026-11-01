@@ -9,6 +9,8 @@ export interface CoinItem { x: number; y: number }
 export interface BridgeItem extends Rect { id: string }
 export interface DoorItem extends Rect { id: number }
 export interface LeverItem { x: number; y: number; links: string[] }
+/** A big pumpkin you walk into. (x, y) is its center; (tx, ty) is where the player appears. */
+export interface PumpkinPortal { x: number; y: number; tx: number; ty: number }
 export type EnemyKind = "beast" | "bird" | "wind" | "rain" | "fire" | "bat" | "spider" | "monster";
 export interface EnemyItem {
   type: EnemyKind;
@@ -48,6 +50,8 @@ export interface LevelData {
   bridges: BridgeItem[];
   doors: DoorItem[];
   enemies: EnemyItem[];
+  /** walk-in pumpkins that pop you up to a sky path. Halloween levels 63–70. */
+  pumpkins?: PumpkinPortal[];
   exit: Rect;
 }
 
@@ -285,20 +289,6 @@ function drawHalloweenSky(
     sketchLine(ctx, sx, sy - 4, sx, sy + 4, 90 + i, f, 0.4, "#f2c14e", 2);
   }
 
-  // pumpkin doodles drifting with the page
-  const pumpkins: Array<[number, number, number]> = [
-    [280, 150, 1], [720, 130, 0.85], [1180, 160, 1.1], [1680, 140, 0.9],
-  ];
-  for (const [px0, py, sc] of pumpkins) {
-    const px = ((px0 - camX * 0.25) % (levelW + 400) + levelW + 400) % (levelW + 400) - 200;
-    if (px < -40 || px > 1000) continue;
-    sketchCircle(ctx, px, py, 16 * sc, "#ef8f4a", px0, f, 1.4);
-    sketchLine(ctx, px, py - 14 * sc, px + 2, py - 24 * sc, px0 + 1, f, 0.6, "#5eaa61", 3);
-    sketchLine(ctx, px - 6 * sc, py - 2, px - 2 * sc, py + 2, px0 + 2, f, 0.3, INK, 2);
-    sketchLine(ctx, px + 6 * sc, py - 2, px + 2 * sc, py + 2, px0 + 3, f, 0.3, INK, 2);
-    sketchLine(ctx, px - 4 * sc, py + 6 * sc, px + 4 * sc, py + 5 * sc, px0 + 4, f, 0.4, INK, 2);
-  }
-
   // decorative bats, much smaller than the ones you can stomp
   for (let i = 0; i < 5; i++) {
     const bx = ((i * 210 + 80 - camX * 0.35 + t * 18) % (levelW + 300) + levelW + 300) % (levelW + 300) - 150;
@@ -426,6 +416,8 @@ export function drawWorld(ctx: CanvasRenderingContext2D, st: WorldState): void {
     crayonText(ctx, "push this!", lv.x, lv.y - 46, 15, INK, f, 63);
   }
 
+  for (const pk of level.pumpkins ?? []) drawPumpkinPortal(ctx, pk, t, f);
+
   // doors (two stacked blocks like the sketch: door 1 top, door 2 bottom)
   for (const d of level.doors) {
     const open = st.openDoors.has(d.id);
@@ -515,6 +507,26 @@ function drawStar(ctx: CanvasRenderingContext2D, r: number, fill: string, f: num
   ctx.strokeStyle = INK;
   ctx.lineWidth = 2.5;
   ctx.stroke();
+}
+
+/** A big pumpkin gate. Walk in, pop up to the sky path. */
+function drawPumpkinPortal(
+  ctx: CanvasRenderingContext2D, pk: PumpkinPortal, t: number, f: number,
+): void {
+  const bob = Math.sin(t * 3 + pk.x) * 2;
+  const cy = pk.y + bob;
+  const seed = 900 + Math.round(pk.x);
+
+  sketchCircle(ctx, pk.x, cy, 20, "#ef8f4a", seed, f, 1.6);
+  sketchLine(ctx, pk.x, cy - 18, pk.x + 3, cy - 30, seed + 1, f, 0.5, "#5eaa61", 4);
+  sketchLine(ctx, pk.x - 7, cy - 2, pk.x - 2, cy + 3, seed + 2, f, 0.3, INK, 2);
+  sketchLine(ctx, pk.x + 7, cy - 2, pk.x + 2, cy + 3, seed + 3, f, 0.3, INK, 2);
+  sketchLine(ctx, pk.x - 6, cy + 8, pk.x + 6, cy + 7, seed + 4, f, 0.4, INK, 2);
+  crayonText(ctx, "up!", pk.x, cy - 40, 16, "#e04f4f", f, seed + 5);
+
+  // a little landing mark on the sky platform
+  const pulse = 8 + Math.sin(t * 5) * 2;
+  sketchCircle(ctx, pk.tx + 12, pk.ty + 28, pulse, "rgba(239,143,74,0.35)", seed + 6, f, 0.8);
 }
 
 function sxb(bi: number, lx: number): number {

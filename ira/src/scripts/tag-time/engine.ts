@@ -316,6 +316,23 @@ function windPush(pl: Player, dt: number): void {
   }
 }
 
+/** Walk into a big pumpkin and pop up onto its sky platform. */
+function enterPumpkin(pl: Player): boolean {
+  const body = rectOf(pl.x + 2, pl.y + 2, PW - 4, PH - 2);
+  for (const pk of st.level.pumpkins ?? []) {
+    if (!overlap(body, rectOf(pk.x - 18, pk.y - 24, 36, 46), 0)) continue;
+    pl.x = pk.tx;
+    pl.y = pk.ty;
+    pl.vx = 0;
+    pl.vy = -220;
+    pl.onGround = false;
+    sounds.whoosh();
+    say("whoosh! up in the sky!");
+    return true;
+  }
+  return false;
+}
+
 /* ---------- per-player physics ---------- */
 
 function stepPlayer(p: number, dt: number): void {
@@ -370,6 +387,8 @@ function stepPlayer(p: number, dt: number): void {
     }
   }
   if (pl.onGround) pl.coyote = 0.09;
+
+  if (enterPumpkin(pl)) return;
 
   // hazards
   const body = rectOf(pl.x + 3, pl.y + 3, PW - 6, PH - 3);
