@@ -36,9 +36,9 @@ const latest = INCIDENTS[0];
 					{profile.name.split(' ')[0]}'s résumé, as an observability platform
 				</h1>
 				<p class="mt-1 max-w-2xl text-sm text-muted">
-					{INCIDENTS.length} resolved incidents, {DEPLOYS.length} deploys, zero rollbacks. Every incident below was
-					inherited, triaged, and permanently resolved — the postmortems are the career highlights.
-					Watch the golden signals; page the on-call if anything looks off.
+					{INCIDENTS.length} resolved incidents, {DEPLOYS.length} deploys, zero rollbacks — from the B.SQL turnaround
+					after the ~70,000-order outage to the Datadog rollout and the $40M/yr FinOps cut. The postmortems are
+					the career highlights; watch the golden signals; page the on-call if anything looks off.
 				</p>
 			</div>
 			<div class="flex flex-wrap gap-2 font-mono text-[11px] text-muted">
@@ -90,7 +90,7 @@ const latest = INCIDENTS[0];
 			</SrePanel>
 
 			<!-- Incident feed + postmortem -->
-			<SrePanel id="panel-incidents" title="Incident feed — inherited, triaged, resolved" span={2} source="all posts · 100% resolved">
+			<SrePanel id="panel-incidents" title="Incident feed — led, mitigated, resolved" span={2} source="all posts · 100% resolved">
 				<div class="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
 					<ol id="sre-incidents" class="min-w-0 space-y-1" aria-label="Incidents">
 						{INCIDENTS.map((inc, i) => (
@@ -132,31 +132,32 @@ const latest = INCIDENTS[0];
 			</SrePanel>
 
 			<!-- SLOs & error budget -->
-			<SrePanel id="panel-slo" title="SLOs & error budget" source="slo.yaml · 30d window">
+			<SrePanel id="panel-slo" title="SLOs & error budget" source="MySQL Availability Reporter · slo.yaml">
 				<div class="flex items-center gap-4">
 					<div class="relative shrink-0">
-						<svg class="sre-gauge" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Availability gauge">
+						<svg class="sre-gauge" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Runbook coverage gauge">
 							<circle class="sre-gauge-track" cx="60" cy="60" r="52" fill="none" stroke-width="9"></circle>
 							<circle id="gauge-fill" class="sre-gauge-fill" cx="60" cy="60" r="52" fill="none" stroke-width="9" stroke-dasharray="326.7" stroke-dashoffset="326.7"></circle>
 						</svg>
 						<div class="absolute inset-0 flex flex-col items-center justify-center">
 							<b id="gauge-value" class="font-mono text-lg font-semibold tabular-nums text-text">—</b>
-							<span class="font-mono text-[9.5px] uppercase tracking-[0.1em] text-muted">availability</span>
+							<span class="font-mono text-[9.5px] uppercase tracking-[0.1em] text-muted">runbook coverage</span>
 						</div>
 					</div>
 					<div class="grid min-w-0 flex-1 grid-cols-2 gap-3">
-						<div class="sre-stat"><span>SLO target</span><b>99.99%</b></div>
-						<div class="sre-stat"><span>achieved (30d)</span><b class="text-ok">99.999%</b></div>
-						<div class="sre-stat"><span>error budget</span><b>4m 23s / mo</b></div>
-						<div class="sre-stat"><span>burn rate</span><b class="text-ok">0.01×</b></div>
+						<div class="sre-stat"><span>reliability</span><b class="text-ok">off the top-offender list</b></div>
+						<div class="sre-stat"><span>sustained</span><b>since the 2022 turnaround</b></div>
+						<div class="sre-stat"><span>on-call pages</span><b class="text-ok">~1 / month</b></div>
+						<div class="sre-stat"><span>cost reduction</span><b>65%+ · $40M+/yr</b></div>
 					</div>
 				</div>
 				<div class="mt-4">
 					<div class="flex items-baseline justify-between font-mono text-[11px] text-muted">
-						<span>error budget remaining</span>
+						<span>availability budget recovered</span>
 						<b id="budget-pct" class="text-text">100%</b>
 					</div>
 					<div class="sre-budget mt-1"><div id="budget-bar" class="sre-budget-fill" style="width:0%"></div></div>
+					<p class="mt-1.5 font-mono text-[10.5px] text-muted">B.SQL removed from the top offenders for availability budget loss per team — and kept off.</p>
 				</div>
 				<table class="sre-table mt-4">
 					<thead>
@@ -193,7 +194,8 @@ const latest = INCIDENTS[0];
 				</div>
 				<p class="mt-3 text-[12px] leading-relaxed text-muted">
 					Latency, traffic, errors, saturation — the four golden signals, running on career-scale numbers:
-					~15ms p99 at 1M+ req/min, a 20,000+ server fleet, and an error rate the budget barely notices.
+					~15ms p99 at 1M+ req/min across a 20,000+ server fleet, with runbooks covering ~95% of known
+					failure modes and a pager that now fires about once a month.
 				</p>
 			</SrePanel>
 
@@ -215,18 +217,20 @@ const latest = INCIDENTS[0];
 			</SrePanel>
 
 			<!-- On-call -->
-			<SrePanel id="panel-oncall" title="On-call" source="pager · quiet since 2006">
+			<SrePanel id="panel-oncall" title="On-call" source="pager · pages ~1/month">
 				<div class="grid grid-cols-2 gap-3">
-					<div class="sre-stat"><span>on-call primary</span><b>{ONCALL.primary}</b></div>
-					<div class="sre-stat"><span>MTTD</span><b class="text-ok">{ONCALL.mttd}</b></div>
-					<div class="sre-stat col-span-2"><span>MTTR</span><b>{ONCALL.mttr}</b></div>
+					<div class="sre-stat col-span-2"><span>on-call primary</span><b>{ONCALL.primary}</b></div>
+					<div class="sre-stat col-span-2"><span>escalation rotation</span><b>{ONCALL.escalation}</b></div>
+					<div class="sre-stat"><span>runbooks</span><b class="text-ok">{ONCALL.runbooks}</b></div>
+					<div class="sre-stat"><span>page frequency</span><b class="text-ok">{ONCALL.pages}</b></div>
 				</div>
 				<div class="mt-3 flex flex-wrap gap-1.5">
 					{ONCALL.compliance.map((c) => <span class="sre-tag">100% {c}</span>)}
 				</div>
 				<p class="mt-3 text-[12.5px] leading-relaxed text-muted">
-					Hands-on with the SRE teams and the 24/7 incident response rotation. If a real incident needs a
-					leader who has resolved every one above, this is how to reach the primary.
+					Designed a healthy on-call model with an outsourced ops partner: Pythian handles routine L1, runbooks are
+					updated after every new repeating or big failure, and onboarding comes with recorded training and shadowing.
+					Leads response for large B.SQL incidents and takes regular on-call shifts.
 				</p>
 				<a
 					href={profile.linkedin}

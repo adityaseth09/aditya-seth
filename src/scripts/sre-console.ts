@@ -1,7 +1,7 @@
 /**
  * Client controller for /sre. Vanilla TypeScript, no framework.
  * Reads state from lib/sre/data.ts, renders into the shells in pages/sre.astro:
- * a guided terminal, the incident postmortems, SLO gauge, golden-signal
+ * a guided terminal, the incident postmortems, the SLO gauge, golden-signal
  * sparklines, and the deploy timeline interactions.
  */
 import {
@@ -10,6 +10,9 @@ import {
 	SLOS,
 	SIGNALS,
 	ONCALL,
+	OBSERVABILITY_STACK,
+	TALKS,
+	HEADLINE,
 	CAREER_START,
 	PLATFORM,
 	COMMANDS,
@@ -58,19 +61,20 @@ const SEVS = ['SEV1', 'SEV2', 'SEV3'] as const;
 function cmdHelp(): Line[] {
 	return [
 		['commands:', 'head'],
-		['  help                this list'],
-		['  status              platform summary'],
-		['  incidents [sev]     incident feed, optionally filtered by SEV1/2/3'],
-		['  postmortem <id>     full postmortem, e.g. postmortem INC-2022-042'],
-		['  slo                 SLOs and error budget'],
-		['  uptime              availability since the first production shift'],
-		['  deploys             the career deploy timeline'],
-		['  savings             the FinOps numbers'],
-		['  fleet               the MySQL fleet at a glance'],
-		['  signals             the four golden signals'],
-		['  oncall              who carries the pager'],
-		['  whoami               the primary on-call, in résumé form'],
-		['  clear               clear the console'],
+		['  help                 this list'],
+		['  status               platform summary'],
+		['  incidents [sev]      incident feed, optionally filtered by SEV1/2/3'],
+		['  postmortem <id>      full postmortem, e.g. postmortem INC-2022-042'],
+		['  slo                  SLOs and error budget'],
+		['  uptime               reliability record since the first production shift'],
+		['  deploys              the career deploy timeline'],
+		['  savings              the FinOps numbers'],
+		['  fleet                the MySQL fleet at a glance'],
+		['  observability        the monitoring stack'],
+		['  talks                speaking and community'],
+		['  oncall               who carries the pager'],
+		['  whoami                the primary on-call, in résumé form'],
+		['  clear                clear the console'],
 		['promql-ish input is parsed leniently: sum(savings) works too.', 'muted'],
 	];
 }
@@ -78,11 +82,12 @@ function cmdHelp(): Line[] {
 function cmdStatus(): Line[] {
 	return [
 		[`${PLATFORM} · all systems operational`, 'ok'],
-		['availability   99.999% (target 99.99%)'],
-		['error budget   4m 23s / month · 100% remaining'],
+		['availability   B.SQL off the top-offender list for availability budget loss (sustained since)'],
+		['on-call        pages ~1/month · runbooks cover ~95% of failure modes'],
+		['observability  Datadog company-wide (MCP in Fabric) · VividCortex decommissioned'],
 		[`incidents      ${INCIDENTS.length} on file · 0 unresolved`],
 		[`deploys        ${DEPLOYS.length} releases · 0 rollbacks`],
-		['on-call        Aditya · 24/7 · hands-on with the SRE rotation'],
+		['on-call        Aditya · ADS-level escalation rotation · Manchester DB shifts'],
 	];
 }
 
@@ -123,8 +128,8 @@ function findIncident(id: string): Incident | undefined {
 function cmdSlo(): Line[] {
 	return [
 		['slo.yaml', 'head'],
-		...SLOS.map((s) => [`  ${s.name.padEnd(18)} target ${s.target.padEnd(22)} achieved ${s.achieved.padEnd(24)} budget ${s.budget}`]),
-		['error budget: 4m 23s / month at the 99.99% target — 100% remaining, burn rate 0.01×', 'ok'],
+		...SLOS.flatMap((s): Line[] => [[`  ${s.name.padEnd(16)} target ${s.target} · achieved ${s.achieved} · ${s.budget}`]]),
+		['availability budget recovered: B.SQL removed from the top-offender list, sustained since the 2022 turnaround', 'ok'],
 	];
 }
 
@@ -134,10 +139,11 @@ function cmdUptime(): Line[] {
 	const years = Math.floor(days / 365.25);
 	const rem = Math.round(days - years * 365.25);
 	return [
-		['uptime', 'head'],
+		['reliability record', 'head'],
 		[`  since first production shift (${CAREER_START}): ${years}y ${rem}d`],
-		['  availability achieved: 99.999% — four nines contracted, the fifth comes free', 'ok'],
-		[`  mttr: ${ONCALL.mttr} · mttd: ${ONCALL.mttd}`],
+		['  B.SQL: off the top-offender list for availability budget loss — sustained since the 2022 turnaround', 'ok'],
+		[`  runbooks   ${ONCALL.runbooks} · updated after every new repeating or big failure`],
+		[`  pages      ${ONCALL.pages} · Pythian handles routine L1`],
 	];
 }
 
@@ -154,37 +160,59 @@ function cmdDeploys(): Line[] {
 function cmdSavings(): Line[] {
 	return [
 		['finops · savings_total', 'head'],
-		['  $40M+/year   cloud + on-prem right-sizing, driven by production telemetry', 'ok'],
-		['  −20%         further opex via agentic optimisation', 'ok'],
-		['  −35%         infrastructure costs through cloud migration'],
-		['  method      measure first (usage evidence), then optimise — never spreadsheets', 'muted'],
+		['  $40M+/yr     MySQL infrastructure costs cut company-wide for DML', 'ok'],
+		['  65%+         cost reduction across AWS and on-prem MySQL', 'ok'],
+		['  ~50%         Datadog licence negotiated below the initial quote — and below VividCortex', 'ok'],
+		['  migration    thousands of servers supervised to AWS'],
+		['  method       measure first (production evidence), then optimise — company-wide cost visibility', 'muted'],
 	];
 }
 
 function cmdFleet(): Line[] {
 	return [
 		['mysql_fleet', 'head'],
-		['  20,000+ servers · one of the world\u2019s largest MySQL fleets'],
-		['  observability  AI-driven, integrated across the fleet'],
-		['  remediation   agentic auto-remediation keeps it reliable around the clock'],
-		['  compliance    SOX · PCI · PII at 100%'],
+		['  20,000+ servers · on-prem and AWS · one of the world\u2019s largest MySQL fleets'],
+		['  changes       percentage-based canary deployments for database changes — a first for the team'],
+		['  pull requests every PR must improve reliability or test coverage'],
+		['  ops           outsourced Pythian team handles routine L1 · runbooks ~95% of failure modes'],
+		['  compliance    100% SOX · PCI · PII across the MySQL estate'],
+	];
+}
+
+function cmdObservability(): Line[] {
+	return [
+		['observability stack', 'head'],
+		...OBSERVABILITY_STACK.flatMap((s): Line[] => [['  ' + s]]),
+		['Datadog MCP wired into Fabric: every engineer can query monitoring data through AI tooling.', 'muted'],
+	];
+}
+
+function cmdTalks(): Line[] {
+	return [
+		['speaking and community', 'head'],
+		...TALKS.flatMap((t): Line[] => [
+			[`  ${t.event} · ${t.when}`],
+			[`    "${t.title}"`, 'ok'],
+		]),
+		['internal: Observability Day Datadog workshop (30+ attendees) + the Datadog training programme', 'muted'],
 	];
 }
 
 function cmdSignals(): Line[] {
 	return [
 		['the four golden signals', 'head'],
-		...SIGNALS.map((s) => [`  ${s.label.padEnd(14)} ${s.value}`]),
-		['latency ~15ms p99 at 1M+ req/min — the dashboard charts them live.', 'muted'],
+		...SIGNALS.map((s) => [`  ${s.label.padEnd(18)} ${s.value}`]),
+		['runbooks cover ~95% of known failure modes; the pager now fires about once a month.', 'muted'],
 	];
 }
 
 function cmdOncall(): Line[] {
 	return [
 		['pager duty', 'head'],
-		[`  primary   ${ONCALL.primary}`],
-		[`  mttd      ${ONCALL.mttd} · mttr ${ONCALL.mttr}`],
-		['  quietest incident channel in the org — prevention beats paging', 'ok'],
+		[`  primary     ${ONCALL.primary}`],
+		[`  rotation    ${ONCALL.escalation}`],
+		[`  runbooks    ${ONCALL.runbooks} · updated after every new repeating or big failure`],
+		[`  pages       ${ONCALL.pages} — Pythian handles routine L1`, 'ok'],
 		['page the primary via LinkedIn (see the On-call panel →)', 'muted'],
 	];
 }
@@ -192,10 +220,11 @@ function cmdOncall(): Line[] {
 function cmdWhoami(): Line[] {
 	const { profile } = resume;
 	return [
-		[`${profile.name} — ${profile.title}`, 'head'],
+		[`${profile.name} — ${HEADLINE}`, 'head'],
 		[profile.hook],
 		[`  location   ${profile.location}`],
 		[`  status     ${profile.availability}`, 'ok'],
+		['leads large incidents, sits in the ADS-level escalation rotation, 20+ years in software engineering', 'muted'],
 		['run: incidents to see what gets resolved around here', 'muted'],
 	];
 }
@@ -237,6 +266,8 @@ function runCommand(raw: string): void {
 	if (cmd === 'deploys' || cmd === 'releases' || keyword('deploy')) return say(cmdDeploys());
 	if (cmd === 'savings' || cmd === 'finops' || cmd === 'cost' || keyword('savings')) return say(cmdSavings());
 	if (cmd === 'fleet' || cmd === 'mysql' || keyword('fleet')) return say(cmdFleet());
+	if (cmd === 'observability' || keyword('datadog') || keyword('observability')) return say(cmdObservability());
+	if (cmd === 'talks' || cmd === 'speaking' || keyword('talks')) return say(cmdTalks());
 	if (cmd === 'signals' || cmd === 'golden' || keyword('rate(')) return say(cmdSignals());
 	if (cmd === 'oncall' || cmd === 'page' || keyword('oncall')) return say(cmdOncall());
 	if (cmd === 'whoami' || cmd === 'profile' || keyword('whoami')) return say(cmdWhoami());
@@ -283,23 +314,25 @@ function selectIncident(id: string, announce = true): void {
 /* ---------- gauge, budget, sparklines ---------- */
 
 function animateHealth(): void {
+	// Gauge: runbook coverage (~95% of known failure modes), from the CV.
 	const C = 2 * Math.PI * 52; // 326.7
 	const gauge = $('#gauge-fill');
 	const gaugeValue = $('#gauge-value');
 	const budgetBar = $('#budget-bar');
 	const budgetPct = $('#budget-pct');
+	const target = (C * 0.05).toFixed(1); // 95% of the ring
 	if (reducedMotion) {
-		if (gauge) gauge.style.strokeDashoffset = '0';
+		if (gauge) gauge.style.strokeDashoffset = target;
 		if (budgetBar) budgetBar.style.width = '100%';
 	} else {
 		window.setTimeout(() => {
-			if (gauge) gauge.style.strokeDashoffset = '0'; // 99.999% ≈ full ring
+			if (gauge) gauge.style.strokeDashoffset = target;
 		}, 150);
 		window.setTimeout(() => {
 			if (budgetBar) budgetBar.style.width = '100%';
 		}, 350);
 	}
-	if (gaugeValue) gaugeValue.textContent = '99.999%';
+	if (gaugeValue) gaugeValue.textContent = '95%';
 	if (budgetPct) budgetPct.textContent = '100%';
 }
 
@@ -320,7 +353,7 @@ function fmtSignal(id: string): (n: number) => string {
 		case 'latency':
 			return (n) => `${(12 + (n / 100) * 6).toFixed(1)} ms p99`;
 		case 'traffic':
-			return (n) => `${((0.85 + (n / 100) * 0.3) * 1).toFixed(2)}M req/min`;
+			return (n) => `${(0.85 + (n / 100) * 0.3).toFixed(2)}M req/min`;
 		case 'errors':
 			return (n) => `${((n / 100) * 0.002).toFixed(4)}%`;
 		default:
