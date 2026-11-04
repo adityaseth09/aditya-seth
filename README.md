@@ -26,6 +26,12 @@ The **SQL** button in the header opens the same résumé as a MySQL/PostgreSQL d
 
 Tables are derived from `resume.json` at build time in `src/lib/db/schema.ts`; saved queries live in `src/lib/db/queries.ts`. No client framework or extra dependencies.
 
+## Observability view (`/sre`)
+
+The **SRE** button in the header opens the same résumé as an observability platform: career highlights reframed as resolved incident postmortems (SEV1–SEV3, with impact, detection, resolution and business outcome), an SLO/error-budget panel with an availability gauge, the four golden signals as live sparklines, the career as a zero-rollback deploy timeline, an on-call panel, and a guided terminal. Commands like `incidents`, `postmortem INC-2022-042`, `slo`, `uptime`, `deploys`, `savings` and `fleet` explore the platform; lenient PromQL-ish input (`sum(savings_total)`) is parsed too. Arrow keys replay command history.
+
+Incidents, deploys, SLOs and signals are typed data in `src/lib/sre/data.ts`, derived from `resume.json`. No client framework or extra dependencies.
+
 ## Content updates
 
 Edit [`src/data/resume.json`](src/data/resume.json) to change profile info, metrics, experience, education, certifications, skills, or navigation links.
@@ -59,14 +65,18 @@ Update `site` in [`astro.config.mjs`](astro.config.mjs) to your production URL f
 ```text
 src/
 ├── data/resume.json       # Single source of truth
-├── components/            # UI sections (components/db/ = database view)
+├── components/            # UI sections (components/db/ = database view, components/sre/ = observability view)
 ├── lib/db/                # Relational model, dialects, queries, B+Tree, simulations
+├── lib/sre/data.ts        # Incidents, deploys, SLOs, golden signals for /sre
 ├── scripts/db-console.ts  # Client controller for /db
+├── scripts/sre-console.ts # Client controller for /sre
 ├── layouts/BaseLayout.astro
 ├── pages/index.astro      # Classic résumé
 ├── pages/db.astro         # Database view
+├── pages/sre.astro        # Observability view
 ├── styles/global.css      # Tailwind @theme tokens
-└── styles/db.css          # Database view styles
+├── styles/db.css          # Database view styles
+└── styles/sre.css         # Observability view styles
 public/
 ├── favicon.svg
 ├── og-image.svg

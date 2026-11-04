@@ -1,0 +1,426 @@
+/* SRE view. Plain CSS on top of the @theme tokens in global.css. */
+
+.sre-shell {
+	background-image:
+		linear-gradient(to right, color-mix(in srgb, var(--color-border) 45%, transparent) 1px, transparent 1px),
+		linear-gradient(to bottom, color-mix(in srgb, var(--color-border) 45%, transparent) 1px, transparent 1px);
+	background-size: 32px 32px;
+	mask-image: linear-gradient(to bottom, transparent, black 80px, black calc(100% - 40px), transparent);
+}
+
+.font-mono,
+.sre-console,
+.sre-table,
+.sre-kv,
+.sre-stat b {
+	font-family: var(--font-mono);
+}
+
+/* ---------- small atoms ---------- */
+
+.sre-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	border-radius: 999px;
+	border: 1px solid var(--color-border);
+	padding: 0.1rem 0.55rem;
+	font-family: var(--font-mono);
+	font-size: 10.5px;
+	line-height: 1.5;
+	color: var(--color-muted);
+	white-space: nowrap;
+}
+.sre-pill-dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 999px;
+	background: var(--color-ok);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ok) 25%, transparent);
+}
+.sre-pill[data-state="warn"] .sre-pill-dot {
+	background: var(--color-warn);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-warn) 25%, transparent);
+}
+.sre-pill[data-state="crit"] .sre-pill-dot {
+	background: var(--color-crit);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-crit) 25%, transparent);
+	animation: sre-blink 0.9s ease-in-out infinite;
+}
+
+.sre-kv {
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.4rem;
+	border: 1px solid var(--color-border);
+	border-radius: 0.5rem;
+	padding: 0.25rem 0.6rem;
+	background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+	text-decoration: none;
+}
+.sre-kv span {
+	color: var(--color-muted);
+}
+.sre-kv b {
+	font-weight: 600;
+	color: var(--color-text);
+}
+
+.sre-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+	border: 1px solid color-mix(in srgb, var(--color-border) 80%, transparent);
+	border-radius: 0.75rem;
+	padding: 0.6rem 0.75rem;
+	background: color-mix(in srgb, var(--color-elevated) 45%, transparent);
+}
+.sre-stat span {
+	font-family: var(--font-mono);
+	font-size: 10.5px;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-muted);
+}
+.sre-stat b {
+	font-size: 15px;
+	font-weight: 600;
+	color: var(--color-text);
+	font-variant-numeric: tabular-nums;
+}
+
+.sre-btn-primary {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	border-radius: 999px;
+	background: var(--color-accent);
+	padding: 0.45rem 0.9rem;
+	font-size: 12.5px;
+	font-weight: 600;
+	color: #fff;
+	transition: filter 0.2s;
+}
+.sre-btn-primary:hover {
+	filter: brightness(1.1);
+}
+.sre-btn-primary:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* ---------- severity badges ---------- */
+
+.sre-sev {
+	display: inline-flex;
+	align-items: center;
+	border-radius: 0.35rem;
+	padding: 0.05rem 0.4rem;
+	font-family: var(--font-mono);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	color: #fff;
+}
+.sre-sev[data-sev="SEV1"] {
+	background: color-mix(in srgb, var(--color-crit) 85%, transparent);
+}
+.sre-sev[data-sev="SEV2"] {
+	background: color-mix(in srgb, var(--color-warn) 85%, transparent);
+}
+.sre-sev[data-sev="SEV3"] {
+	background: color-mix(in srgb, var(--color-accent) 75%, transparent);
+}
+
+/* ---------- console ---------- */
+
+.sre-console {
+	border: 1px solid var(--color-border);
+	border-radius: 0.75rem;
+	background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+}
+.sre-console-input {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	border-bottom: 1px solid var(--color-border);
+	padding: 0.55rem 0.75rem;
+}
+.sre-console-input .sre-prompt {
+	color: var(--color-ok);
+	font-size: 12.5px;
+	white-space: nowrap;
+}
+.sre-console-input input {
+	flex: 1;
+	min-width: 0;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: var(--color-text);
+	font-family: var(--font-mono);
+	font-size: 13px;
+	caret-color: var(--color-accent);
+}
+.sre-console-out {
+	max-height: 340px;
+	overflow-y: auto;
+	padding: 0.65rem 0.75rem;
+	font-size: 12px;
+	line-height: 1.65;
+}
+.sre-line {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+.sre-line.cmd {
+	color: var(--color-text);
+}
+.sre-line.cmd::before {
+	content: 'sre@prod:~$ ';
+	color: var(--color-ok);
+}
+.sre-line.ok {
+	color: var(--color-ok);
+}
+.sre-line.warn {
+	color: var(--color-warn);
+}
+.sre-line.crit {
+	color: var(--color-crit);
+}
+.sre-line.muted {
+	color: var(--color-muted);
+}
+.sre-line.head {
+	color: var(--color-text);
+	font-weight: 600;
+}
+
+.sre-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	border: 1px solid var(--color-border);
+	border-radius: 999px;
+	padding: 0.2rem 0.6rem;
+	font-family: var(--font-mono);
+	font-size: 11px;
+	color: var(--color-muted);
+	transition: border-color 0.2s, color 0.2s;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.sre-chip:hover {
+	border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
+	color: var(--color-text);
+}
+
+/* ---------- incident feed ---------- */
+
+.sre-incident {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	gap: 0.2rem;
+	border: 1px solid transparent;
+	border-radius: 0.6rem;
+	padding: 0.5rem 0.6rem;
+	text-align: left;
+	transition: border-color 0.15s, background 0.15s;
+	cursor: pointer;
+}
+.sre-incident:hover {
+	border-color: var(--color-border);
+	background: color-mix(in srgb, var(--color-elevated) 55%, transparent);
+}
+.sre-incident[aria-pressed="true"] {
+	border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+	background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+.sre-incident .sre-incident-top {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+.sre-incident .sre-incident-id {
+	font-family: var(--font-mono);
+	font-size: 11px;
+	color: var(--color-muted);
+}
+.sre-incident .sre-incident-title {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--color-text);
+}
+.sre-incident .sre-incident-service {
+	font-family: var(--font-mono);
+	font-size: 10.5px;
+	color: var(--color-muted);
+}
+
+.sre-pm-section {
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+}
+.sre-pm-section > span {
+	font-family: var(--font-mono);
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--color-muted);
+}
+.sre-pm-section > p {
+	font-size: 12.5px;
+	line-height: 1.6;
+	color: var(--color-text);
+}
+
+.sre-tag {
+	display: inline-flex;
+	border: 1px solid var(--color-border);
+	border-radius: 999px;
+	padding: 0.08rem 0.5rem;
+	font-family: var(--font-mono);
+	font-size: 10px;
+	color: var(--color-muted);
+}
+
+/* ---------- SLO gauge + budget ---------- */
+
+.sre-gauge {
+	transform: rotate(-90deg);
+}
+.sre-gauge .sre-gauge-track {
+	stroke: color-mix(in srgb, var(--color-border) 80%, transparent);
+}
+.sre-gauge .sre-gauge-fill {
+	stroke: var(--color-ok);
+	stroke-linecap: round;
+	transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.sre-budget {
+	height: 8px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--color-border) 80%, transparent);
+	overflow: hidden;
+}
+.sre-budget-fill {
+	height: 100%;
+	border-radius: 999px;
+	background: linear-gradient(90deg, var(--color-ok), color-mix(in srgb, var(--color-ok) 55%, var(--color-accent)));
+	transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- sparklines ---------- */
+
+.sre-spark svg {
+	display: block;
+	width: 100%;
+	height: 48px;
+}
+.sre-spark .sre-spark-line {
+	fill: none;
+	stroke: var(--color-accent);
+	stroke-width: 1.8;
+}
+.sre-spark .sre-spark-fill {
+	fill: color-mix(in srgb, var(--color-accent) 14%, transparent);
+	stroke: none;
+}
+.sre-spark.is-crit .sre-spark-line {
+	stroke: var(--color-crit);
+}
+.sre-spark.is-crit .sre-spark-fill {
+	fill: color-mix(in srgb, var(--color-crit) 12%, transparent);
+}
+
+/* ---------- deploy timeline ---------- */
+
+.sre-deploy {
+	display: grid;
+	grid-template-columns: 5.5rem 1fr auto;
+	align-items: baseline;
+	gap: 0.35rem 0.75rem;
+	border: 1px solid var(--color-border);
+	border-radius: 0.6rem;
+	padding: 0.5rem 0.7rem;
+	background: color-mix(in srgb, var(--color-elevated) 35%, transparent);
+}
+.sre-deploy .sre-deploy-version {
+	font-family: var(--font-mono);
+	font-size: 11px;
+	color: var(--color-accent);
+}
+.sre-deploy .sre-deploy-service {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--color-text);
+}
+.sre-deploy .sre-deploy-channel {
+	grid-column: 2 / 4;
+	font-size: 11.5px;
+	color: var(--color-muted);
+}
+.sre-deploy .sre-deploy-note {
+	grid-column: 2 / 4;
+	font-family: var(--font-mono);
+	font-size: 10.5px;
+	color: var(--color-muted);
+}
+.sre-deploy .sre-deploy-dates {
+	font-family: var(--font-mono);
+	font-size: 10.5px;
+	color: var(--color-muted);
+	white-space: nowrap;
+}
+
+.sre-dot {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 999px;
+	background: var(--color-ok);
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ok) 20%, transparent);
+	margin-right: 0.4rem;
+}
+
+/* ---------- table ---------- */
+
+.sre-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 12px;
+}
+.sre-table th {
+	text-align: left;
+	font-size: 10px;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--color-muted);
+	padding: 0.3rem 0.5rem;
+	border-bottom: 1px solid var(--color-border);
+}
+.sre-table td {
+	padding: 0.35rem 0.5rem;
+	border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+	color: var(--color-text);
+}
+.sre-table td.ok,
+.sre-table b.ok {
+	color: var(--color-ok);
+	font-weight: 600;
+}
+
+@keyframes sre-blink {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.35;
+	}
+}

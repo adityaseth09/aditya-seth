@@ -14,8 +14,11 @@ import Footer from '../components/Footer.astro';
 		<script is:inline>
 			(function () {
 				try {
-					if (localStorage.getItem('view') === 'db') {
+					var view = localStorage.getItem('view');
+					if (view === 'db') {
 						location.replace('/db');
+					} else if (view === 'sre') {
+						location.replace('/sre');
 					}
 				} catch (e) {}
 			})();

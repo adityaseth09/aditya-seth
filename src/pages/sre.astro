@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SreNav from '../components/sre/SreNav.astro';
+import SrePanel from '../components/sre/SrePanel.astro';
+import resume from '../data/resume.json';
+import { INCIDENTS, DEPLOYS, SLOS, SIGNALS, ONCALL, COMMANDS, CAREER_START, PLATFORM } from '../lib/sre/data';
+import '../styles/sre.css';
+
+const { profile } = resume;
+const title = `${profile.name} — résumé as an observability platform`;
+const description = `Explore ${profile.name}'s résumé like an SRE: incident postmortems for every save, SLOs and error budgets, golden signals, the deploy timeline of a 20-year career, and a live on-call console.`;
+const year = new Date().getFullYear();
+const latest = INCIDENTS[0];
+---
+
+<BaseLayout title={title} description={description}>
+	<Fragment slot="head">
+		<script is:inline>
+			(function () {
+				try {
+					localStorage.setItem('view', 'sre');
+				} catch (e) {}
+			})();
+		</script>
+	</Fragment>
+
+	<SreNav />
+
+	<main id="main" class="sre-shell mx-auto w-full max-w-[1600px] px-4 pb-16 pt-5 sm:px-6">
+		<div class="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+			<div>
+				<p class="font-mono text-[11px] uppercase tracking-[0.18em] text-accent">
+					{`sre@${PLATFORM}:~$ watch career --source=resume`}
+				</p>
+				<h1 class="mt-1 font-display text-2xl font-semibold tracking-tight text-text sm:text-3xl">
+					{profile.name.split(' ')[0]}'s résumé, as an observability platform
+				</h1>
+				<p class="mt-1 max-w-2xl text-sm text-muted">
+					{INCIDENTS.length} resolved incidents, {DEPLOYS.length} deploys, zero rollbacks — from the B.SQL turnaround
+					after the ~70,000-order outage to the Datadog rollout and the $40M/yr FinOps cut. The postmortems are
+					the career highlights; watch the golden signals; page the on-call if anything looks off.
+				</p>
+			</div>
+			<div class="flex flex-wrap gap-2 font-mono text-[11px] text-muted">
+				<span class="sre-kv"><span>region</span><b>eu-west-1 · Amsterdam</b></span>
+				<span class="sre-kv"><span>on-call</span><b>24/7</b></span>
+				<span class="sre-kv"><span>first shift</span><b>{CAREER_START}</b></span>
+				<a href="/" id="classic-view-mobile" class="sre-kv md:hidden"><span>view</span><b>classic →</b></a>
+			</div>
+		</div>
+
+		<div class="grid min-w-0 gap-5 xl:grid-cols-2">
+			<!-- Live console -->
+			<SrePanel id="panel-console" title="Live console" span={2} source="guided terminal · type help">
+				<div class="grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+					<div class="min-w-0">
+						<div class="sre-console">
+							<div class="sre-console-input">
+								<span class="sre-prompt">sre@{PLATFORM}:~$</span>
+								<input
+									id="sre-in"
+									type="text"
+									autocomplete="off"
+									spellcheck="false"
+									placeholder="try: incidents · postmortem INC-2022-042 · slo · uptime"
+									aria-label="Console command"
+								/>
+								<button id="sre-run" type="button" class="sre-btn-primary shrink-0">
+									<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+									Run
+								</button>
+							</div>
+							<div id="sre-out" class="sre-console-out" aria-live="polite"></div>
+						</div>
+						<div id="sre-chips" class="mt-3 flex flex-wrap gap-1.5" aria-label="Console commands">
+							{COMMANDS.map((c) => <button type="button" class="sre-chip" data-cmd={c}>{c}</button>)}
+						</div>
+					</div>
+					<div class="min-w-0 rounded-xl border border-border/70 bg-elevated/40 p-3">
+						<p class="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">how to read this dashboard</p>
+						<ul class="mt-2 space-y-1.5 text-[12.5px] leading-relaxed text-muted">
+							<li><b class="text-text">Incidents</b> are the situations inherited at each job — the alert that was firing.</li>
+							<li><b class="text-text">Postmortems</b> record what was done and the business outcome.</li>
+							<li><b class="text-text">SLOs</b> measure the same claims as the classic résumé, in nines.</li>
+							<li><b class="text-text">Deploys</b> is the career timeline: every release shipped, none rolled back.</li>
+						</ul>
+						<p class="mt-3 font-mono text-[10.5px] text-muted">tip: ↑ / ↓ replays history</p>
+					</div>
+				</div>
+			</SrePanel>
+
+			<!-- Incident feed + postmortem -->
+			<SrePanel id="panel-incidents" title="Incident feed — led, mitigated, resolved" span={2} source="all posts · 100% resolved">
+				<div class="grid gap-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
+					<ol id="sre-incidents" class="min-w-0 space-y-1" aria-label="Incidents">
+						{INCIDENTS.map((inc, i) => (
+							<li>
+								<button type="button" class="sre-incident" data-incident={inc.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+									<span class="sre-incident-top">
+										<span class="sre-sev" data-sev={inc.sev}>{inc.sev}</span>
+										<span class="sre-incident-id">{inc.id}</span>
+										<span class="sre-incident-service">{inc.service}</span>
+									</span>
+									<span class="sre-incident-title">{inc.title}</span>
+								</button>
+							</li>
+						))}
+					</ol>
+					<article id="sre-pm" class="min-w-0 rounded-xl border border-border/70 bg-elevated/40 p-4" aria-live="polite">
+						<div class="flex flex-wrap items-center gap-2">
+							<span id="pm-sev" class="sre-sev" data-sev={latest.sev}>{latest.sev}</span>
+							<span id="pm-id" class="font-mono text-[11px] text-muted">{latest.id}</span>
+							<span class="sre-pill" data-state="ok"><span class="sre-pill-dot"></span> resolved</span>
+						</div>
+						<h3 id="pm-title" class="mt-2 font-display text-base font-semibold text-text">{latest.title}</h3>
+						<div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 font-mono text-[11px]">
+							<div><span class="text-muted">service </span><span id="pm-service" class="text-text">{latest.service}</span></div>
+							<div><span class="text-muted">opened </span><span id="pm-opened" class="text-text">{latest.opened}</span></div>
+							<div><span class="text-muted">ttr </span><span id="pm-ttr" class="text-text">{latest.ttr}</span></div>
+						</div>
+						<div class="mt-3 space-y-3">
+							<div class="sre-pm-section"><span>impact</span><p id="pm-impact">{latest.impact}</p></div>
+							<div class="sre-pm-section"><span>detection</span><p id="pm-detected">{latest.detected}</p></div>
+							<div class="sre-pm-section"><span>resolution</span><p id="pm-resolution">{latest.resolution}</p></div>
+							<div class="sre-pm-section"><span>outcome</span><p id="pm-outcome" class="text-ok">{latest.outcome}</p></div>
+						</div>
+						<div id="pm-tags" class="mt-3 flex flex-wrap gap-1.5">
+							{latest.tags.map((t) => <span class="sre-tag">{t}</span>)}
+						</div>
+					</article>
+				</div>
+			</SrePanel>
+
+			<!-- SLOs & error budget -->
+			<SrePanel id="panel-slo" title="SLOs & error budget" source="MySQL Availability Reporter · slo.yaml">
+				<div class="flex items-center gap-4">
+					<div class="relative shrink-0">
+						<svg class="sre-gauge" width="120" height="120" viewBox="0 0 120 120" role="img" aria-label="Runbook coverage gauge">
+							<circle class="sre-gauge-track" cx="60" cy="60" r="52" fill="none" stroke-width="9"></circle>
+							<circle id="gauge-fill" class="sre-gauge-fill" cx="60" cy="60" r="52" fill="none" stroke-width="9" stroke-dasharray="326.7" stroke-dashoffset="326.7"></circle>
+						</svg>
+						<div class="absolute inset-0 flex flex-col items-center justify-center">
+							<b id="gauge-value" class="font-mono text-lg font-semibold tabular-nums text-text">—</b>
+							<span class="font-mono text-[9.5px] uppercase tracking-[0.1em] text-muted">runbook coverage</span>
+						</div>
+					</div>
+					<div class="grid min-w-0 flex-1 grid-cols-2 gap-3">
+						<div class="sre-stat"><span>reliability</span><b class="text-ok">off the top-offender list</b></div>
+						<div class="sre-stat"><span>sustained</span><b>since the 2022 turnaround</b></div>
+						<div class="sre-stat"><span>on-call pages</span><b class="text-ok">~1 / month</b></div>
+						<div class="sre-stat"><span>cost reduction</span><b>65%+ · $40M+/yr</b></div>
+					</div>
+				</div>
+				<div class="mt-4">
+					<div class="flex items-baseline justify-between font-mono text-[11px] text-muted">
+						<span>availability budget recovered</span>
+						<b id="budget-pct" class="text-text">100%</b>
+					</div>
+					<div class="sre-budget mt-1"><div id="budget-bar" class="sre-budget-fill" style="width:0%"></div></div>
+					<p class="mt-1.5 font-mono text-[10.5px] text-muted">B.SQL removed from the top offenders for availability budget loss per team — and kept off.</p>
+				</div>
+				<table class="sre-table mt-4">
+					<thead>
+						<tr><th>slo</th><th>target</th><th>achieved</th><th>budget</th></tr>
+					</thead>
+					<tbody>
+						{SLOS.map((s) => (
+							<tr>
+								<td>{s.name}</td>
+								<td class="font-mono text-[11px]">{s.target}</td>
+								<td class="ok">{s.achieved}</td>
+								<td class="font-mono text-[11px] text-muted">{s.budget}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</SrePanel>
+
+			<!-- Golden signals -->
+			<SrePanel id="panel-signals" title="Golden signals" source="metrics · 15s scrape">
+				<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+					{SIGNALS.map((s) => (
+						<div class="sre-spark" data-signal={s.id} data-base={s.base} data-amp={s.amp}>
+							<div class="flex items-baseline justify-between font-mono text-[10.5px] text-muted">
+								<span>{s.label}</span>
+								<b class="text-text">{s.value}</b>
+							</div>
+							<svg viewBox="0 0 200 48" preserveAspectRatio="none" aria-hidden="true">
+								<path class="sre-spark-fill" d=""></path>
+								<path class="sre-spark-line" d=""></path>
+							</svg>
+						</div>
+					))}
+				</div>
+				<p class="mt-3 text-[12px] leading-relaxed text-muted">
+					Latency, traffic, errors, saturation — the four golden signals, running on career-scale numbers:
+					~15ms p99 at 1M+ req/min across a 20,000+ server fleet, with runbooks covering ~95% of known
+					failure modes and a pager that now fires about once a month.
+				</p>
+			</SrePanel>
+
+			<!-- Deploy timeline -->
+			<SrePanel id="panel-deploys" title="Deploy timeline" source="release history · 0 rollbacks">
+				<ol class="max-h-96 space-y-1.5 overflow-y-auto pr-1" aria-label="Deploys">
+					{DEPLOYS.map((d) => (
+						<li class="sre-deploy">
+							<span class="sre-deploy-version">{d.version}</span>
+							<span class="sre-deploy-service">{d.service}</span>
+							<span class="sre-deploy-dates">
+								<span class="sre-dot" aria-hidden="true"></span>{d.start} → {d.end}
+							</span>
+							<span class="sre-deploy-channel">{d.channel} · {d.region}</span>
+							<span class="sre-deploy-note">{d.note}</span>
+						</li>
+					))}
+				</ol>
+			</SrePanel>
+
+			<!-- On-call -->
+			<SrePanel id="panel-oncall" title="On-call" source="pager · pages ~1/month">
+				<div class="grid grid-cols-2 gap-3">
+					<div class="sre-stat col-span-2"><span>on-call primary</span><b>{ONCALL.primary}</b></div>
+					<div class="sre-stat col-span-2"><span>escalation rotation</span><b>{ONCALL.escalation}</b></div>
+					<div class="sre-stat"><span>runbooks</span><b class="text-ok">{ONCALL.runbooks}</b></div>
+					<div class="sre-stat"><span>page frequency</span><b class="text-ok">{ONCALL.pages}</b></div>
+				</div>
+				<div class="mt-3 flex flex-wrap gap-1.5">
+					{ONCALL.compliance.map((c) => <span class="sre-tag">100% {c}</span>)}
+				</div>
+				<p class="mt-3 text-[12.5px] leading-relaxed text-muted">
+					Designed a healthy on-call model with an outsourced ops partner: Pythian handles routine L1, runbooks are
+					updated after every new repeating or big failure, and onboarding comes with recorded training and shadowing.
+					Leads response for large B.SQL incidents and takes regular on-call shifts.
+				</p>
+				<a
+					href={profile.linkedin}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white transition hover:brightness-110"
+				>
+					Page the on-call (LinkedIn)
+				</a>
+			</SrePanel>
+		</div>
+	</main>
+
+	<footer class="border-t border-border/70 py-6">
+		<div class="mx-auto flex w-full max-w-[1600px] flex-col gap-2 px-4 font-mono text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
+			<p>&copy; {year} {profile.name}. Simulated telemetry; real career.</p>
+			<p>
+				<a href="/" class="transition hover:text-text">Classic résumé</a> · <a href="/db" class="transition hover:text-text">SQL view</a> · <a href={profile.resumePdf} download class="transition hover:text-text">PDF</a>
+			</p>
+		</div>
+	</footer>
+
+	<script>
+		import '../scripts/sre-console';
+	</script>
+</BaseLayout>
